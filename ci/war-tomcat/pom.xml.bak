@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.totvs.thf</groupId>
+		<artifactId>totvs-thf2-parent</artifactId>
+    <version>12.1.33-SNAPSHOT</version>
+	</parent>
+  <artifactId>geren-ferias-folgas-tomcat</artifactId>  
+  <packaging>war</packaging>
+  <name>artifactId Maven Webapp</name>
+  <dependencies>
+    <dependency>
+      <groupId>com.totvs.framework</groupId>
+      <artifactId>totvs-fwk-sso</artifactId>
+      <version>12.1.33-NFRW-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>geren-ferias-folgas-tomcat</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <webResources>
+          <resource>
+            <directory>../../dist/geren-ferias-folgas</directory>
+          </resource>
+        </webResources>
+        </configuration>
+      </plugin>
+    </plugins>       
+  </build>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>nexus-snapshots</id>
+      <url>http://nexus.10.80.129.186.xip.io/repository/maven-snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>
