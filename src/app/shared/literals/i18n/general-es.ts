@@ -40,26 +40,8 @@ export const generalEs = {
     name: 'Nombre',
     description: 'Descripción',
     type: 'Tipo',
-    accessKey: 'llave de acceso',
-    situation: 'Situación',
-    document: 'Documento',
-    link: 'Enlace',
-    relatedDocuments: 'Documentos relacionados',
-    datePeriod: 'Período',
-    settings: 'Ajustes',
-    refresh: 'Actualizar',
-    initialSite: 'Establecimiento inicial',
-    finalSite: 'Establecimiento final',
-    filterPeriod: 'Período de filtrado',
-    lastDaysRecurringPeriod: 'Últimos días (período recurrente)',
-    emissionDate: 'Fecha de emisión',
-    transactionDate: 'Fecha de transacción',
-    documentsToConsider: 'Considere los documentos',
-    canceled: 'Cancelado',
-    inValidation: 'En validación',
-
-    /* menu */
     /* menu */
     loginUsuario: 'Login Usuario',
-    module: 'Gerenciamento férias/Folga'
+    module: 'Gerenciamento férias/Folga',
+    titleVacation: 'Férias e Folgas'
 };

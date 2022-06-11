@@ -39,26 +39,8 @@ export const generalPt = {
     name: 'Nome',
     code: 'Código',
     description: 'Descrição',
-    type: 'Tipo',
-    accessKey: 'Chave de acesso',
-    situation: 'Situação',
-    document: 'Documento',
-    link: 'Relacionar',
-    relatedDocuments: 'Notas relacionadas',
-    datePeriod: 'Período',
-    settings: 'Configurações',
-    refresh: 'Atualizar',
-    initialSite: 'Estabelecimento inicial',
-    finalSite: 'Estabelecimento final',
-    filterPeriod: 'Filtrar período',
-    lastDaysRecurringPeriod: 'Últimos dias (período recorrente)',
-    emissionDate: 'Data emissão',
-    transactionDate: 'Data transação',
-    documentsToConsider: 'Considerar documentos',
-    canceled: 'Cancelados',
-    inValidation: 'Em validação',
-
     /* menu */
     loginUsuario: 'Login Usuario',
-    module: 'Gerenciamento férias/Folga'
+    module: 'Gerenciamento férias/Folga',
+    titleVacation: 'Férias e Folgas'
 };
