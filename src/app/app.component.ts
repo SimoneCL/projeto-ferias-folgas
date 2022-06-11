@@ -27,6 +27,7 @@ export class AppComponent implements OnInit {
             [this.poI18nService.getLiterals()]
         ).subscribe(literals => {
             literals.map(item => Object.assign(this.literals, item));
+            console.log('entrou no component')
         });
        
     }
