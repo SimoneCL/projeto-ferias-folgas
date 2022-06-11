@@ -1,0 +1,24 @@
+<po-page-default 
+  [p-title]="literals?.titleVacation">
+  <div class="po-row">
+      <po-datepicker-range
+          class="po-lg-3 po-md-3"
+          p-label="Período"
+          [(ngModel)]="config.datePickerRange"
+          (p-change)="calculateQuantityOfVacationDays()"
+          >
+      </po-datepicker-range>
+  </div>
+  <div class="po-row">
+    <po-table
+      [p-columns]="columns"
+      [p-items]="items"
+      [p-actions]="tableActions"
+      [p-hide-columns-manager]="true">
+      <ng-template  p-table-column-template [p-property]="targetProperty" let-value>
+        <!-- <span *ngIf="value === 'FINISHED'" [style.background]="'silver'" [innerText]="value"></span> -->
+        <!-- <span *ngIf="value === 'OPENED'" [style.background]="'gray'" [innerText]="value"></span> -->
+      </ng-template>
+    </po-table>
+  </div>
+</po-page-default>

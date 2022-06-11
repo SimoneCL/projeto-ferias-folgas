@@ -2,10 +2,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-    /*{
-        path: 'eventoCancelamento',
-        loadChildren: () => import('./evento-cancelamento/evento-cancelamento.module').then(m => m.EventoCancelamentoModule)
-    }*/
+    {
+        path: 'ferias-folga',
+        loadChildren: () => import('./ferias-folga/ferias-folga.module').then(m => m.FeriasFolgaModule)
+    }
 ];
 
 @NgModule({
