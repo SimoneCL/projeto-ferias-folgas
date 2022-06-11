@@ -32,10 +32,10 @@ export class AppComponent implements OnInit {
     }
 
     displayVersions(): void {
-        console.log('App:', name);
+        /*console.log('App:', name);
         console.log('Git Info:', git);
         console.log('Versão do App:', version);
         console.log('Dependencias:');
-        Object.keys(dependencies).forEach((key) => console.log(' - ', key, ':', dependencies[key]));
+        Object.keys(dependencies).forEach((key) => console.log(' - ', key, ':', dependencies[key]));*/
     }
 }

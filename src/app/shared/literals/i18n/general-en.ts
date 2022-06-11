@@ -40,25 +40,8 @@ export const generalEn = {
     code: 'Code',
     description: 'Description',
     type: 'Type',
-    accessKey: 'Access key',
-    situation: 'Situation',
-    document: 'Document',
-    link: 'Link',
-    relatedDocuments: 'Related documents',
-    datePeriod: 'Date period',
-    settings: 'Settings',
-    refresh: 'Refresh',
-    initialSite: 'Initial site',
-    finalSite: 'Final site',
-    filterPeriod: 'Filter period',
-    lastDaysRecurringPeriod: 'Last days (recurring period)',
-    emissionDate: 'Emission date',
-    transactionDate: 'Transaction date',
-    documentsToConsider: 'Documents to consider',
-    canceled: 'Canceled',
-    inValidation: 'In validation',
-
     /* menu */
     loginUsuario: 'User Login',
-    module: 'Management Day off'
+    module: 'Management Day off',
+    titleVacation: 'Vacation & Day Off'
 };
