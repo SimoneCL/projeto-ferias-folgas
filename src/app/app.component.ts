@@ -27,9 +27,13 @@ export class AppComponent implements OnInit {
             [this.poI18nService.getLiterals()]
         ).subscribe(literals => {
             literals.map(item => Object.assign(this.literals, item));
+            this.menus = [
+                { label: 'Férias e Folgas', link: '/ferias-folga' },
+                {label: 'Equipes', link: '/'}
+            ];
             console.log('entrou no component')
         });
-       
+
     }
 
     displayVersions(): void {
