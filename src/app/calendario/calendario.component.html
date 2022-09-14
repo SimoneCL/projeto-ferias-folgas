@@ -1,0 +1,20 @@
+<po-page-default>
+
+    <full-calendar 
+       [options]="calendarOptions">
+    </full-calendar>
+</po-page-default>
+<po-modal #modal 
+    [p-title]="literals?.scheduleEvent"
+    [p-primary-action]="confirmModal"
+    [p-secondary-action]="cancelModal" >
+
+    <po-radio-group
+      name="radioGroupBasic"
+      p-label="Tipo evento"
+      [p-options]="eventsOptions"
+      [(ngModel)]="eventType">
+    </po-radio-group>
+
+
+</po-modal>

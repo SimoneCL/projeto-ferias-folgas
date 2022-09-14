@@ -28,10 +28,10 @@ export class AppComponent implements OnInit {
         ).subscribe(literals => {
             literals.map(item => Object.assign(this.literals, item));
             this.menus = [
-                { label: 'Férias e Folgas', link: '/ferias-folga' },
+                {label: 'Férias e Folgas', link: '/ferias-folga' },
+                {label: 'Calendários', link: '/calendario'},
                 {label: 'Equipes', link: '/'}
             ];
-            console.log('entrou no component')
         });
 
     }
