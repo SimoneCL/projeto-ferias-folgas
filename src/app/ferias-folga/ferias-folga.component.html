@@ -10,15 +10,26 @@
       </po-datepicker-range>
   </div>
   <div class="po-row">
-    <po-table
+    <po-table #tableEvent
       [p-columns]="columns"
       [p-items]="items"
-      [p-actions]="tableActions"
       [p-hide-columns-manager]="true">
-      <ng-template  p-table-column-template [p-property]="targetProperty" let-value>
-        <!-- <span *ngIf="value === 'FINISHED'" [style.background]="'silver'" [innerText]="value"></span> -->
-        <!-- <span *ngIf="value === 'OPENED'" [style.background]="'gray'" [innerText]="value"></span> -->
+      <ng-template p-table-cell-template let-column="column" let-row="row">
+        
+        <!-- <h1 >column.property {{row.dia2022-09-06}} </h1> -->
+        <!-- <h1 *ngIf="column.property === 'dia3'" >{{row.dia3}}</h1> -->
+        <!-- <h1 *ngIf="column.property === 'dia4'">{{row.dia4}}</h1> --> 
+        
+        <!-- <div *ngIf="column.property === 'dia' && row.status === 'CANCELED'">
+          <h1 [style.background]="'red'">CANCELADA</h1>
+          <span (click)="onClick()"><small>clique aqui</small></span> 
+        </div>
+        <h1 *ngIf="column.property === 'dia' && row.status === 'FINISHED'" [style.background]="'green'">FINALIZADA</h1>
+        <h1 *ngIf="column.property === 'status' && row.status === 'OPENED'" [style.background]="'orange'">ABERTA</h1>
+        <h1 *ngIf="column.property === 'status2'">Conteúdo do status 2</h1>
+        <h1 *ngIf="column.property === 'status3'">Conteúdo do status 3</h1> -->
       </ng-template>
     </po-table>
   </div>
+  
 </po-page-default>

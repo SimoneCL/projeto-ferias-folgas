@@ -42,5 +42,8 @@ export const generalPt = {
     /* menu */
     loginUsuario: 'Login Usuario',
     module: 'Gerenciamento férias/Folga',
-    titleVacation: 'Férias e Folgas'
+    titleVacation: 'Férias e Folgas',
+    calendar: 'Calendário',
+    scheduleEvent: 'Agendamento evento',
+    createMessage: 'Evento criado com Sucesso'
 };

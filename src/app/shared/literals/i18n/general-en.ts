@@ -43,5 +43,8 @@ export const generalEn = {
     /* menu */
     loginUsuario: 'User Login',
     module: 'Management Day off',
-    titleVacation: 'Vacation & Day Off'
+    titleVacation: 'Vacation & Day Off',
+    calendar: 'Calendar',
+    scheduleEvent: 'Schedule event'
+
 };

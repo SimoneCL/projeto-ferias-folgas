@@ -1,12 +1,14 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { FeriasFolgaRoutingModule } from './ferias-folga-routing.module';
-import { FeriasFolgaComponent } from './ferias-folga.component';
-import { LoadingInterceptorModule } from '../loading-interceptor.module';
+import { FormsModule } from '@angular/forms';
 import { PoI18nPipe, PoModule } from '@po-ui/ng-components';
 import { PoTemplatesModule } from '@po-ui/ng-templates';
-import { FormsModule } from '@angular/forms';
+import { LoadingInterceptorModule } from '../loading-interceptor.module';
+import { EventoService } from '../shared/services/evento.service';
+import { EventoListService } from '../shared/services/eventolist.service';
+import { FeriasFolgaRoutingModule } from './ferias-folga-routing.module';
+import { FeriasFolgaComponent } from './ferias-folga.component';
 
 
 @NgModule({
@@ -22,7 +24,9 @@ import { FormsModule } from '@angular/forms';
     FeriasFolgaRoutingModule
   ],
   providers: [
-    PoI18nPipe
+    PoI18nPipe,
+    EventoService,
+    EventoListService
   ]
 })
 export class FeriasFolgaModule { }
