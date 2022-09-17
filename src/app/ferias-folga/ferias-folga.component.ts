@@ -23,7 +23,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   targetProperty = '';
 
   items: Array<any> = new Array<any>();
-
+  
   private itemsEventos: Array<IEventoList>;
   public eventos: Array<any> = new Array<any>();
   itemsAux: Array<any>;
@@ -60,7 +60,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
   setupComponents() {
     this.primeiroDia = new Date();
-    this.ultimoDia = new Date(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate() + 15, 0);
+    this.ultimoDia = new Date(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate() + 19, 0);
 
     this.sugerePeriodoDefault();
     if (this.columns[1].property.length > 0) {
