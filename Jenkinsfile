@@ -53,6 +53,9 @@ pipeline {
             }
         }
         stage('SonarQube') {
+            when {
+                branch 'master'
+            }
             steps {
                 container('node') {
                     script {
@@ -77,6 +80,9 @@ pipeline {
             }
         }
         stage('Deploy to Central') {
+            when {
+                branch 'master'
+            }
             steps {
                 container('maven') {
                     dir('ci/war-tomcat') {
