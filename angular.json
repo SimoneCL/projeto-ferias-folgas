@@ -18,17 +18,15 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
+            "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "**\/*",
-                "input": "node_modules/@po-ui/style/images",
-                "output": "assets/images"
-              }
+              "src/assets"
             ],
             "styles": [
-              "node_modules/@totvs/po-theme/css/po-theme-default.min.css"
+              "node_modules/@totvs/po-theme/css/po-theme-default-variables.min.css",
+              "node_modules/@totvs/po-theme/css/po-theme-default.min.css",
+              "node_modules/@po-ui/style/css/po-theme-core.min.css"
             ],
             "scripts": [],
             "vendorChunk": true,
@@ -47,9 +45,10 @@
                 }
               ],
               "optimization": true,
-              "outputHashing": "all",
+              "outputHashing": "none",
               "sourceMap": false,
               "namedChunks": false,
+              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -99,22 +98,11 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/@totvs/po-theme/css/po-theme-default.min.css"
+                "node_modules/@totvs/po-theme/css/po-theme-default-variables.min.css",
+                "node_modules/@totvs/po-theme/css/po-theme-default.min.css",
+                "node_modules/@po-ui/style/css/po-theme-core.min.css"  
             ],
             "scripts": []
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
           }
         },
         "e2e": {
@@ -128,12 +116,23 @@
               "devServerTarget": "geren-ferias-folgas:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "geren-ferias-folgas",
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

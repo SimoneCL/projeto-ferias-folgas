@@ -9,10 +9,6 @@ const routes: Routes = [
     {
         path: 'ferias-folga',
         loadChildren: () => import('./ferias-folga/ferias-folga.module').then(m => m.FeriasFolgaModule)
-    },
-    {
-        path: 'calendario',
-        loadChildren: () => import('./calendario/calendario.module').then(m => m.CalendarioModule)
     }
     
     

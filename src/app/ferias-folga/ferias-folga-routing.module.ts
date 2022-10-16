@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CalendarioComponent } from '../calendario/calendario.component';
 import { FeriasFolgaComponent } from './ferias-folga.component';
 
 const routes: Routes = [
