@@ -1,0 +1,23 @@
+<po-page-default
+    [p-title]="literals?.scheduleEventUser"
+    [p-actions]="pageActions">
+  <!-- <div class="po-row">
+      <po-datepicker-range
+          class="po-lg-3 po-md-3"
+          p-label="Período"
+          [(ngModel)]="config.datePickerRange"
+          (p-change)="calculateQuantityOfVacationDays()"
+          >
+      </po-datepicker-range>
+  </div> -->
+  
+  <po-table
+    p-striped="true"
+    [p-columns]="columns"
+    [p-items]="items"
+    [p-actions]="tableActions"
+    [p-show-more-disabled]="!hasNext"
+    (p-show-more)="search(true)"
+    p-actions-right="true">
+    </po-table>
+</po-page-default> 
