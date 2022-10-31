@@ -7,10 +7,13 @@ const routes: Routes = [
         loadChildren: () => import('./login/login.module').then(m => m.LoginModule)
     },
     {
-        path: 'ferias-folga',
+        path: 'feriasFolga',
         loadChildren: () => import('./ferias-folga/ferias-folga.module').then(m => m.FeriasFolgaModule)
-    }
-    
+    },
+    {
+        path: 'agendaUser',
+        loadChildren: () => import('./agendamento-user/agendamento-user.module').then(m => m.AgendamentoUserModule)
+    },
     
 ];
 @NgModule({

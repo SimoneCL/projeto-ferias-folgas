@@ -1,26 +1,18 @@
- <!-- <po-page-edit
-  p-title="User Edit"
-  [p-breadcrumb]="breadcrumb"
-  [p-disable-submit]="formVacationSuggestion.invalid"
-  (p-cancel)="return()"
-  (p-save)="save()"
-> -->
-
 <po-page-default 
     [p-actions]="getActions()" 
     [p-breadcrumb]="breadcrumb" 
-    p-title="User Edit">
+    [p-title]="getTitle()">
   <form [formGroup]="formVacationSuggestion">
   <po-radio-group
-  class="po-lg-4"
-  name="eventType"
-  formControlName="eventType"
-  [p-label]="literals?.eventType"
-  p-required
-  [p-options]="eventOptions"
-  (p-change)="changeEvent($event)"
->
-</po-radio-group>
+    class="po-lg-4"
+    name="eventType"
+    formControlName="eventType"
+    [p-label]="literals?.eventType"
+    p-required
+    [p-options]="eventOptions"
+    (p-change)="changeEvent($event)"
+  >
+  </po-radio-group>
   <po-divider class="po-md-9" [p-label]="literals?.rangeSchedule"> </po-divider>
 
   <div class="po-row">

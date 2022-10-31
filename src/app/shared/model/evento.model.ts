@@ -3,7 +3,7 @@ export interface IEvento {
     user: string;
     eventIniDate: string;
     eventEndDate: string;
-    type: number|string;
+    type: number | string;
 }
 
 export class Evento implements IEvento {
@@ -11,24 +11,30 @@ export class Evento implements IEvento {
     user: string;
     eventIniDate: string;
     eventEndDate: string;
-    type: number|string;
+    type: number | string;
 
     constructor(values: Object = {}) {
         Object.assign(this, values);
     }
 
-    static getInternalId(item: IEvento): number {
-        return item.id;
+    static getInternalId(model: IEvento): string {
+        return `${model.id};${model.user}`; //deixei ponto e virgula, pois no mock não funciona com pipe depois alterar
+    }
+    static FormataStringData(data) {
+        var dia = data.split("/")[0];
+        var mes = data.split("/")[1];
+        var ano = data.split("/")[2];
+
+        return ("0" + dia).slice(-2) + '/' + ("0" + mes).slice(-2);
+        // Utilizo o .slice(-2) para garantir o formato com 2 digitos.
     }
 
-    get $id(): number { return this.id; }
-    get $eventIniDate(): string { return this.eventIniDate; }
-    get $eventEndDate(): string { return this.eventEndDate; }
-  
-
-    set $id(value: number) { this.id = value; }
-    set $eventIniDate(value: string) { this.eventIniDate = value; }
-    set $eventEndDate(value: string) { this.eventEndDate = value; }
-  
+    static dayOffType(literals: {}): Array<any> {
+        return [
+            { value: 1, color: 'color-01', label: literals['vacation'] },
+            { value: 2, color: 'color-08', label: literals['holidayBridge'] },
+            { value: 3, color: 'color-10', label: literals['resetDay'] },
+        ];
+    }
 
 }
