@@ -12,7 +12,6 @@ import { EventoService } from 'src/app/shared/services/evento.service';
   styleUrls: ['./agendamento-user-edit.component.css']
 })
 export class AgendamentoUserEditComponent implements OnInit {
-  // @ViewChild('formVacationSuggestion', { static: true }) formVacationSuggestion: UntypedFormGroup;
 
   private eventoUserSubscription$: Subscription;
   public eventUser: IEvento = new Evento();
@@ -26,7 +25,7 @@ export class AgendamentoUserEditComponent implements OnInit {
   quantityOfDays: number;
   eventType: number;
   eventPage: string;
-  
+
   public eventOptions: Array<PoRadioGroupOption>;
   public isHidden: boolean;
 
@@ -41,7 +40,6 @@ export class AgendamentoUserEditComponent implements OnInit {
     private route: Router,
     private formBuilder: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
-    private poDialog: PoDialogService,
     private poI18nService: PoI18nService,
     private poNotification: PoNotificationService,
     private serviceEvento: EventoService
@@ -63,20 +61,17 @@ export class AgendamentoUserEditComponent implements OnInit {
 
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
       const id = this.activatedRoute.snapshot.paramMap.get('id');
-      this.get(id);
+      if (id) {
+        this.get(id);
+      }
       this.setupComponents();
     });
   }
 
   setupComponents() {
+    this.isHidden = this.eventPage === 'new';
     this.formVacationSuggestion.get("eventType").patchValue(1);
-    this.breadcrumb = {
-      items: [
-        { label: this.literals.scheduleEventUser, action: this.beforeRedirect.bind(this), link: '/agendaUser' },
-        { label: 'User Edit' }
-      ]
-    };
-
+        this.breadcrumb = this.getBreadcrumb();
     this.eventOptions = [
       { label: 'Férias', value: 1 },
       { label: 'Ponte', value: 2 },
@@ -100,33 +95,55 @@ export class AgendamentoUserEditComponent implements OnInit {
     if (this.eventUser.type === 1) {
       this.eventUser.eventIniDate = this.formVacationSuggestion.get('datepickerRange').value.start;
       this.eventUser.eventEndDate = this.formVacationSuggestion.get('datepickerRange').value.end;
-      
+
     } else {
       this.eventUser.eventIniDate = this.formVacationSuggestion.get('datepickerRange').value.start;
-      this.eventUser.eventEndDate =  this.eventUser.eventIniDate;
+      this.eventUser.eventEndDate = this.eventUser.eventIniDate;
     }
-    // this.formVacationSuggestion.get("eventType").patchValue(this.eventUser.type);
-    // this.formVacationSuggestion.get("datepickerRange").patchValue(this.datepickerRangeAux);
-console.log('this.eventUser.id ',this.eventUser.id )
+
     if (this.eventPage !== 'edit') {
       this.eventUser.id = Math.floor(Math.random() * 65536);
     }
-    console.log(this.eventUser);
   }
   create() {
-    this.save() ;
+    this.save();
     this.eventoUserSubscription$ = this.serviceEvento.create(this.eventUser).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
     });
   }
   update() {
-    this.save() ;
+    this.save();
     this.eventoUserSubscription$ = this.serviceEvento.update(this.eventUser).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
     });
   }
+  getTitle(): string {
+    if (this.eventPage === 'edit') {
+      return this.literals.editEventUser;
+    } else {
+      return this.literals.newEventUser;
+    }
+  }
+  getBreadcrumb(){
+    if (this.eventPage === 'edit') {
+      return {
+        items: [
+          { label: this.literals.scheduleEventUser, action: this.beforeRedirect.bind(this), link: '/agendaUser' },
+          { label: this.literals.editEventUser }
+        ]
+      };
+    } else {
+      return {
+        items: [
+          { label: this.literals.scheduleEventUser, action: this.beforeRedirect.bind(this), link: '/agendaUser' },
+          { label: this.literals.newEventUser }
+        ]
+      };
+    }
+  }
+
   getActions(): Array<PoPageAction> {
     switch (this.eventPage) {
       case 'edit': {
@@ -134,7 +151,7 @@ console.log('this.eventUser.id ',this.eventUser.id )
       }
       case 'detail': {
         return this.detailActions();
-      }      
+      }
     }
     return this.newActions();
   }
@@ -169,7 +186,7 @@ console.log('this.eventUser.id ',this.eventUser.id )
         label: this.literals.save,
         action: this.create.bind(this),
         icon: 'po-icon-plus'
-      },{
+      }, {
         label: this.literals.return,
         action: this.return.bind(this)
       }
@@ -213,5 +230,10 @@ console.log('this.eventUser.id ',this.eventUser.id )
         (1000 * 60 * 60 * 24)
       );
     this.formVacationSuggestion.get('quantityOfDays').setValue(this.quantityOfDays);
+  }
+  ngOnDestroy(): void {
+    if (this.eventoUserSubscription$) {
+      this.eventoUserSubscription$.unsubscribe();
+    }
   }
 }

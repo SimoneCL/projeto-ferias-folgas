@@ -24,6 +24,7 @@ export class AgendamentoUserListComponent implements OnInit {
   items: Array<IEvento> = new Array<IEvento>();
   dayOffType: Array<any>;
   columns: Array<PoTableColumn>;
+  filterSettings: PoPageFilter;
 
   hasNext = false;
   pageSize = 20;
@@ -69,13 +70,13 @@ export class AgendamentoUserListComponent implements OnInit {
     ];
     this.dayOffType = Evento.dayOffType(this.literals);
 
-    
+
     this.columns = [
-      { property: 'type', label: this.literals.type, type: 'label', labels: this.dayOffType},
+      { property: 'type', label: this.literals.type, type: 'label', labels: this.dayOffType },
       { property: 'eventIniDate', label: this.literals.dateIni, type: 'date' },
       { property: 'eventEndDate', label: this.literals.dateEnd, type: 'date' },
     ];
-   
+
 
     /*this.disclaimerGroup = {
       title: this.literals.filters,
@@ -83,20 +84,21 @@ export class AgendamentoUserListComponent implements OnInit {
       change: this.onChangeDisclaimer.bind(this)
     };*/
 
-    // this.filterSettings = {
-    //   action: this.searchById.bind(this),
-    //   placeholder: this.literals.search
-    // };
+    this.filterSettings = {
+      action: this.searchById.bind(this),
+      placeholder: this.literals.search
+    };
   }
 
   searchById(quickSearchValue: string) {
-    this.disclaimers = [...[{ property: 'user', value: 'simone' }]];
-   // this.disclaimerGroup.disclaimers = [...this.disclaimers];
+   
+    // this.disclaimerGroup.disclaimers = [...this.disclaimers];
   }
 
   search(loadMore = false): void {
 
-    const disclaimer = this.disclaimers || [];
+    this.disclaimers = [...[{ property: 'user', value: 'simone' }]];
+    //const disclaimer = this.disclaimers || [];
 
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
@@ -107,7 +109,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
     this.isLoading = true;
     this.eventoUserSubscription$ = this.serviceEvento
-      .query(disclaimer, this.currentPage, this.pageSize)
+      .query(this.disclaimers, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<IEvento>) => {
         this.items = [...this.items, ...response.items];
         this.hasNext = response.hasNext;
@@ -125,7 +127,7 @@ export class AgendamentoUserListComponent implements OnInit {
       message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.id]),
       confirm: () => {
         this.eventoUserSubscription$ = this.serviceEvento
-        .delete(id)
+          .delete(id)
           .subscribe(response => {
             this.router.navigate(['/agendaUser']);
             this.poNotification.success(this.literals.excludedMessage);
@@ -144,14 +146,6 @@ export class AgendamentoUserListComponent implements OnInit {
     ];
   }
 
-  private actionTable(item: IEvento): void {
-    this.edit(item);
-  }
-
-  private detail(item: IEvento): void {
-    this.router.navigate(['/agendaUser', 'detail', Evento.getInternalId(item)]);
-  }
-
   private edit(item: IEvento): void {
     this.router.navigate(['/agendaUser', 'edit', Evento.getInternalId(item)]);
   }
@@ -162,68 +156,8 @@ export class AgendamentoUserListComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    this.eventoUserSubscription$.unsubscribe();
+    if (this.eventoUserSubscription$) {
+      this.eventoUserSubscription$.unsubscribe();
+    }
   }
-
-  // literals: any = {};
-  // items: Array<any> = new Array<any>();
-  // columns = [];
-
-
-  // hasNext = false;
-  // currentPage = 1;
-  // pageSize = 20;
-  // expandables = [''];
-  // disclaimers: Array<PoDisclaimer> = [];
-
-  // servEventSubscription$: Subscription;
-  // constructor(
-  //   private poI18nService: PoI18nService,
-  //   private servEvent: EventoService
-  // ) { }
-
-  // ngOnInit(): void {
-  //   forkJoin(
-  //     [
-  //       this.poI18nService.getLiterals(),
-  //       this.poI18nService.getLiterals({ context: 'general' })
-  //     ]
-  //   ).subscribe(literals => {
-  //     literals.map(item => Object.assign(this.literals, item));
-  //     this.setupComponents();
-  //     this.search();
-
-  //   });
-  // }
-
-  // setupComponents() {
-  //   this.disclaimers = [{property: 'user',value:'simone'}] //aqui deveremos pegar o usupario logado
-  //   this.columns = [
-  //     { property: 'type', label: this.literals.type, type: 'string' },
-  //     { property: 'eventIniDate', label: this.literals.dateIni, type: 'date' },
-  //     { property: 'eventEndDate', label: this.literals.dateEnd, type: 'date' },
-  //   ];
-  // }
-
-  // search(loadMore = false): void {
-
-  //   if (loadMore === true) {
-  //     this.currentPage = this.currentPage + 1;
-  //   } else {
-  //     this.currentPage = 1;
-
-  //   }
-
-  //   this.hasNext = false;
-  //   this.servEventSubscription$ = this.servEvent
-  //     .query(this.disclaimers || [], this.expandables, this.currentPage, this.pageSize)
-  //     .subscribe((response: TotvsResponse<IEvento>) => {
-  //       if (response && response.items) {
-  //         this.items = [...response.items];
-  //         console.log('this.items',this.items)
-  //         this.hasNext = response.hasNext;
-  //       }
-  //       if (this.items.length === 0) { this.currentPage = 1; }
-  //     });
-  // }
 }

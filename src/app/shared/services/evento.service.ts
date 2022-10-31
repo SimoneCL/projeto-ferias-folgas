@@ -4,92 +4,86 @@ import { PoDisclaimer, PoLookupFilteredItemsParams } from '@po-ui/ng-components'
 import { Observable } from 'rxjs';
 
 import { TotvsResponse } from 'dts-backoffice-util';
-import { EventoUser, IEventoUser } from '../model/evento-user.model';
+import { Evento, IEvento } from '../model/evento.model';
 
 @Injectable()
 export class EventoService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
     // private apiBaseUrl = '/dts/datasul-rest/resources/prg/fin/v1/evento';
-    private apiBaseUrl = 'http://localhost:3000/evento';
-    private apiUploadUrl = `${this.apiBaseUrl}/addFile`;
-
+    private apiBaseUrl = 'http://localhost:3000/eventoAux';
+    
     private expandables = [''];
 
     constructor(private http: HttpClient) { }
+    query(filters: PoDisclaimer[], page = 1, pageSize = 20): Observable<TotvsResponse<IEvento>> {
 
-    getApiBaseUrl(): string {
-        return this.apiBaseUrl;
+        let url = `${this.apiBaseUrl}?pageSize=${pageSize}&page=${page}`;
+
+        if (filters && filters.length > 0) {
+
+            const urlParams = new Array<string>();
+
+            filters.map(filter => {
+                urlParams.push(`${filter.property}=${filter.value}`);
+            });
+
+            url = `${url}&${urlParams.join('&')}`;
+        }
+        return this.http.get<TotvsResponse<IEvento>>(url);
     }
 
-    getApiUploadUrl(): string {
-        return this.apiUploadUrl;
-    }
-
-    query(filters: PoDisclaimer[], expandables: string[], page = 1, pageSize = 20): Observable<TotvsResponse<IEventoUser>> {
-        const url = this.getUrl(this.apiBaseUrl, filters, expandables, page, pageSize);
-
-        return this.http.get<TotvsResponse<IEventoUser>>(url, this.headers);
-    }
-
-    getById(id: string, expandables: string[]): Observable<IEventoUser> {
+    getById(id: string, expandables: string[]): Observable<IEvento> {
         let lstExpandables = this.getExpandables(expandables);
         if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }
 
-        return this.http.get<IEventoUser>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
+        return this.http.get<IEvento>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
     }
 
     getMetadata(type = '', id = ''): Observable<any> {
         let url = `${this.apiBaseUrl}/metadata`;
         if (id) { url = `${url}/${id}`; }
         if (type) { url = `${url}/${type}`; }
-        return this.http.get<TotvsResponse<IEventoUser>>(url, this.headers);
+        return this.http.get<TotvsResponse<IEvento>>(url, this.headers);
     }
 
-    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IEventoUser> {
+    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IEvento> {
         const header = { params: { page: params.page.toString(), pageSize: params.pageSize.toString() } };
 
         if (params.filter && params.filter.length > 0) {
             header.params['code'] = params.filter;
         }
 
-        return this.http.get<IEventoUser>(`${this.apiBaseUrl}`, header);
+        return this.http.get<IEvento>(`${this.apiBaseUrl}`, header);
     }
 
-    getObjectByValue(id: string): Observable<IEventoUser> {
-        return this.http.get<IEventoUser>(`${this.apiBaseUrl}/${id}`);
+    getObjectByValue(id: string): Observable<IEvento> {
+        return this.http.get<IEvento>(`${this.apiBaseUrl}/${id}`);
     }
 
-    create(model: IEventoUser): Observable<IEventoUser> {
-        return this.http.post<IEventoUser>(this.apiBaseUrl, model, this.headers);
+    create(model: IEvento): Observable<IEvento> {
+        return this.http.post<IEvento>(this.apiBaseUrl, model, this.headers);
     }
 
-    update(model: IEventoUser): Observable<IEventoUser> {
-        return this.http.put<IEventoUser>(`${this.apiBaseUrl}/${EventoUser.getInternalId(model)}`, model, this.headers);
+    update(model: IEvento): Observable<IEvento> {
+        return this.http.put<IEvento>(`${this.apiBaseUrl}/${Evento.getInternalId(model)}`, model, this.headers);
     }
 
-    delete(model: IEventoUser): Observable<Object> {
-        return this.http.delete(`${this.apiBaseUrl}/${model}`, this.headers);
+    // delete(model: IEvento): Observable<Object> {
+    //     return this.http.delete(`${this.apiBaseUrl}/${model}`, this.headers);
+    // }
+    delete(id: string): Observable<any> {
+      
+        return this.http.delete(`${this.apiBaseUrl}/${id}`);
     }
 
     block(id: string): Observable<Object> {
         return this.http.post(`${this.apiBaseUrl}/${id}/block`, null, this.headers);
     }
 /*
-    duplic(model: IEventoUser): Observable<Object> {
+    duplic(model: IEvento): Observable<Object> {
         return this.http.post(`${this.apiBaseUrl}/${Evento.getInternalId(model)}/duplic`, model, this.headers);
     }*/
-
-    getFile(id: string): Observable<Object> {
-        const url = `/evento/${id}/file`;
-        return this.http.get(url, this.headers);
-    }
-
-    getQrCode(text: string): Observable<Blob> {
-        const url = `/qrcode/download?text=${text}`;
-        return this.http.get(url, { responseType: 'blob' });
-    }
-
     changeStatus(id: string, status: number): Observable<Object> {
         const model = {};
         model['status'] = status;

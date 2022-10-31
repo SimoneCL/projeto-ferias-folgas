@@ -6,7 +6,6 @@ import { PoI18nPipe, PoModule } from '@po-ui/ng-components';
 import { PoTemplatesModule } from '@po-ui/ng-templates';
 import { LoadingInterceptorModule } from '../loading-interceptor.module';
 import { EventoService } from '../shared/services/evento.service';
-import { EventoListService } from '../shared/services/eventolist.service';
 import { FeriasFolgaRoutingModule } from './ferias-folga-routing.module';
 import { FeriasFolgaComponent } from './ferias-folga.component';
 
@@ -25,8 +24,7 @@ import { FeriasFolgaComponent } from './ferias-folga.component';
   ],
   providers: [
     PoI18nPipe,
-    EventoService,
-    EventoListService
+    EventoService
   ]
 })
 export class FeriasFolgaModule { }
