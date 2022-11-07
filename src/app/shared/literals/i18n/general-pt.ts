@@ -52,11 +52,13 @@ export const generalPt = {
     holidayBridge: 'Ponte',
     resetDay: 'Reset day/Day Off',
     eventType: 'Tipo evento',
+    newEventType: 'Novo tipo de evento',
     type: 'Tipo',
     dateIni: 'Data Inicial',
     dateEnd: 'Data final',
     period: 'Período',
     rangeSchedule: 'Período agendamento',
     qtdDays: 'Quantidade de dias'
+    
     
 };

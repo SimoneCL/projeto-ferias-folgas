@@ -28,8 +28,9 @@ export class AppComponent implements OnInit {
         ).subscribe(literals => {
             literals.map(item => Object.assign(this.literals, item));
             this.menus = [
-                {label: 'Férias e Folgas',icon:"po-icon-list",shortLabel:"Folgas", link: '/feriasFolga' },
+                {label: 'Férias e Folgas',icon:"po-icon-calendar-ok",shortLabel:"Folgas", link: '/feriasFolga' },
                 {label: 'Agenda',icon:"po-icon-calendar",shortLabel:"Agenda", link: '/agendaUser'},
+                {label: 'Tipo evento',shortLabel:"evento", link: '/tipoEvento'},
             ];
         });
 
