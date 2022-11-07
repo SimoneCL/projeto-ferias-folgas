@@ -4,19 +4,19 @@ import { PoDisclaimer, PoLookupFilteredItemsParams } from '@po-ui/ng-components'
 import { Observable } from 'rxjs';
 
 import { TotvsResponse } from 'dts-backoffice-util';
-import { Evento, IEvento } from '../model/evento.model';
+import { ITipoEvento, TipoEvento } from '../model/tipo-evento.model';
 
 @Injectable()
-export class EventoService {
+export class TipoEventoService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
-    // private apiBaseUrl = '/dts/datasul-rest/resources/prg/fin/v1/evento';
-    private apiBaseUrl = 'http://localhost:3000/evento';
+    // private apiBaseUrl = '/dts/datasul-rest/resources/prg/fin/v1/tipoevento';
+    private apiBaseUrl = 'http://localhost:3000/tipoEvento';
     
     private expandables = [''];
 
     constructor(private http: HttpClient) { }
-    query(filters: PoDisclaimer[], page = 1, pageSize = 20): Observable<TotvsResponse<IEvento>> {
+    query(filters: PoDisclaimer[], page = 1, pageSize = 20): Observable<TotvsResponse<ITipoEvento>> {
 
         let url = `${this.apiBaseUrl}?pageSize=${pageSize}&page=${page}`;
 
@@ -30,43 +30,43 @@ export class EventoService {
 
             url = `${url}&${urlParams.join('&')}`;
         }
-        return this.http.get<TotvsResponse<IEvento>>(url);
+        return this.http.get<TotvsResponse<ITipoEvento>>(url);
     }
 
-    getById(id: string, expandables: string[]): Observable<IEvento> {
+    getById(id: string, expandables: string[]): Observable<ITipoEvento> {
         let lstExpandables = this.getExpandables(expandables);
         if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }
 
-        return this.http.get<IEvento>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
+        return this.http.get<ITipoEvento>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
     }
 
     getMetadata(type = '', id = ''): Observable<any> {
         let url = `${this.apiBaseUrl}/metadata`;
         if (id) { url = `${url}/${id}`; }
         if (type) { url = `${url}/${type}`; }
-        return this.http.get<TotvsResponse<IEvento>>(url, this.headers);
+        return this.http.get<TotvsResponse<ITipoEvento>>(url, this.headers);
     }
 
-    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IEvento> {
+    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<ITipoEvento> {
         const header = { params: { page: params.page.toString(), pageSize: params.pageSize.toString() } };
 
         if (params.filter && params.filter.length > 0) {
             header.params['code'] = params.filter;
         }
 
-        return this.http.get<IEvento>(`${this.apiBaseUrl}`, header);
+        return this.http.get<ITipoEvento>(`${this.apiBaseUrl}`, header);
     }
 
-    getObjectByValue(id: string): Observable<IEvento> {
-        return this.http.get<IEvento>(`${this.apiBaseUrl}/${id}`);
+    getObjectByValue(id: string): Observable<ITipoEvento> {
+        return this.http.get<ITipoEvento>(`${this.apiBaseUrl}/${id}`);
     }
 
-    create(model: IEvento): Observable<IEvento> {
-        return this.http.post<IEvento>(this.apiBaseUrl, model, this.headers);
+    create(model: ITipoEvento): Observable<ITipoEvento> {
+        return this.http.post<ITipoEvento>(this.apiBaseUrl, model, this.headers);
     }
 
-    update(model: IEvento): Observable<IEvento> {
-        return this.http.put<IEvento>(`${this.apiBaseUrl}/${Evento.getInternalId(model)}`, model, this.headers);
+    update(model: ITipoEvento): Observable<ITipoEvento> {
+        return this.http.put<ITipoEvento>(`${this.apiBaseUrl}/${TipoEvento.getInternalId(model)}`, model, this.headers);
     }
 
     delete(id: string): Observable<any> {

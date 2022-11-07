@@ -25,7 +25,7 @@ const PROXY_CONFIG = [
            "/genericsZoom",
            "/jobScheduler",
            "/evento",
-           "/eventoAux"
+           "/evento"
        ],
        target: "http://localhost:3000",
        secure: false,
