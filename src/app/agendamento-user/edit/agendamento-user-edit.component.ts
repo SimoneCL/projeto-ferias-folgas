@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PoBreadcrumb, PoDatepickerRange, PoDialogService, PoI18nService, PoNotificationService, PoPageAction, PoRadioGroupOption } from '@po-ui/ng-components';
+import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { Evento, IEvento } from 'src/app/shared/model/evento.model';
 import { EventoService } from 'src/app/shared/services/evento.service';
+import { ITipoEvento } from '../../shared/model/tipo-evento.model';
+import { TipoEventoService } from '../../shared/services/tipo-evento.service';
 
 @Component({
   selector: 'app-agendamento-user-edit',
@@ -14,6 +17,7 @@ import { EventoService } from 'src/app/shared/services/evento.service';
 export class AgendamentoUserEditComponent implements OnInit {
 
   private eventoUserSubscription$: Subscription;
+  private tipoEventoSubscription$: Subscription;
   public eventUser: IEvento = new Evento();
 
   breadcrumb: PoBreadcrumb;
@@ -26,7 +30,9 @@ export class AgendamentoUserEditComponent implements OnInit {
   eventType: number;
   eventPage: string;
 
-  public eventOptions: Array<PoRadioGroupOption>;
+  items: Array<ITipoEvento> = new Array<ITipoEvento>();
+
+  public eventOptions: Array<PoRadioGroupOption> = [];
   public isHidden: boolean;
 
   get validateForm() {
@@ -42,7 +48,8 @@ export class AgendamentoUserEditComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private poI18nService: PoI18nService,
     private poNotification: PoNotificationService,
-    private serviceEvento: EventoService
+    private serviceEvento: EventoService,
+    private serviceTipoEvento: TipoEventoService
   ) { }
 
   ngOnInit(): void {
@@ -59,6 +66,7 @@ export class AgendamentoUserEditComponent implements OnInit {
         eventType: [undefined]
       });
 
+      this.search();
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
       const id = this.activatedRoute.snapshot.paramMap.get('id');
       if (id) {
@@ -71,12 +79,8 @@ export class AgendamentoUserEditComponent implements OnInit {
   setupComponents() {
     this.isHidden = this.eventPage === 'new';
     this.formVacationSuggestion.get("eventType").patchValue(1);
-        this.breadcrumb = this.getBreadcrumb();
-    this.eventOptions = [
-      { label: 'Férias', value: 1 },
-      { label: 'Ponte', value: 2 },
-      { label: 'Reset day/Day Off', value: 3 }
-    ];
+    this.breadcrumb = this.getBreadcrumb();
+  
   }
   private beforeRedirect(itemBreadcrumbLabel) {
     if (this.formVacationSuggestion.valid) {
@@ -126,7 +130,7 @@ export class AgendamentoUserEditComponent implements OnInit {
       return this.literals.newEventUser;
     }
   }
-  getBreadcrumb(){
+  getBreadcrumb() {
     if (this.eventPage === 'edit') {
       return {
         items: [
@@ -209,6 +213,17 @@ export class AgendamentoUserEditComponent implements OnInit {
       });
   }
 
+  search(): void {
+    this.tipoEventoSubscription$ = this.serviceTipoEvento
+      .query([], 1, 999)
+      .subscribe((response: TotvsResponse<ITipoEvento>) => {
+        this.items = [...this.items, ...response.items];
+
+        for (let i in this.items) {
+          this.eventOptions.push({ label: this.items[i].descTipoEvento, value: this.items[i].code });
+        }
+      });
+  }
 
   calculateQuantityOfVacationDays() {
     const start = new Date(this.formVacationSuggestion.get('datepickerRange').value.start);
@@ -234,6 +249,9 @@ export class AgendamentoUserEditComponent implements OnInit {
   ngOnDestroy(): void {
     if (this.eventoUserSubscription$) {
       this.eventoUserSubscription$.unsubscribe();
+    }
+    if (this.tipoEventoSubscription$) {
+      this.tipoEventoSubscription$.unsubscribe();
     }
   }
 }

@@ -6,6 +6,7 @@ import { PoModule } from '@po-ui/ng-components';
 import { PoTemplatesModule } from '@po-ui/ng-templates';
 import { LoadingInterceptorModule } from '../loading-interceptor.module';
 import { EventoService } from '../shared/services/evento.service';
+import { TipoEventoService } from '../shared/services/tipo-evento.service';
 import { AgendamentoUserRoutingModule } from './agendamento-user-routing.module';
 import { AgendamentoUserEditComponent } from './edit/agendamento-user-edit.component';
 import { AgendamentoUserListComponent } from './list/agendamento-user-list.component';
@@ -26,7 +27,8 @@ import { AgendamentoUserListComponent } from './list/agendamento-user-list.compo
     ReactiveFormsModule
   ],
   providers:[
-    EventoService
+    EventoService,
+    TipoEventoService
   ]
 })
 export class AgendamentoUserModule { }

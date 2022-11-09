@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoNotificationService, PoPageAction, PoPageFilter, PoTableColumn } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoNotificationService, PoPageAction, PoPageFilter, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { Evento, IEvento } from '../../shared/model/evento.model';
+import { ITipoEvento } from '../../shared/model/tipo-evento.model';
 import { EventoService } from '../../shared/services/evento.service';
+import { TipoEventoService } from '../../shared/services/tipo-evento.service';
 
 @Component({
   selector: 'app-agendamento-user-list',
@@ -14,15 +16,17 @@ import { EventoService } from '../../shared/services/evento.service';
 export class AgendamentoUserListComponent implements OnInit {
 
   private eventoUserSubscription$: Subscription;
+  private tipoEventoSubscription$: Subscription;
   private disclaimers: Array<PoDisclaimer> = [];
 
   pageActions: Array<PoPageAction>;
-  tableActions: Array<PoPageAction>;
+  tableActions: Array<PoTableAction>;
 
   breadcrumb: PoBreadcrumb;
 
   items: Array<IEvento> = new Array<IEvento>();
-  dayOffType: Array<any>;
+  tipoEventos: Array<ITipoEvento> = new Array<ITipoEvento>();
+  dayOffType: Array<any> = [];
   columns: Array<PoTableColumn>;
   filterSettings: PoPageFilter;
 
@@ -35,6 +39,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
   constructor(
     private serviceEvento: EventoService,
+    private serviceTipoEvento: TipoEventoService,
     private poI18nPipe: PoI18nPipe,
     private poI18nService: PoI18nService,
     private poDialogService: PoDialogService,
@@ -50,6 +55,7 @@ export class AgendamentoUserListComponent implements OnInit {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
+      this.searchTipoEvento();
       this.setupComponents();
       this.search();
     });
@@ -68,9 +74,7 @@ export class AgendamentoUserListComponent implements OnInit {
         action: () => this.router.navigate(['agendaUser/new'])
       }
     ];
-    this.dayOffType = Evento.dayOffType(this.literals);
-
-
+    
     this.columns = [
       { property: 'type', label: this.literals.type, type: 'label', labels: this.dayOffType },
       { property: 'eventIniDate', label: this.literals.dateIni, type: 'date' },
@@ -155,9 +159,24 @@ export class AgendamentoUserListComponent implements OnInit {
     this.search();
   }
 
+  searchTipoEvento(): void {
+    this.tipoEventoSubscription$ = this.serviceTipoEvento
+      .query([], 1, 999)
+      .subscribe((response: TotvsResponse<ITipoEvento>) => {
+        this.tipoEventos = [...this.tipoEventos, ...response.items];
+
+        for (let i in this.tipoEventos) {
+          this.dayOffType .push({ label: this.tipoEventos[i].descTipoEvento, value: this.tipoEventos[i].code });
+        }
+      });
+  }
+
   ngOnDestroy(): void {
     if (this.eventoUserSubscription$) {
       this.eventoUserSubscription$.unsubscribe();
+    }
+    if (this.tipoEventoSubscription$){
+      this.tipoEventoSubscription$.unsubscribe();
     }
   }
 }
