@@ -17,7 +17,11 @@ const routes: Routes = [
     {
         path: 'tipoEvento',
         loadChildren: () => import('./tipo-evento/tipo-evento.module').then(m => m.TipoEventoModule)
-    }
+    },
+    {
+        path: 'cadastroUser',
+        loadChildren: () => import('./cadastro-user/cadastro-user.module').then(m => m.CadastroUserModule)
+    },
     
 ];
 @NgModule({

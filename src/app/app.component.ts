@@ -31,6 +31,7 @@ export class AppComponent implements OnInit {
                 {label: 'Férias e Folgas',icon:"po-icon-calendar-ok",shortLabel:"Folgas", link: '/feriasFolga' },
                 {label: 'Agenda',icon:"po-icon-calendar",shortLabel:"Agenda", link: '/agendaUser'},
                 {label: 'Tipo evento',shortLabel:"evento", link: '/tipoEvento'},
+                {label: 'Cadastro',icon:"po-icon-user-add",shortLabel:"Cadastro", link: '/cadastroUser'},
             ];
         });
 

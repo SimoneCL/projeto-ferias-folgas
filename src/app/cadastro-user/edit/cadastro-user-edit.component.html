@@ -1,0 +1,65 @@
+<po-page-default 
+    [p-actions]="getActions()" 
+    [p-breadcrumb]="breadcrumb" 
+    [p-title]="getTitle()">
+  <form [formGroup]="formVacationSuggestion">
+
+  <!--<po-divider class="po-md-9" [p-label]="literals?.rangeSchedule"> </po-divider>-->
+
+  <div class="po-row">
+    <po-input 
+      class="po-md-6" 
+      formControlName="name" 
+      p-clean 
+      p-icon="po-icon-user" 
+      [p-label]="literals?.name"> 
+    </po-input>
+  </div>
+  <div class="po-row">
+  <po-email 
+    class="po-lg-6" 
+    formControlName="email" 
+    [p-label]="literals?.email" 
+    p-clean> 
+  </po-email>
+  </div>
+  <div class="po-row">
+    <po-select
+      class="po-lg-6" 
+      name="select"
+      p-label="Perfil"
+      [p-options]="[
+        { label: 'Team Lead', value: '1' },
+        { label: 'Product Owner', value: '2' },
+        { label: 'Dev Team', value: '3' }
+      ]">
+    </po-select>
+  </div>
+  <div class="po-row">
+    <po-password
+    class="po-sm-3"
+    name="newPassword"
+    p-clean
+    p-error-pattern="invalid password"
+    p-label="Nova Senha"
+    p-mask="999999"
+    p-minlength="6"
+    p-required
+  >
+  </po-password>
+
+  <po-password
+    class="po-sm-3"
+    name="confirmNewPassword"
+    p-clean
+    p-error-pattern="invalid password"
+    p-label="Confirme Nova Senha"
+    p-mask="999999"
+    p-minlength="6"
+    p-required
+  >
+  </po-password>
+  </div>
+</form>
+</po-page-default>
+<!-- </po-page-edit>  -->
