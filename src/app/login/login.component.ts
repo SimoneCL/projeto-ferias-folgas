@@ -1,21 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { PoDialogService, PoI18nService } from '@po-ui/ng-components';
+import { PoDialogService, PoDisclaimer, PoI18nService } from '@po-ui/ng-components';
+import { TotvsResponse } from 'dts-backoffice-util';
 import { PoModalPasswordRecoveryType, PoPageBlockedUserReasonParams, PoPageLoginCustomField, PoPageLoginLiterals, PoPageLoginRecovery } from '@po-ui/ng-templates';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
+import { ILogin } from '../shared/model/login.model';
+import { LoginService } from '../shared/services/login.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
-
- // constructor() { }
-
-  customField: PoPageLoginCustomField = {
-    property: 'domain',
-    placeholder: 'Enter your domain'
-  };
 
   titleApp:String;
   attempts = 3;
@@ -31,10 +27,33 @@ export class LoginComponent implements OnInit {
     contactMail: 'support@mail.com'
   };
   showPageBlocked: boolean = false;
+
+  items: Array<any> = new Array<any>();
+
+  private itemsLogin: Array<ILogin>;
+  public login: Array<any> = new Array<any>();
+  ItemsAux: Array<any>;
+  newLogin = {};
+  eventos: Array<any> = [];
+
+  hasNext = false;
+  currentPage = 1;
+  pageSize = 20;
+  expandables = [''];
+  disclaimers: Array<PoDisclaimer> = [];
+  map1 = new Map();
+
+  servLoginSubscription$: Subscription;
   
   private i18nSubscription: Subscription;
-
-  constructor(private poI18nService: PoI18nService, private poDialog: PoDialogService) {}
+  userLogin: ILogin;
+  
+  constructor(
+    private poI18nService: PoI18nService, 
+    private poDialog: PoDialogService,
+    private servLogin: LoginService,
+    private router: Router
+  ) {}
 
   ngOnDestroy() {
     this.i18nSubscription.unsubscribe();
@@ -45,34 +64,76 @@ export class LoginComponent implements OnInit {
       this.literalsI18n = literals;
       this.exceededAttempts = 0;
       this.setupComponent();
-      
+      this.search();      
     });
   }
 
+  search (loadMore = false): void {
+    if (loadMore === true) {
+      this.currentPage = this.currentPage + 1;      
+    } else {
+      this.currentPage = 1;
+      this.items = [];
+    }
+    
+    this.hasNext = false;
+    this.servLoginSubscription$ = this.servLogin
+      .query(this.disclaimers || [], this.expandables, this.currentPage, this.pageSize)
+      .subscribe((response: TotvsResponse<ILogin>) => {
+
+        if (response && response.items) {
+          this.itemsLogin = [...this.items, ...response.items];
+          this.hasNext = response.hasNext;
+        }
+        
+        if (this.itemsLogin.length === 0) {
+          this.currentPage = 1;
+        }
+
+      });
+
+  }
+
   setupComponent() {
-    this.titleApp = "Folgas e Férias";
+    this.titleApp = "Login";
   }
   checkLogin(formData) {
-    this.loading = true;
 
-    if (formData.login === 'devpo' && formData.password === '1986') {
-      this.passwordErrors = [];
-      this.exceededAttempts = 0;
-      this.loginErrors = [];
+    if (this.itemsLogin) {
+      this.servLoginSubscription$ = this.servLogin
+        .getById(formData.login).subscribe((item: ILogin) => {
+          this.userLogin = item;          
+          
+          if (this.userLogin.email.substring(this.userLogin.email.indexOf("@")) != "@totvs.com.br") {
+            this.poDialog.alert({
+              ok: () => (this.loading = false),
+              title: 'Email Invalido',
+              message: 'usuario ou senha incorretos.'
+            }); 
+          }
 
-      setTimeout(() => {
-        this.poDialog.alert({
-          ok: () => (this.loading = false),
-          title: 'Access released',
-          message: 'You are on vacation, take time to rest.'
+          if (formData.login === this.userLogin.email && formData.password === this.userLogin.password) {
+            this.passwordErrors = [];
+            this.exceededAttempts = 0;
+            this.loginErrors = [];
+
+            localStorage.setItem('user',this.userLogin.user);
+            console.log("login",localStorage.getItem('user'));
+
+            setTimeout(() => {
+              this.router.navigate(['/ferias-folga']);
+              //this.router.navigate(['/']);
+            }, 500);
+          } else {
+            this.poDialog.alert({
+              ok: () => (this.loading = false),
+              title: 'Login Invalido',
+              message: 'usuario ou senha incorretos.'
+            });            
+          }
+
         });
-      }, 3000);
-    } else {
-      this.loading = false;
-      this.generateAttempts();
-      this.passwordErrors = ['Senha e/ou usuário inválido, verifique e tente novamente.'];
-      this.loginErrors = ['Senha e/ou usuário inválido, verifique e tente novamente.'];
-    }
+    }          
   }
 
   passwordChange() {
@@ -95,5 +156,6 @@ export class LoginComponent implements OnInit {
     if (this.attempts === 0) {
       this.showPageBlocked = true;
     }
-  }
+  }  
 }
+

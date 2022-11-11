@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
     {
-        path: 'login',
+        path: '',
         loadChildren: () => import('./login/login.module').then(m => m.LoginModule)
     },
     {
@@ -13,8 +13,15 @@ const routes: Routes = [
     {
         path: 'calendario',
         loadChildren: () => import('./calendario/calendario.module').then(m => m.CalendarioModule)
-    }
-    
+    },
+    {
+        path: 'feriados',
+        loadChildren: () => import('./feriados/feriados.module').then(m => m.FeriadosModule)
+    },
+    {
+        path: 'equipes',
+        loadChildren: () => import('./equipes/equipes.module').then(m => m.EquipesModule)
+    }    
     
 ];
 @NgModule({
