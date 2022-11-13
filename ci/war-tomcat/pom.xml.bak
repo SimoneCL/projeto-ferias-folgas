@@ -4,7 +4,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	<parent>
 		<groupId>com.totvs.thf</groupId>
 		<artifactId>totvs-thf2-parent</artifactId>
-    <version>12.1.33-SNAPSHOT</version>
+    <version>11.5.X-SNAPSHOT</version>
 	</parent>
   <artifactId>geren-ferias-folgas-tomcat</artifactId>  
   <packaging>war</packaging>
@@ -13,7 +13,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <dependency>
       <groupId>com.totvs.framework</groupId>
       <artifactId>totvs-fwk-sso</artifactId>
-      <version>12.1.33-NFRW-SNAPSHOT</version>
+      <version>11.5.X-NFRW-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>

@@ -43,7 +43,22 @@ export const generalPt = {
     loginUsuario: 'Login Usuario',
     module: 'Gerenciamento férias/Folga',
     titleVacation: 'Férias e Folgas',
-    calendar: 'Calendário',
-    scheduleEvent: 'Agendamento evento',
-    createMessage: 'Evento criado com Sucesso'
+    scheduleEventUser: 'Agendamento evento do usuário',
+    editEventUser: 'Edição agendamento do usuário',
+    detailEventUser: 'Detalhe evento do usuário',
+    newEventUser: 'Novo agendamento do usuário',
+    createMessage: 'Evento criado com Sucesso',
+    vacation:'Férias',
+    holidayBridge: 'Ponte',
+    resetDay: 'Reset day/Day Off',
+    eventType: 'Tipo evento',
+    newEventType: 'Novo tipo de evento',
+    type: 'Tipo',
+    dateIni: 'Data Inicial',
+    dateEnd: 'Data final',
+    period: 'Período',
+    rangeSchedule: 'Período agendamento',
+    qtdDays: 'Quantidade de dias'
+    
+    
 };

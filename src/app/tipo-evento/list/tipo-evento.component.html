@@ -1,0 +1,35 @@
+<po-page-list
+    [p-title]="literals?.eventType"
+    [p-actions]="pageActions"
+    [p-disclaimer-group]="disclaimerGroup"
+    [p-filter]="filterSettings">
+  <po-table
+    p-striped="true"
+    [p-columns]="columns"
+    [p-items]="items"
+    [p-actions]="tableActions"
+    [p-show-more-disabled]="!hasNext"
+    (p-show-more)="search(true)"
+    p-actions-right="true">
+    </po-table>
+</po-page-list> 
+<po-modal class="po-md-12" #modal 
+  [p-title]="literals?.newEventType"
+  [p-primary-action]="confirm" 
+  [p-secondary-action]="close"> 
+  <po-number class="po-md-2"
+    name="code" 
+    [p-label]="literals?.code"
+    [(ngModel)]="tipoEvento.code"
+    [p-disabled]="isEdit"
+    p-required="true"
+    (p-change-model)="changeValue($event)"
+    p-maxlength="4"> 
+  </po-number>
+  <po-input class="po-md-10"
+    name="description" 
+    [p-label]="literals?.description"
+    [(ngModel)]="tipoEvento.descTipoEvento"
+    p-required="true"> 
+  </po-input>
+</po-modal>

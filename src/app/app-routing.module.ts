@@ -7,12 +7,8 @@ const routes: Routes = [
         loadChildren: () => import('./login/login.module').then(m => m.LoginModule)
     },
     {
-        path: 'ferias-folga',
+        path: 'feriasFolga',
         loadChildren: () => import('./ferias-folga/ferias-folga.module').then(m => m.FeriasFolgaModule)
-    },
-    {
-        path: 'calendario',
-        loadChildren: () => import('./calendario/calendario.module').then(m => m.CalendarioModule)
     },
     {
         path: 'feriados',
@@ -21,8 +17,15 @@ const routes: Routes = [
     {
         path: 'equipes',
         loadChildren: () => import('./equipes/equipes.module').then(m => m.EquipesModule)
+    },
+    {
+        path: 'agendaUser',
+        loadChildren: () => import('./agendamento-user/agendamento-user.module').then(m => m.AgendamentoUserModule)
+    },
+    {
+        path: 'tipoEvento',
+        loadChildren: () => import('./tipo-evento/tipo-evento.module').then(m => m.TipoEventoModule)
     }    
-    
 ];
 @NgModule({
     imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' })],
