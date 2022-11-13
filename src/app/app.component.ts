@@ -12,7 +12,7 @@ import { dependencies, git, name, version } from '../../package.json';
 export class AppComponent implements OnInit {
     menus: Array<PoMenuItem>;
     literals: any = {};
-
+    
     constructor(
         public poI18nService: PoI18nService,
     ) {
@@ -23,6 +23,9 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
+
+        localStorage.setItem('user', null);
+
         forkJoin(
             [this.poI18nService.getLiterals()]
         ).subscribe(literals => {
@@ -31,9 +34,10 @@ export class AppComponent implements OnInit {
                 {label: 'Férias e Folgas',icon:"po-icon-calendar-ok",shortLabel:"Folgas", link: '/feriasFolga' },
                 {label: 'Agenda',icon:"po-icon-calendar",shortLabel:"Agenda", link: '/agendaUser'},
                 {label: 'Tipo evento',shortLabel:"evento", link: '/tipoEvento'},
-            ];
-        });
-
+                {label: 'Feriados',icon:"po-icon-calendar-settings",shortLabel:"Feriados", link: '/feriados'},
+                {label: 'Equipes',icon:"po-icon-users",shortLabel:"Equipes", link: '/equipes'},
+            ];            
+        });        
     }
 
     displayVersions(): void {

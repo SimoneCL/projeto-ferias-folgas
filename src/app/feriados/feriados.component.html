@@ -1,0 +1,62 @@
+<po-page-list 
+  p-title="Feriados" 
+  [p-title]="literals?.titleferiados"
+  [p-actions]="actions"
+  [p-disclaimer-group]="disclaimerGroup"
+  [p-filter]="filterSettings">
+  
+  <po-table 
+    p-striped="true"
+    [p-selectable]="true"
+    [p-columns]="columnsFeriados" 
+    [p-items]="feriadosItems"
+    [p-actions]="tableActions"
+    p-actions-right="true"> 
+  </po-table>
+</po-page-list>
+
+<po-modal #modal 
+    [p-title]="literals?.scheduleEvent"
+    [p-primary-action]="confirm"
+    [p-secondary-action]="close" >
+
+    <form #formFeriados="ngForm">
+      <div class="po-row">
+        <po-datepicker 
+          class="po-md-3" 
+          name="data" 
+          [(ngModel)]="createItems.data"
+          [p-disabled]="isEdit"
+          p-required="true"
+          p-clean 
+          p-label="Data"> 
+        </po-datepicker>
+        <po-select 
+          class="po-md-3" 
+          name="tipoFeriado"       
+          [(ngModel)]="createItems.tipoFeriado"
+          p-label="Tipo" 
+          [p-options]="typeOptions">
+        </po-select>
+        <po-input 
+          class="po-md-6" 
+          name="descricao"      
+          [(ngModel)]="createItems.descricao" 
+          p-label="Descrição" 
+          p-required> 
+        </po-input>    
+      </div>
+    
+      <div class="po-row">    
+        <po-checkbox
+          class="po-md-6"
+          name="pontoFacultativo"                  
+          p-label="Ponto Facultativo"
+          [(ngModel)]="createItems.pontoFacultativo"
+          (p-change)="changeEvent('p-change')"
+        >
+        </po-checkbox>        
+      </div>  
+    </form>
+</po-modal>
+
