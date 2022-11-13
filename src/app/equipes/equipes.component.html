@@ -1,0 +1,50 @@
+<po-page-list 
+  p-title="Equipes" 
+  [p-title]="literals?.titleEquipes"
+  [p-actions]="actions"
+  [p-disclaimer-group]="disclaimerGroup"
+  [p-filter]="filterSettings">
+  
+  <po-table 
+    p-striped="true"
+    [p-selectable]="true"
+    [p-columns]="columnsEquipes" 
+    [p-items]="EquipesItems"
+    [p-actions]="tableActions"
+    p-actions-right="true"> 
+  </po-table>
+</po-page-list>
+
+<po-modal #modal 
+    [p-title]="literals?.scheduleEvent"
+    [p-primary-action]="confirm"
+    [p-secondary-action]="close" >
+
+    <form #formEquipes="ngForm">
+      <div class="po-row">        
+        <po-input 
+          class="po-md-2" 
+          name="codEquipe"      
+          [(ngModel)]="createItems.codEquipe" 
+          [p-disabled]="isEdit"
+          p-label="Código" 
+          p-required> 
+        </po-input>
+        <po-input 
+          class="po-md-6" 
+          name="descEquipe"      
+          [(ngModel)]="createItems.descEquipe" 
+          p-label="Descrição" 
+          p-required> 
+        </po-input>
+        <po-input 
+          class="po-md-4" 
+          name="liderEquipe"      
+          [(ngModel)]="createItems.liderEquipe"
+          p-label="Líder" 
+          p-required> 
+        </po-input>    
+      </div>      
+    </form>
+</po-modal>
+

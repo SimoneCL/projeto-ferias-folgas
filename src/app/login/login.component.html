@@ -1,20 +1,11 @@
-<!-- <po-container>
-    <div class="po-row">
-      <po-info class="po-md-2" p-label="Forgot your ID Sample Phone" p-value="(99) 99999-9999"></po-info>
-      <po-info class="po-md-2" p-label="Forgot your ID Sample Email" p-value="mail@mail.com"></po-info>
-      <po-info class="po-md-2" p-label="Forgot your ID Sample SMS Code" p-value="999999"></po-info>
-    </div>
-  </po-container> -->
-  
   <po-page-login
     *ngIf="!showPageBlocked"
     p-hide-remember-user
-    p-login-pattern="^[a-zA-Z]*$"
+    p-login-pattern="^[a-zA-Z0-9.-]*"
     p-logo="./assets/images/logo.png"
-    p-password-pattern="^(\d*)$"
+    p-password-pattern="^[a-zA-Z0-9.-]*"
     [p-product-name]="titleApp"
     p-register-url="http://po.com"
-    [p-custom-field]="customField"
     [p-exceeded-attempts-warning]="exceededAttempts"
     [p-literals]="literalsI18n"
     [p-loading]="loading"
