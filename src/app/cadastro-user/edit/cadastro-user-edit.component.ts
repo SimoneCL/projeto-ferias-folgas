@@ -47,6 +47,8 @@ export class CadastroUserEditComponent implements OnInit {
 
   optionsEquipe: Array<PoMultiselectOption> = [];
   equipeSelected: Array<string> = [];
+  private equipesSalvar: Array<IEquipes> = [];
+  private equipesDeletar: Array<IEquipes> = [];
   // equipe: IEquipes = new Equipes();
 
 
@@ -72,14 +74,20 @@ export class CadastroUserEditComponent implements OnInit {
 
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
       const id = this.activatedRoute.snapshot.paramMap.get('id');
+      this.equipesSalvar = [];
+      this.equipesDeletar = [];
       if (id) {
         this.get(id);
+        
       }
       this.setupComponents();
+
+
     });
   }
 
   setupComponents() {
+
     this.breadcrumb = this.getBreadcrumb();
     this.perfilOptions = [
       { label: 'Team Lead', value: '1' },
@@ -121,6 +129,7 @@ export class CadastroUserEditComponent implements OnInit {
     if (this.confirmNewPassword === this.newPassword) {
       this.usuario.senha = this.newPassword;
     }
+
   }
   create() {
     this.save();
@@ -137,32 +146,17 @@ export class CadastroUserEditComponent implements OnInit {
     });
   }
 
-  delete(item: IEquipes) {
-    this.poDialogService.confirm({
-      title: this.literals.remove,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.codEquipe]),
-      confirm: () => {
-        console.log('item.codEquipe',item.codEquipe)
-        this.equipes = [];
-        this.equipes = this.equipeItems.filter(equipe => equipe.codEquipe !== item.codEquipe);
-        this.equipeItems = this.equipeItems.filter(equipe => equipe.codEquipe !== item.codEquipe);
-        //this.equipes= [...this.equipeItems];
-        console.log('delete this.equipes', this.equipes);
-        console.log('delete this.equipeItems', this.equipeItems)
-
-      }
-    });
-  }
-
 
   public closeModal() {
     this.equipeSelected = [];
     this.modalEquipe.close();
   }
 
+
   public relacEquipe() {
     for (let i in this.equipeSelected) {
       this.getEquipe(this.equipeSelected[i])
+
     }
     this.closeModal();
 
@@ -173,14 +167,52 @@ export class CadastroUserEditComponent implements OnInit {
       .getById(id)
       .subscribe((response: IEquipes) => {
 
-        this.equipeItems = [... this.equipeItems,response];
-         this.equipes = this.equipeItems.filter(function (a) {
-          return !this[JSON.stringify(a)] && (this[JSON.stringify(a)] = true);
-        }, Object.create(null))
-       });
-      console.log('getEquipe - this.equipes',this.equipes)
-      console.log('getEquipe - this.equipeItems',this.equipeItems)
+
+        this.equipeItems = [... this.equipeItems, response];
+        if (this.equipeItems.length !== 0) {
+          const parsed_array = this.equipeItems.map(val => { return JSON.stringify(val) })
+          this.equipeItems = parsed_array.filter((value, ind) => parsed_array.indexOf(value) == ind).map((val) => { return JSON.parse(val) });
+
+          this.equipesSalvar = [...this.equipeItems];
+
+          this.usuario.equipes = Object.keys(this.equipeItems.reduce((acc, curr) => (acc[curr.codEquipe] = '', acc), {}));
+        }
+      });
+
   }
+
+  delete(item: IEquipes) {
+    this.poDialogService.confirm({
+      title: this.literals.remove,
+      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.codEquipe]),
+      confirm: () => {
+        this.remove(item);
+
+      }
+    });
+  }
+
+  public remove(item: IEquipes) {
+    if (this.equipesSalvar) {
+      this.equipesSalvar.forEach((equipe, index) => {
+        if (equipe.codEquipe === item.codEquipe) {
+          this.equipesSalvar.splice(index, 1);
+        }
+      });
+    }
+
+    if (this.equipeItems) {
+      this.equipeItems.forEach((equipe, index) => {
+        if (equipe.codEquipe === item.codEquipe) {
+          this.equipesDeletar.push(equipe);
+          this.equipeItems.splice(index, 1);
+          this.usuario.equipes = Object.keys(this.equipeItems.reduce((acc, curr) => (acc[curr.codEquipe] = '', acc), {}));
+        
+        }
+      });
+    }
+  }
+
   getTitle(): string {
     if (this.eventPage === 'edit') {
       return this.literals.editUser;
@@ -258,10 +290,14 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   get(id: string): void {
+    this.usuario.equipes = [];
     this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])
       .subscribe((response: IUsuario) => {
         this.usuario = response;
+        for (let i in this.usuario.equipes) {
+          this.getEquipe(this.usuario.equipes[i]);
+        }
       });
   }
 
@@ -271,9 +307,9 @@ export class CadastroUserEditComponent implements OnInit {
     this.modalEquipe.open();
 
   }
-  
+
   searchEquipes(loadMore = false): void {
-    
+
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
     } else {
@@ -287,9 +323,6 @@ export class CadastroUserEditComponent implements OnInit {
         if (response && response.items) {
           this.equipesList = [...response.items];
           this.hasNext = response.hasNext;
-
-          console.log('searchEquipes this.equipesList', this.equipesList)
-
           for (let i in this.equipesList) {
             this.optionsEquipe.push({ label: this.equipesList[i].descEquipe, value: this.equipesList[i].codEquipe });
           }
