@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { PoModule } from '@po-ui/ng-components';
+import { PoI18nPipe, PoModule } from '@po-ui/ng-components';
 import { PoTemplatesModule } from '@po-ui/ng-templates';
 import { LoadingInterceptorModule } from '../loading-interceptor.module';
-import { EventoService } from '../shared/services/evento.service';
+import { EquipesService } from '../shared/services/equipes.service';
+import { UsuarioService } from '../shared/services/usuario.service';
 import { CadastroUserRoutingModule } from './cadastro-user-routing.module';
 import { CadastroUserEditComponent } from './edit/cadastro-user-edit.component';
 import { CadastroUserListComponent } from './list/cadastro-user-list.component';
@@ -26,7 +27,9 @@ import { CadastroUserListComponent } from './list/cadastro-user-list.component';
     ReactiveFormsModule
   ],
   providers:[
-    EventoService
+    UsuarioService,
+    EquipesService,
+    PoI18nPipe
   ]
 })
 export class CadastroUserModule { }

@@ -2,14 +2,11 @@
     [p-actions]="getActions()" 
     [p-breadcrumb]="breadcrumb" 
     [p-title]="getTitle()">
-  <form [formGroup]="formVacationSuggestion">
-
-  <!--<po-divider class="po-md-9" [p-label]="literals?.rangeSchedule"> </po-divider>-->
 
   <div class="po-row">
     <po-input 
       class="po-md-6" 
-      formControlName="name" 
+      [(ngModel)]="usuario.usuario" 
       p-clean 
       p-icon="po-icon-user" 
       [p-label]="literals?.name"> 
@@ -18,7 +15,7 @@
   <div class="po-row">
   <po-email 
     class="po-lg-6" 
-    formControlName="email" 
+    [(ngModel)]="usuario.email" 
     [p-label]="literals?.email" 
     p-clean> 
   </po-email>
@@ -28,20 +25,18 @@
       class="po-lg-6" 
       name="select"
       p-label="Perfil"
-      [p-options]="[
-        { label: 'Team Lead', value: '1' },
-        { label: 'Product Owner', value: '2' },
-        { label: 'Dev Team', value: '3' }
-      ]">
+      [(ngModel)]="usuario.tipoPerfil" 
+      [p-options]="perfilOptions">
     </po-select>
   </div>
   <div class="po-row">
     <po-password
     class="po-sm-3"
     name="newPassword"
+    [(ngModel)]="newPassword"
     p-clean
     p-error-pattern="invalid password"
-    p-label="Nova Senha"
+    p-label="New password"
     p-mask="999999"
     p-minlength="6"
     p-required
@@ -51,15 +46,43 @@
   <po-password
     class="po-sm-3"
     name="confirmNewPassword"
+    [(ngModel)]="confirmNewPassword"
     p-clean
     p-error-pattern="invalid password"
-    p-label="Confirme Nova Senha"
+    p-label="Confirm New Password"
     p-mask="999999"
     p-minlength="6"
     p-required
   >
   </po-password>
   </div>
-</form>
+  <po-divider
+    [p-label]="literals?.equipe" >
+  </po-divider>
+  <po-button 
+    [p-label]="literals?.novaEquipe"
+    p-kind = "primary" 
+    (p-click)="onClick()"> 
+  </po-button>
+  <po-table
+    p-striped="true"
+    [p-columns]="columns"
+    [p-items]="equipes"
+    [p-actions]="tableActions"
+    [p-show-more-disabled]="!hasNext"
+    (p-show-more)="searchEquipes(true)"
+    p-actions-right="true">
+    </po-table>
 </po-page-default>
-<!-- </po-page-edit>  -->
+<po-modal #modalEquipe 
+  [p-title]="literals?.novaEquipe"
+  [p-primary-action]="confirm" 
+  [p-secondary-action]="close"> 
+  <po-multiselect 
+    name="equipes" 
+    [(ngModel)]="equipeSelected"
+    [p-label]="literals?.equipe" 
+    [p-options]="this.optionsEquipe"> 
+  </po-multiselect>
+</po-modal>
+

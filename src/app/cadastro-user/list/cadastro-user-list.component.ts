@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoNotificationService, PoPageAction, PoPageFilter, PoTableColumn } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoNotificationService, PoPageAction, PoPageFilter, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { Evento, IEvento } from '../../shared/model/evento.model';
-import { EventoService } from '../../shared/services/evento.service';
+import { IUsuario, Usuario } from '../../shared/model/usuario.model';
+import { UsuarioService } from '../../shared/services/usuario.service';
 
 @Component({
   selector: 'app-cadastro-user-list',
@@ -13,18 +14,19 @@ import { EventoService } from '../../shared/services/evento.service';
 })
 export class CadastroUserListComponent implements OnInit {
 
-  private eventoUserSubscription$: Subscription;
+  private usuarioSubscription$: Subscription;
   private disclaimers: Array<PoDisclaimer> = [];
 
   pageActions: Array<PoPageAction>;
-  tableActions: Array<PoPageAction>;
+  tableActions: Array<PoTableAction>;
 
   breadcrumb: PoBreadcrumb;
 
-  items: Array<IEvento> = new Array<IEvento>();
-  dayOffType: Array<any>;
+  items: Array<IUsuario> = new Array<IUsuario>();
   columns: Array<PoTableColumn>;
   filterSettings: PoPageFilter;
+  disclaimerGroup: PoDisclaimerGroup;
+
 
   hasNext = false;
   pageSize = 20;
@@ -34,7 +36,7 @@ export class CadastroUserListComponent implements OnInit {
   literals: any = {};
 
   constructor(
-    private serviceEvento: EventoService,
+    private serviceUsuario: UsuarioService,
     private poI18nPipe: PoI18nPipe,
     private poI18nService: PoI18nService,
     private poDialogService: PoDialogService,
@@ -59,46 +61,42 @@ export class CadastroUserListComponent implements OnInit {
 
     this.tableActions = [
       { action: this.edit.bind(this), label: this.literals.edit },
+      { action: this.detail.bind(this), label: this.literals.detail },
       { action: this.delete.bind(this), label: this.literals.delete, type: 'danger' }
     ];
-
     this.pageActions = [
       {
         label: this.literals.add,
         action: () => this.router.navigate(['cadastroUser/new'])
       }
     ];
-    this.dayOffType = Evento.dayOffType(this.literals);
-
 
     this.columns = [
-      { property: 'type', label: this.literals.type, type: 'label', labels: this.dayOffType },
-      { property: 'eventIniDate', label: this.literals.dateIni, type: 'date' },
-      { property: 'eventEndDate', label: this.literals.dateEnd, type: 'date' },
+      { property: 'usuario', label: this.literals.usuario, type: 'string'},
+      { property: 'email', label: this.literals.email, type: 'string' },
+      { property: 'tipoPerfil', label: this.literals.perfil, type: 'number' },
     ];
 
 
-    /*this.disclaimerGroup = {
+    this.disclaimerGroup = {
       title: this.literals.filters,
       disclaimers: [],
       change: this.onChangeDisclaimer.bind(this)
-    };*/
+    };
 
     this.filterSettings = {
       action: this.searchById.bind(this),
-      placeholder: this.literals.search
+      placeholder: this.literals.description
     };
   }
 
   searchById(quickSearchValue: string) {
    
-    // this.disclaimerGroup.disclaimers = [...this.disclaimers];
+    this.disclaimers = [...[{ property: 'usuario', value: quickSearchValue }]];
+    this.disclaimerGroup.disclaimers = [...this.disclaimers];
   }
 
   search(loadMore = false): void {
-
-    this.disclaimers = [...[{ property: 'user', value: 'simone' }]];
-    //const disclaimer = this.disclaimers || [];
 
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
@@ -108,25 +106,22 @@ export class CadastroUserListComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.eventoUserSubscription$ = this.serviceEvento
+    this.usuarioSubscription$ = this.serviceUsuario
       .query(this.disclaimers, this.currentPage, this.pageSize)
-      .subscribe((response: TotvsResponse<IEvento>) => {
+      .subscribe((response: TotvsResponse<IUsuario>) => {
         this.items = [...this.items, ...response.items];
         this.hasNext = response.hasNext;
         this.isLoading = false;
-      }, (err: any) => {
-        /*Se retornar erro desabilitar o botão adicionar*/
-        this.pageActions = undefined;
       });
   }
 
-  delete(item: IEvento): void {
-    const id = Evento.getInternalId(item);
+  delete(item: IUsuario): void {
+    const id = Usuario.getInternalId(item);
     this.poDialogService.confirm({
       title: this.literals.remove,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.id]),
+      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.usuario]),
       confirm: () => {
-        this.eventoUserSubscription$ = this.serviceEvento
+        this.usuarioSubscription$ = this.serviceUsuario
           .delete(id)
           .subscribe(response => {
             this.router.navigate(['/cadastroUser']);
@@ -146,8 +141,12 @@ export class CadastroUserListComponent implements OnInit {
     ];
   }
 
-  private edit(item: IEvento): void {
-    this.router.navigate(['/cadastroUser', 'edit', Evento.getInternalId(item)]);
+  private edit(item: IUsuario): void {
+    this.router.navigate(['/cadastroUser', 'edit', Usuario.getInternalId(item)]);
+  }
+
+  private detail(item: IUsuario): void {
+    this.router.navigate(['/cadastroUser', 'detail', Usuario.getInternalId(item)]);
   }
 
   public onChangeDisclaimer(disclaimers): void {
@@ -156,8 +155,8 @@ export class CadastroUserListComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    if (this.eventoUserSubscription$) {
-      this.eventoUserSubscription$.unsubscribe();
+    if (this.usuarioSubscription$) {
+      this.usuarioSubscription$.unsubscribe();
     }
   }
 }

@@ -9,7 +9,7 @@ export const generalPt = {
     edit: 'Editar',
     copy: 'Copiar',
     detail: 'Detalhes',
-    email: 'Email',
+    email: 'E-mail',
     filters: 'Filtros',
     applyFilters: 'Aplicar filtros',
     modalCancelEditTitle: 'Deseja cancelar as alterações?',
@@ -40,11 +40,11 @@ export const generalPt = {
     code: 'Código',
     description: 'Descrição',
     /* menu */
-    loginUsuario: 'Login Usuario',
+    loginUsuario: 'Login usuário',
     module: 'Gerenciamento férias/Folga',
     titleVacation: 'Férias e Folgas',
     scheduleEventUser: 'Agendamento evento do usuário',
-    listUser: 'Lista de Usuários',
+    listUser: 'Lista de usuários',
     newUser: 'Novo cadastro de usuário',
     editUser: 'Editar cadastro de usuário',
     editEventUser: 'Edição agendamento do usuário',
@@ -61,7 +61,11 @@ export const generalPt = {
     dateEnd: 'Data final',
     period: 'Período',
     rangeSchedule: 'Período agendamento',
-    qtdDays: 'Quantidade de dias'
+    qtdDays: 'Quantidade de dias',
+    usuario: 'Usuário',
+    perfil: 'Perfil usuário',
+    equipe: 'Equipe',
+    novaEquipe: 'Incluir equipe'
     
     
 };

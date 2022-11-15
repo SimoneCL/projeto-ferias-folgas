@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoDatepickerRange, PoDialogService, PoI18nService, PoNotificationService, PoPageAction, PoRadioGroupOption } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoRadioGroupOption, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
+import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
-import { Evento, IEvento } from 'src/app/shared/model/evento.model';
-import { EventoService } from 'src/app/shared/services/evento.service';
+import { Equipes, IEquipes } from '../../shared/model/equipes.model';
+import { IUsuario, Usuario } from '../../shared/model/usuario.model';
+import { EquipesService } from '../../shared/services/equipes.service';
+import { UsuarioService } from '../../shared/services/usuario.service';
 
 @Component({
   selector: 'app-cadastro-user-edit',
@@ -12,37 +14,51 @@ import { EventoService } from 'src/app/shared/services/evento.service';
   styleUrls: ['./cadastro-user-edit.component.css']
 })
 export class CadastroUserEditComponent implements OnInit {
+  @ViewChild(PoModalComponent, { static: true }) modalEquipe: PoModalComponent;
 
-  private eventoUserSubscription$: Subscription;
-  public eventUser: IEvento = new Evento();
+  private usuarioSubscription$: Subscription;
+  private servEquipesSubscription$: Subscription;
+  public usuario: IUsuario = new Usuario();
 
   breadcrumb: PoBreadcrumb;
   literals: any = {};
 
-  datepickerRange: PoDatepickerRange;
-  datepickerRangeAux: PoDatepickerRange;
-  formVacationSuggestion: UntypedFormGroup;
-  quantityOfDays: number;
-  eventType: number;
   eventPage: string;
 
-  public eventOptions: Array<PoRadioGroupOption>;
-  public isHidden: boolean;
+  public perfilOptions: Array<PoRadioGroupOption>;
+  public newPassword: string;
+  public confirmNewPassword: string;
 
-  get validateForm() {
-    return !(
-      this.formVacationSuggestion.valid &&
-      this.formVacationSuggestion.get('datepickerRange').value.start &&
-      this.formVacationSuggestion.get('datepickerRange').value.end
-    );
-  }
+  tableActions: Array<PoTableAction>;
+  equipesList: Array<IEquipes> = new Array<IEquipes>();
+
+  equipeItems: Array<IEquipes> = new Array<IEquipes>();
+  equipes: Array<IEquipes> = new Array<IEquipes>();
+  columns: Array<PoTableColumn>;
+
+  hasNext = false;
+  currentPage = 1;
+  pageSize = 20;
+  expandables = [''];
+  disclaimers: Array<PoDisclaimer> = [];
+
+  confirm: PoModalAction;
+  close: PoModalAction;
+
+  optionsEquipe: Array<PoMultiselectOption> = [];
+  equipeSelected: Array<string> = [];
+  // equipe: IEquipes = new Equipes();
+
+
   constructor(
     private route: Router,
-    private formBuilder: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
     private poI18nService: PoI18nService,
     private poNotification: PoNotificationService,
-    private serviceEvento: EventoService
+    private poDialogService: PoDialogService,
+    private poI18nPipe: PoI18nPipe,
+    private serviceUsuario: UsuarioService,
+    private servEquipes: EquipesService,
   ) { }
 
   ngOnInit(): void {
@@ -53,11 +69,6 @@ export class CadastroUserEditComponent implements OnInit {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-      this.formVacationSuggestion = this.formBuilder.group({
-        datepickerRange: [undefined, Validators.required],
-        quantityOfDays: [undefined],
-        eventType: [undefined]
-      });
 
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
       const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -69,55 +80,106 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   setupComponents() {
-    this.isHidden = this.eventPage === 'new';
-    this.formVacationSuggestion.get("eventType").patchValue(1);
-        this.breadcrumb = this.getBreadcrumb();
-    this.eventOptions = [
-      { label: 'Férias', value: 1 },
-      { label: 'Ponte', value: 2 },
-      { label: 'Reset day/Day Off', value: 3 }
+    this.breadcrumb = this.getBreadcrumb();
+    this.perfilOptions = [
+      { label: 'Team Lead', value: '1' },
+      { label: 'Product Owner', value: '2' },
+      { label: 'Dev Team', value: '3' }
     ];
+
+    this.columns = [
+      { property: 'codEquipe', label: 'Código', type: 'number', width: '10%' },
+      { property: 'descEquipe', label: 'Descrição', type: 'string' }
+    ];
+
+    this.tableActions = [
+      { action: this.delete.bind(this), label: this.literals.delete, type: 'danger' }
+    ];
+
+    this.confirm = {
+      action: () => {
+        this.relacEquipe();
+      },
+      label: this.literals.save
+    };
+
+    this.close = {
+      action: () => this.closeModal(),
+      label: this.literals.cancel
+    };
   }
   private beforeRedirect(itemBreadcrumbLabel) {
-    if (this.formVacationSuggestion.valid) {
-      this.return();
-    }
-  }
-  changeEvent(event) {
-    this.isHidden = this.formVacationSuggestion.get('eventType').value === 1;
+    this.return();
   }
   return() {
-    this.route.navigate(['/agendaUser']);;
+    this.route.navigate(['/cadastroUser']);;
   }
   save() {
-    this.eventUser.user = 'simone';
-    this.eventUser.type = this.formVacationSuggestion.get('eventType').value;
-    if (this.eventUser.type === 1) {
-      this.eventUser.eventIniDate = this.formVacationSuggestion.get('datepickerRange').value.start;
-      this.eventUser.eventEndDate = this.formVacationSuggestion.get('datepickerRange').value.end;
-
-    } else {
-      this.eventUser.eventIniDate = this.formVacationSuggestion.get('datepickerRange').value.start;
-      this.eventUser.eventEndDate = this.eventUser.eventIniDate;
-    }
-
     if (this.eventPage !== 'edit') {
-      this.eventUser.id = Math.floor(Math.random() * 65536);
+      this.usuario.IdUsuario = Math.floor(Math.random() * 65536);
+    }
+    if (this.confirmNewPassword === this.newPassword) {
+      this.usuario.senha = this.newPassword;
     }
   }
   create() {
     this.save();
-    this.eventoUserSubscription$ = this.serviceEvento.create(this.eventUser).subscribe(() => {
+    this.usuarioSubscription$ = this.serviceUsuario.create(this.usuario).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
     });
   }
   update() {
     this.save();
-    this.eventoUserSubscription$ = this.serviceEvento.update(this.eventUser).subscribe(() => {
+    this.usuarioSubscription$ = this.serviceUsuario.update(this.usuario).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
     });
+  }
+
+  delete(item: IEquipes) {
+    this.poDialogService.confirm({
+      title: this.literals.remove,
+      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.codEquipe]),
+      confirm: () => {
+        console.log('item.codEquipe',item.codEquipe)
+        this.equipes = [];
+        this.equipes = this.equipeItems.filter(equipe => equipe.codEquipe !== item.codEquipe);
+        this.equipeItems = this.equipeItems.filter(equipe => equipe.codEquipe !== item.codEquipe);
+        //this.equipes= [...this.equipeItems];
+        console.log('delete this.equipes', this.equipes);
+        console.log('delete this.equipeItems', this.equipeItems)
+
+      }
+    });
+  }
+
+
+  public closeModal() {
+    this.equipeSelected = [];
+    this.modalEquipe.close();
+  }
+
+  public relacEquipe() {
+    for (let i in this.equipeSelected) {
+      this.getEquipe(this.equipeSelected[i])
+    }
+    this.closeModal();
+
+  }
+  getEquipe(id: string): void {
+    
+    this.servEquipesSubscription$ = this.servEquipes
+      .getById(id)
+      .subscribe((response: IEquipes) => {
+
+        this.equipeItems = [... this.equipeItems,response];
+         this.equipes = this.equipeItems.filter(function (a) {
+          return !this[JSON.stringify(a)] && (this[JSON.stringify(a)] = true);
+        }, Object.create(null))
+       });
+      console.log('getEquipe - this.equipes',this.equipes)
+      console.log('getEquipe - this.equipeItems',this.equipeItems)
   }
   getTitle(): string {
     if (this.eventPage === 'edit') {
@@ -126,7 +188,7 @@ export class CadastroUserEditComponent implements OnInit {
       return this.literals.newUser;
     }
   }
-  getBreadcrumb(){
+  getBreadcrumb() {
     if (this.eventPage === 'edit') {
       return {
         items: [
@@ -161,7 +223,8 @@ export class CadastroUserEditComponent implements OnInit {
     return [
       {
         label: this.literals.save,
-        action: this.update.bind(this, this.eventUser),
+        disabled: (this.newPassword === undefined || this.confirmNewPassword !== this.newPassword),
+        action: this.update.bind(this, this.usuario),
       },
       {
         label: this.literals.return,
@@ -184,6 +247,7 @@ export class CadastroUserEditComponent implements OnInit {
     return [
       {
         label: this.literals.save,
+        disabled: (this.newPassword === undefined || this.confirmNewPassword !== this.newPassword),
         action: this.create.bind(this),
         icon: 'po-icon-plus'
       }, {
@@ -194,46 +258,50 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   get(id: string): void {
-    let data = []
-    this.eventoUserSubscription$ = this.serviceEvento
+    this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])
-      .subscribe((response: IEvento) => {
-
-        this.eventUser = response;
-        this.datepickerRangeAux = {
-          start: this.eventUser.eventIniDate,
-          end: this.eventUser.eventEndDate
-        }
-        this.formVacationSuggestion.get("eventType").patchValue(this.eventUser.type);
-        this.formVacationSuggestion.get("datepickerRange").patchValue(this.datepickerRangeAux);
+      .subscribe((response: IUsuario) => {
+        this.usuario = response;
       });
   }
 
+  onClick() {
+    this.optionsEquipe = [];
+    this.searchEquipes();
+    this.modalEquipe.open();
 
-  calculateQuantityOfVacationDays() {
-    const start = new Date(this.formVacationSuggestion.get('datepickerRange').value.start);
-    const end = new Date(this.formVacationSuggestion.get('datepickerRange').value.end);
-
-    if (this.eventUser.type === 1) {
-      this.eventUser.eventIniDate = start.getFullYear() + "-" + ((start.getMonth() + 1)) + "-" + ((start.getDate() + 1));
-      this.eventUser.eventEndDate = end.getFullYear() + "-" + ((end.getMonth() + 1)) + "-" + ((end.getDate() + 1));
+  }
+  
+  searchEquipes(loadMore = false): void {
+    
+    if (loadMore === true) {
+      this.currentPage = this.currentPage + 1;
     } else {
-      this.eventUser.eventIniDate = start.getFullYear() + "-" + ((start.getMonth() + 1)) + "-" + ((start.getDate() + 1));
-      this.eventUser.eventEndDate = this.eventUser.eventIniDate;
+      this.currentPage = 1;
     }
 
+    this.hasNext = false;
+    this.servEquipesSubscription$ = this.servEquipes
+      .query(this.disclaimers, [], 1, 999)
+      .subscribe((response: TotvsResponse<IEquipes>) => {
+        if (response && response.items) {
+          this.equipesList = [...response.items];
+          this.hasNext = response.hasNext;
 
-    this.quantityOfDays
-      = Math.floor(
-        (Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()) -
-          Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) /
-        (1000 * 60 * 60 * 24)
-      );
-    this.formVacationSuggestion.get('quantityOfDays').setValue(this.quantityOfDays);
+          console.log('searchEquipes this.equipesList', this.equipesList)
+
+          for (let i in this.equipesList) {
+            this.optionsEquipe.push({ label: this.equipesList[i].descEquipe, value: this.equipesList[i].codEquipe });
+          }
+        }
+      })
   }
   ngOnDestroy(): void {
-    if (this.eventoUserSubscription$) {
-      this.eventoUserSubscription$.unsubscribe();
+    if (this.usuarioSubscription$) {
+      this.usuarioSubscription$.unsubscribe();
+    }
+    if (this.servEquipesSubscription$) {
+      this.servEquipesSubscription$.unsubscribe();
     }
   }
 }
