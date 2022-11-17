@@ -9,7 +9,8 @@
       [(ngModel)]="usuario.usuario" 
       p-clean 
       p-icon="po-icon-user" 
-      [p-label]="literals?.name"> 
+      [p-label]="literals?.name"
+      [p-disabled]="properties">
     </po-input>
   </div>
   <div class="po-row">
@@ -17,6 +18,7 @@
     class="po-lg-6" 
     [(ngModel)]="usuario.email" 
     [p-label]="literals?.email" 
+    [p-disabled]="properties"
     p-clean> 
   </po-email>
   </div>
@@ -25,7 +27,8 @@
       class="po-lg-6" 
       name="select"
       p-label="Perfil"
-      [(ngModel)]="usuario.tipoPerfil" 
+      [(ngModel)]="usuario.tipoPerfil"
+      [p-disabled]="properties" 
       [p-options]="perfilOptions">
     </po-select>
   </div>
@@ -40,10 +43,10 @@
     p-mask="999999"
     p-minlength="6"
     p-required
-  >
-  </po-password>
+    [hidden]="propertiesPassword">
+    </po-password>
 
-  <po-password
+    <po-password
     class="po-sm-3"
     name="confirmNewPassword"
     [(ngModel)]="confirmNewPassword"
@@ -53,17 +56,32 @@
     p-mask="999999"
     p-minlength="6"
     p-required
-  >
-  </po-password>
+    [hidden]="propertiesPassword">
+    </po-password>
+    <po-divider class="po-md-12" 
+    [p-label]="literals?.editarSenha"
+    [hidden]="propertiesButton" >
+    </po-divider>
+    <div class="po-row po-md-12">
+      <po-button 
+      [p-label]="literals?.editarSenha"
+      [hidden]="propertiesButton"
+      p-kind = "primary" 
+      (p-click)="modalSenha.open()"> 
+      </po-button>
+    </div>
+  
   </div>
+  
   <po-divider class="po-md-12" 
     [p-label]="literals?.equipe" >
   </po-divider>
   <div class="po-row po-md-12">
   <po-button 
     [p-label]="literals?.novaEquipe"
+    [hidden]="properties"
     p-kind = "primary" 
-    (p-click)="onClick()"> 
+    (p-click)="abrirEquipe()"> 
   </po-button>
   </div>
   <po-table class="po-md-7" 
@@ -73,9 +91,10 @@
     [p-actions]="tableActions"
     [p-show-more-disabled]="!hasNext"
     (p-show-more)="searchEquipes(true)"
-    p-actions-right="true">
+    [p-actions-right]="true">
     </po-table>
 </po-page-default>
+
 <po-modal #modalEquipe 
   [p-title]="literals?.novaEquipe"
   [p-primary-action]="confirm" 
@@ -87,4 +106,40 @@
     [p-options]="this.optionsEquipe"> 
   </po-multiselect>
 </po-modal>
+
+<po-modal #modalSenha 
+  [p-title]="literals?.editarSenha"
+  [p-primary-action]="confirm" 
+  [p-secondary-action]="close">
+  
+  <po-password
+    class="po-sm-6"
+    name="newPassword"
+    [(ngModel)]="newPassword"
+    p-clean
+    p-error-pattern="invalid password"
+    p-label="New password"
+    p-mask="999999"
+    p-minlength="6"
+    p-required>
+  </po-password>
+
+
+  <po-password
+    class="po-sm-6"
+    name="confirmNewPassword"
+    [(ngModel)]="confirmNewPassword"
+    p-clean
+    p-error-pattern="invalid password"
+    p-label="Confirm New Password"
+    p-mask="999999"
+    p-minlength="6"
+    p-required>
+  </po-password>
+
+</po-modal>
+
+
+
+
 

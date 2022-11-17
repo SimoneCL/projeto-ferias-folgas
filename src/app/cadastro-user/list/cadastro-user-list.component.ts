@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoNotificationService, PoPageAction, PoPageFilter, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoNotificationService, PoPageAction, PoPageFilter, PoTableAction, PoTableColumn, PoTableColumnLabel } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { Evento, IEvento } from '../../shared/model/evento.model';
@@ -20,9 +20,11 @@ export class CadastroUserListComponent implements OnInit {
   pageActions: Array<PoPageAction>;
   tableActions: Array<PoTableAction>;
 
-  breadcrumb: PoBreadcrumb;
+  usuarioTipo: Array<PoTableColumnLabel>;
 
-  items: Array<IUsuario> = new Array<IUsuario>();
+  breadcrumb: PoBreadcrumb;
+  
+  public items: Array<IUsuario> = new Array<IUsuario>();
   columns: Array<PoTableColumn>;
   filterSettings: PoPageFilter;
   disclaimerGroup: PoDisclaimerGroup;
@@ -71,10 +73,16 @@ export class CadastroUserListComponent implements OnInit {
       }
     ];
 
+   
+
+    
     this.columns = [
       { property: 'usuario', label: this.literals.usuario, type: 'string'},
       { property: 'email', label: this.literals.email, type: 'string' },
-      { property: 'tipoPerfil', label: this.literals.perfil, type: 'number' },
+      { property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: [
+        { value: '1', color: 'color-11', label: 'Team Lead'},
+        { value: '2', color: 'color-08', label: 'Product Owner' },
+        { value: '3', color: 'color-02', label: 'Dev Team' }] },
     ];
 
 

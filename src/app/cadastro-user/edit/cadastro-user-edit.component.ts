@@ -15,13 +15,19 @@ import { UsuarioService } from '../../shared/services/usuario.service';
 })
 export class CadastroUserEditComponent implements OnInit {
   @ViewChild(PoModalComponent, { static: true }) modalEquipe: PoModalComponent;
+  @ViewChild(PoModalComponent, { static: true }) modalSenha: PoModalComponent;
 
   private usuarioSubscription$: Subscription;
   private servEquipesSubscription$: Subscription;
   public usuario: IUsuario = new Usuario();
-
+  
   breadcrumb: PoBreadcrumb;
   literals: any = {};
+
+  public properties: string;
+  public propertiesButton: string;
+  public propertiesPassword: string;
+  actionsDisable: boolean;
 
   eventPage: string;
 
@@ -87,7 +93,6 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   setupComponents() {
-
     this.breadcrumb = this.getBreadcrumb();
     this.perfilOptions = [
       { label: 'Team Lead', value: '1' },
@@ -95,13 +100,28 @@ export class CadastroUserEditComponent implements OnInit {
       { label: 'Dev Team', value: '3' }
     ];
 
+    if (this.eventPage === 'detail'){
+      this.properties = "true";
+      this.actionsDisable = false;
+      this.propertiesPassword = "true"; 
+    }
+
+    if (this.eventPage !== 'edit') {
+      this.propertiesButton = "false";
+    }
+
+    if (this.eventPage === 'edit') {
+      this.propertiesPassword = "true";
+    }
+
+
     this.columns = [
       { property: 'codEquipe', label: 'Código', type: 'number', width: '10%' },
       { property: 'descEquipe', label: 'Descrição', type: 'string' }
     ];
 
     this.tableActions = [
-      { action: this.delete.bind(this), label: this.literals.delete, type: 'danger' }
+      { action: this.delete.bind(this), visible:this.actionsDisable, label: this.literals.delete, type: 'danger' }
     ];
 
     this.confirm = {
@@ -142,7 +162,7 @@ export class CadastroUserEditComponent implements OnInit {
     this.save();
     this.usuarioSubscription$ = this.serviceUsuario.update(this.usuario).subscribe(() => {
       this.return();
-      this.poNotification.success(this.literals.createdMessage);
+      this.poNotification.success(this.literals.updatedMessage);
     });
   }
 
@@ -216,6 +236,8 @@ export class CadastroUserEditComponent implements OnInit {
   getTitle(): string {
     if (this.eventPage === 'edit') {
       return this.literals.editUser;
+    } else if (this.eventPage === 'detail') {
+      return this.literals.detailUser;
     } else {
       return this.literals.newUser;
     }
@@ -226,6 +248,13 @@ export class CadastroUserEditComponent implements OnInit {
         items: [
           { label: this.literals.listUser, action: this.beforeRedirect.bind(this), link: '/cadastroUser' },
           { label: this.literals.editUser }
+        ]
+      };
+    } else if(this.eventPage === 'detail'){
+      return {
+        items: [
+          { label: this.literals.listUser, action: this.beforeRedirect.bind(this), link: '/cadastroUser' },
+          { label: this.literals.detailUser }
         ]
       };
     } else {
@@ -255,7 +284,6 @@ export class CadastroUserEditComponent implements OnInit {
     return [
       {
         label: this.literals.save,
-        disabled: (this.newPassword === undefined || this.confirmNewPassword !== this.newPassword),
         action: this.update.bind(this, this.usuario),
       },
       {
@@ -270,7 +298,7 @@ export class CadastroUserEditComponent implements OnInit {
     return [
       {
         label: this.literals.return,
-        action: this.return.bind(this)
+        action: this.return.bind(this),
       }
     ];
   }
@@ -301,12 +329,17 @@ export class CadastroUserEditComponent implements OnInit {
       });
   }
 
-  onClick() {
+  abrirSenha() {
+    this.modalSenha.open();
+  }
+
+  abrirEquipe() {
     this.optionsEquipe = [];
     this.searchEquipes();
     this.modalEquipe.open();
 
   }
+
 
   searchEquipes(loadMore = false): void {
 

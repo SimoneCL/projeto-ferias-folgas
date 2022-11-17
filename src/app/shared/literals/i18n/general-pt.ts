@@ -47,6 +47,7 @@ export const generalPt = {
     listUser: 'Lista de usuários',
     newUser: 'Novo cadastro de usuário',
     editUser: 'Editar cadastro de usuário',
+    detailUser: 'Detalhes do cadastro de usuário',
     editEventUser: 'Edição agendamento do usuário',
     detailEventUser: 'Detalhe evento do usuário',
     newEventUser: 'Novo agendamento do usuário',
@@ -65,7 +66,7 @@ export const generalPt = {
     usuario: 'Usuário',
     perfil: 'Perfil usuário',
     equipe: 'Equipe',
-    novaEquipe: 'Incluir equipe'
-    
+    novaEquipe: 'Incluir equipe',
+    editarSenha: 'Alterar senha'
     
 };
