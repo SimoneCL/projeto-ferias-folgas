@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoRadioGroupOption, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoCheckboxGroupOption, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoRadioGroupOption, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { Equipes, IEquipes } from '../../shared/model/equipes.model';
@@ -14,8 +14,8 @@ import { UsuarioService } from '../../shared/services/usuario.service';
   styleUrls: ['./cadastro-user-edit.component.css']
 })
 export class CadastroUserEditComponent implements OnInit {
-  @ViewChild(PoModalComponent, { static: true }) modalEquipe: PoModalComponent;
-  @ViewChild(PoModalComponent, { static: true }) modalSenha: PoModalComponent;
+  @ViewChild('modalEquipe', { static: false }) modalEquipe: PoModalComponent;
+  @ViewChild('modalSenha', { static: false }) modalSenha: PoModalComponent;
 
   private usuarioSubscription$: Subscription;
   private servEquipesSubscription$: Subscription;
@@ -50,14 +50,15 @@ export class CadastroUserEditComponent implements OnInit {
 
   confirm: PoModalAction;
   close: PoModalAction;
+  confirmPassword: PoModalAction;
+  closePassowrd: PoModalAction;
+  noShadow: true;
 
   optionsEquipe: Array<PoMultiselectOption> = [];
   equipeSelected: Array<string> = [];
   private equipesSalvar: Array<IEquipes> = [];
   private equipesDeletar: Array<IEquipes> = [];
-  // equipe: IEquipes = new Equipes();
-
-
+  
   constructor(
     private route: Router,
     private activatedRoute: ActivatedRoute,
@@ -87,8 +88,6 @@ export class CadastroUserEditComponent implements OnInit {
         
       }
       this.setupComponents();
-
-
     });
   }
 
@@ -135,7 +134,17 @@ export class CadastroUserEditComponent implements OnInit {
       action: () => this.closeModal(),
       label: this.literals.cancel
     };
+    this.confirmPassword = {
+      action: () => this.confirmePassWordModal(),
+      label: this.literals.save
+    };
+
+    this.closePassowrd = {
+      action: () => this.closePassWordModal(),
+      label: this.literals.cancel
+    };
   }
+  
   private beforeRedirect(itemBreadcrumbLabel) {
     this.return();
   }
@@ -172,6 +181,13 @@ export class CadastroUserEditComponent implements OnInit {
     this.modalEquipe.close();
   }
 
+  public confirmePassWordModal() {
+    
+    this.modalSenha.close();
+  }
+  public closePassWordModal() {
+    this.modalSenha.close();
+  }
 
   public relacEquipe() {
     for (let i in this.equipeSelected) {

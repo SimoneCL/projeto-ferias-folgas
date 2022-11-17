@@ -3,6 +3,7 @@
     [p-breadcrumb]="breadcrumb" 
     [p-title]="getTitle()">
 
+  
   <div class="po-row">
     <po-input 
       class="po-md-6" 
@@ -12,6 +13,13 @@
       [p-label]="literals?.name"
       [p-disabled]="properties">
     </po-input>
+    <po-button class="po-pl-0 po-md-1 po-mb-2 po-mt-4"
+      [p-label]="literals?.editarSenha"
+      [hidden]="propertiesButton"
+      p-kind = "tertiary" 
+      (p-click)="modalSenha.open()"> 
+    </po-button>  
+  
   </div>
   <div class="po-row">
   <po-email 
@@ -58,42 +66,43 @@
     p-required
     [hidden]="propertiesPassword">
     </po-password>
-    <po-divider class="po-md-12" 
-    [p-label]="literals?.editarSenha"
-    [hidden]="propertiesButton" >
-    </po-divider>
+    
+<!--     
     <div class="po-row po-md-12">
       <po-button 
-      [p-label]="literals?.editarSenha"
-      [hidden]="propertiesButton"
-      p-kind = "primary" 
-      (p-click)="modalSenha.open()"> 
-      </po-button>
-    </div>
-  
-  </div>
+        [p-label]="literals?.editarSenha"
+        [hidden]="propertiesButton"
+        p-kind = "tertiary" 
+        (p-click)="modalSenha.open()"> 
+        </po-button>  
+    </div> -->
+  </div> 
   
   <po-divider class="po-md-12" 
     [p-label]="literals?.equipe" >
   </po-divider>
   <div class="po-row po-md-12">
-  <po-button 
+  <po-button class="po-mb-2"
     [p-label]="literals?.novaEquipe"
     [hidden]="properties"
     p-kind = "primary" 
     (p-click)="abrirEquipe()"> 
   </po-button>
   </div>
-  <po-table class="po-md-7" 
-    p-striped="true"
-    [p-columns]="columns"
-    [p-items]="equipeItems"
-    [p-actions]="tableActions"
-    [p-show-more-disabled]="!hasNext"
-    (p-show-more)="searchEquipes(true)"
-    [p-actions-right]="true">
-    </po-table>
+  
+  <div class="po-row">
+    <po-table class="po-md-7" 
+      p-striped="true"
+      [p-columns]="columns"
+      [p-items]="equipeItems"
+      [p-actions]="tableActions"
+      [p-show-more-disabled]="!hasNext"
+      (p-show-more)="searchEquipes(true)"
+      [p-actions-right]="true">
+      </po-table>
+  </div>
 </po-page-default>
+
 
 <po-modal #modalEquipe 
   [p-title]="literals?.novaEquipe"
@@ -109,8 +118,8 @@
 
 <po-modal #modalSenha 
   [p-title]="literals?.editarSenha"
-  [p-primary-action]="confirm" 
-  [p-secondary-action]="close">
+  [p-primary-action]="confirmPassword" 
+  [p-secondary-action]="closePassowrd">
   
   <po-password
     class="po-sm-6"
