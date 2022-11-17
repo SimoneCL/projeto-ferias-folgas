@@ -10,7 +10,6 @@ import { Login, ILogin } from '../model/login.model';
 export class LoginService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
-    // private apiBaseUrl = '/dts/datasul-rest/resources/prg/fin/v1/evento';
     private apiBaseUrl = 'http://localhost:3000/login';
     private apiUploadUrl = `${this.apiBaseUrl}/addFile`;
 

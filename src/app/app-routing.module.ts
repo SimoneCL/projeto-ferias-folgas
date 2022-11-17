@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-    {
+   {
         path: '',
         loadChildren: () => import('./login/login.module').then(m => m.LoginModule)
     },
@@ -25,7 +25,12 @@ const routes: Routes = [
     {
         path: 'tipoEvento',
         loadChildren: () => import('./tipo-evento/tipo-evento.module').then(m => m.TipoEventoModule)
-    }    
+    },
+    {
+        path: 'cadastroUser',
+        loadChildren: () => import('./cadastro-user/cadastro-user.module').then(m => m.CadastroUserModule)
+    },
+    
 ];
 @NgModule({
     imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' })],

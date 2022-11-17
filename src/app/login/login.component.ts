@@ -118,10 +118,9 @@ export class LoginComponent implements OnInit {
             this.loginErrors = [];
 
             localStorage.setItem('user',this.userLogin.user);
-            console.log("login",localStorage.getItem('user'));
 
             setTimeout(() => {
-              this.router.navigate(['/ferias-folga']);
+              this.router.navigate(['/feriasFolga']);
               //this.router.navigate(['/']);
             }, 500);
           } else {
