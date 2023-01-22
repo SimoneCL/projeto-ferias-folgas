@@ -26,7 +26,6 @@ export class EquipesComponent implements OnInit{
   literals: any = {};
   codEquipe: number;
   descEquipe: string;
-  liderEquipe: string;
   
   filterSettings: PoPageFilter;
   breadcrumb: PoBreadcrumb;
@@ -95,9 +94,8 @@ export class EquipesComponent implements OnInit{
     };
        
     this.columnsEquipes = [
-      { property: 'codEquipe', label: 'Código', type: 'number' },
-      { property: 'descEquipe', label: 'Descrição', type: 'string' },
-      { property: 'liderEquipe', label: 'Líder', type: 'string' }
+      { property: 'codEquipe', label: 'Código', type: 'number', width: '5%' },
+      { property: 'descEquipe', label: 'Descrição', type: 'string' }
     ];
     
     this.filterSettings = {

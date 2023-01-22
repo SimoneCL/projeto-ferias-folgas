@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
 import { PoI18nService, PoMenuItem } from '@po-ui/ng-components';
 import { TotvsResponse, TranslateService } from 'dts-backoffice-util';
 import { forkJoin } from 'rxjs';
@@ -12,9 +13,10 @@ import { dependencies, git, name, version } from '../../package.json';
 export class AppComponent implements OnInit {
     menus: Array<PoMenuItem>;
     literals: any = {};
-    
+    ishidden: boolean = true;
     constructor(
         public poI18nService: PoI18nService,
+        private router: Router
     ) {
         this.displayVersions();
         poI18nService.setLanguage(
@@ -31,13 +33,20 @@ export class AppComponent implements OnInit {
         ).subscribe(literals => {
             literals.map(item => Object.assign(this.literals, item));
             this.menus = [
-                {label: 'Cadastro',icon:"po-icon-user-add",shortLabel:"Cadastro", link: '/cadastroUser'},
-                {label: 'Férias e Folgas',icon:"po-icon-calendar-ok",shortLabel:"Folgas", link: '/feriasFolga' },
-                {label: 'Agenda',icon:"po-icon-calendar",shortLabel:"Agenda", link: '/agendaUser'},
-                {label: 'Tipo evento',shortLabel:"evento", link: '/tipoEvento'},
-                {label: 'Feriados',icon:"po-icon-calendar-settings",shortLabel:"Feriados", link: '/feriados'},
-                {label: 'Equipes',icon:"po-icon-users",shortLabel:"Equipes", link: '/equipes'}
+                { label: 'Cadastro', icon: "po-icon-user-add", shortLabel: "Cadastro", link: '/cadastroUser' },
+                { label: 'Férias e Folgas', icon: "po-icon-calendar-ok", shortLabel: "Folgas", link: '/feriasFolga' },
+                { label: 'Agenda', icon: "po-icon-calendar", shortLabel: "Agenda", link: '/agendaUser' },
+                { label: 'Tipo evento', icon: "po-icon-document", shortLabel: "evento", link: '/tipoEvento' },
+                { label: 'Feriados', icon: "po-icon-calendar-settings", shortLabel: "Feriados", link: '/feriados' },
+                { label: 'Equipes', icon: "po-icon-users", shortLabel: "Equipes", link: '/equipes' },
+                { label: 'Sair', icon: "po-icon-close", shortLabel: "Sair", link: '/login' },
             ];
+            this.router.events.subscribe((url: any) => {
+                if (url instanceof NavigationEnd) {
+                    this.ishidden = (url.url === '/login');
+                }
+            });
+
         });
     }
 

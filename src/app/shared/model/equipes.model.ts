@@ -1,13 +1,11 @@
 export interface IEquipes {
     codEquipe: number;
-    descEquipe: string;
-    liderEquipe: string;    
+    descEquipe: string;    
 }
 
 export class Equipes implements IEquipes {
     codEquipe: number;
     descEquipe: string;
-    liderEquipe: string; 
     
     constructor(values: Object = {}) {
         Object.assign(this, values);

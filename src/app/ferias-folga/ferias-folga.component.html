@@ -7,7 +7,16 @@
           [(ngModel)]="config.datePickerRange"
           (p-change)="calculateQuantityOfVacationDays()"
           >
+          <!--  -->
       </po-datepicker-range>
+      
+      <po-multiselect  class="po-md-3"
+       name="multiselect" 
+       p-label="Equipes do usuário"
+       [(ngModel)]="multiSelectEquipe"
+        [p-options]="optionsMultiSeletc"
+        (p-change)="changeOptions($event)"> 
+      </po-multiselect>
   </div>
   <div class="po-row">
     <po-table #tableEvent

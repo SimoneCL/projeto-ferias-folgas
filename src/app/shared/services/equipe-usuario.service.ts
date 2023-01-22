@@ -4,19 +4,19 @@ import { PoDisclaimer, PoLookupFilteredItemsParams } from '@po-ui/ng-components'
 import { Observable } from 'rxjs';
 
 import { TotvsResponse } from 'dts-backoffice-util';
-import { IUsuario, Usuario } from '../model/usuario.model';
+import { EquipeUsuario, IEquipeUsuario } from '../model/equipe-usuario.model';
 
 @Injectable()
-export class UsuarioService {
+export class EquipeUsuarioService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
-    private apiBaseUrl = 'http://localhost:3000/usuario';
-
+    private apiBaseUrl = 'http://localhost:3000/equipeUsuario';
+    
     private expandables = [''];
 
     constructor(private http: HttpClient) { }
-    query(filters: PoDisclaimer[], page = 1, pageSize = 9999): Observable<TotvsResponse<IUsuario>> {
-
+    query(filters: PoDisclaimer[], page = 1, pageSize = 9999): Observable<TotvsResponse<IEquipeUsuario>> {
+        
         let url = `${this.apiBaseUrl}?pageSize=${pageSize}&page=${page}`;
 
         if (filters && filters.length > 0) {
@@ -29,46 +29,47 @@ export class UsuarioService {
 
             url = `${url}&${urlParams.join('&')}`;
         }
-        return this.http.get<TotvsResponse<IUsuario>>(url);
+        return this.http.get<TotvsResponse<IEquipeUsuario>>(url);
     }
-    getById(id: string, expandables: string[]): Observable<IUsuario> {
+
+    getById(id: string, expandables: string[]): Observable<IEquipeUsuario> {
         let lstExpandables = this.getExpandables(expandables);
         if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }
 
-        return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
+        return this.http.get<IEquipeUsuario>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
     }
 
     getMetadata(type = '', id = ''): Observable<any> {
         let url = `${this.apiBaseUrl}/metadata`;
         if (id) { url = `${url}/${id}`; }
         if (type) { url = `${url}/${type}`; }
-        return this.http.get<TotvsResponse<IUsuario>>(url, this.headers);
+        return this.http.get<TotvsResponse<IEquipeUsuario>>(url, this.headers);
     }
 
-    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IUsuario> {
+    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IEquipeUsuario> {
         const header = { params: { page: params.page.toString(), pageSize: params.pageSize.toString() } };
 
         if (params.filter && params.filter.length > 0) {
             header.params['code'] = params.filter;
         }
 
-        return this.http.get<IUsuario>(`${this.apiBaseUrl}`, header);
+        return this.http.get<IEquipeUsuario>(`${this.apiBaseUrl}`, header);
     }
 
-    getObjectByValue(id: string): Observable<IUsuario> {
-        return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}`);
+    getObjectByValue(id: string): Observable<IEquipeUsuario> {
+        return this.http.get<IEquipeUsuario>(`${this.apiBaseUrl}/${id}`);
     }
 
-    create(model: IUsuario): Observable<IUsuario> {
-        return this.http.post<IUsuario>(this.apiBaseUrl, model, this.headers);
+    create(model: IEquipeUsuario): Observable<IEquipeUsuario> {
+        return this.http.post<IEquipeUsuario>(this.apiBaseUrl, model, this.headers);
     }
 
-    update(model: IUsuario): Observable<IUsuario> {
-        return this.http.put<IUsuario>(`${this.apiBaseUrl}/${Usuario.getInternalId(model)}`, model, this.headers);
+    update(model: IEquipeUsuario): Observable<IEquipeUsuario> {
+        return this.http.put<IEquipeUsuario>(`${this.apiBaseUrl}/${EquipeUsuario.getInternalId(model)}`, model, this.headers);
     }
 
     delete(id: string): Observable<any> {
-
+      
         return this.http.delete(`${this.apiBaseUrl}/${id}`);
     }
 

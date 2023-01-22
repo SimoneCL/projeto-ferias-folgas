@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { PoDisclaimer, PoLookupFilteredItemsParams } from '@po-ui/ng-components';
-import { Observable } from 'rxjs';
+import { PoDisclaimer, PoLookupFilteredItemsParams, PoMultiselectOption } from '@po-ui/ng-components';
 
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Evento, IEvento } from '../model/evento.model';
+import { map, Observable } from 'rxjs';
+
 
 @Injectable()
 export class EventoService {
@@ -17,7 +18,6 @@ export class EventoService {
 
     constructor(private http: HttpClient) { }
     query(filters: PoDisclaimer[], page = 1, pageSize = 20): Observable<TotvsResponse<IEvento>> {
-
         let url = `${this.apiBaseUrl}?pageSize=${pageSize}&page=${page}`;
 
         if (filters && filters.length > 0) {
@@ -47,19 +47,20 @@ export class EventoService {
         return this.http.get<TotvsResponse<IEvento>>(url, this.headers);
     }
 
-    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IEvento> {
-        const header = { params: { page: params.page.toString(), pageSize: params.pageSize.toString() } };
-
-        if (params.filter && params.filter.length > 0) {
-            header.params['code'] = params.filter;
-        }
-
-        return this.http.get<IEvento>(`${this.apiBaseUrl}`, header);
+    
+    getFilteredData({ value }): Observable<Array<PoMultiselectOption>> {
+        const params = { filter: value };
+        return this.http
+            .get(`${this.apiBaseUrl}`, { params }).
+            pipe(map((response: { items: Array<PoMultiselectOption> }) => response.items));
     }
 
-    getObjectByValue(id: string): Observable<IEvento> {
-        return this.http.get<IEvento>(`${this.apiBaseUrl}/${id}`);
+    getObjectsByValues(value: Array<string | number>): Observable<Array<PoMultiselectOption>> {
+        return this.http
+            .get(`${this.apiBaseUrl}?equipes=${value.toString()}`)
+            .pipe(map((response: { items: Array<PoMultiselectOption> }) => response.items));
     }
+
 
     create(model: IEvento): Observable<IEvento> {
         return this.http.post<IEvento>(this.apiBaseUrl, model, this.headers);

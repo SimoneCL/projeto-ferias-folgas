@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoNotificationService, PoPageAction, PoPageFilter, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
@@ -18,6 +18,7 @@ export class AgendamentoUserListComponent implements OnInit {
   private eventoUserSubscription$: Subscription;
   private tipoEventoSubscription$: Subscription;
   private disclaimers: Array<PoDisclaimer> = [];
+  title: string;
 
   pageActions: Array<PoPageAction>;
   tableActions: Array<PoTableAction>;
@@ -44,6 +45,7 @@ export class AgendamentoUserListComponent implements OnInit {
     private poI18nService: PoI18nService,
     private poDialogService: PoDialogService,
     private poNotification: PoNotificationService,
+    private activatedRoute: ActivatedRoute,
     private router: Router,
   ) { }
 
@@ -62,6 +64,15 @@ export class AgendamentoUserListComponent implements OnInit {
   }
 
   private setupComponents(): void {
+
+    const id  = this.activatedRoute.snapshot.paramMap.get('id');
+    
+    if(id !== null){
+      this.title = this.literals.scheduleEventUser + ': ' + id[0].toUpperCase() + id.substring(1);
+    } else {
+      this.title = this.literals.scheduleEventUser;
+    }
+    
 
     this.tableActions = [
       { action: this.edit.bind(this), label: this.literals.edit },
@@ -160,13 +171,14 @@ export class AgendamentoUserListComponent implements OnInit {
   }
 
   searchTipoEvento(): void {
+    this.dayOffType = [];
     this.tipoEventoSubscription$ = this.serviceTipoEvento
       .query([], 1, 999)
       .subscribe((response: TotvsResponse<ITipoEvento>) => {
         this.tipoEventos = [...this.tipoEventos, ...response.items];
 
         for (let i in this.tipoEventos) {
-          this.dayOffType .push({ label: this.tipoEventos[i].descTipoEvento, value: this.tipoEventos[i].code });
+          this.dayOffType.push({ label: this.tipoEventos[i].descTipoEvento, value: this.tipoEventos[i].code });
         }
       });
   }
