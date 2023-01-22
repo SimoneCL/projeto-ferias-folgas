@@ -3,8 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PoBreadcrumb, PoCheckboxGroupOption, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoRadioGroupOption, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
+import { EquipeUsuario, IEquipeUsuario } from '../../shared/model/equipe-usuario.model';
 import { Equipes, IEquipes } from '../../shared/model/equipes.model';
 import { IUsuario, Usuario } from '../../shared/model/usuario.model';
+import { EquipeUsuarioService } from '../../shared/services/equipe-usuario.service';
 import { EquipesService } from '../../shared/services/equipes.service';
 import { UsuarioService } from '../../shared/services/usuario.service';
 
@@ -19,8 +21,11 @@ export class CadastroUserEditComponent implements OnInit {
 
   private usuarioSubscription$: Subscription;
   private servEquipesSubscription$: Subscription;
+  private servEquipeUsuarioSubscription$: Subscription;
   public usuario: IUsuario = new Usuario();
-  
+  public equipeUsuar: IEquipeUsuario = new EquipeUsuario();
+
+
   breadcrumb: PoBreadcrumb;
   literals: any = {};
 
@@ -37,6 +42,7 @@ export class CadastroUserEditComponent implements OnInit {
 
   tableActions: Array<PoTableAction>;
   equipesList: Array<IEquipes> = new Array<IEquipes>();
+  equipeUsuario: Array<IEquipeUsuario> = new Array<IEquipeUsuario>();
 
   equipeItems: Array<IEquipes> = new Array<IEquipes>();
   equipes: Array<IEquipes> = new Array<IEquipes>();
@@ -46,7 +52,7 @@ export class CadastroUserEditComponent implements OnInit {
   currentPage = 1;
   pageSize = 20;
   expandables = [''];
-  disclaimers: Array<PoDisclaimer> = [];
+  //disclaimers: Array<PoDisclaimer> = [];
 
   confirm: PoModalAction;
   close: PoModalAction;
@@ -56,9 +62,9 @@ export class CadastroUserEditComponent implements OnInit {
 
   optionsEquipe: Array<PoMultiselectOption> = [];
   equipeSelected: Array<string> = [];
-  private equipesSalvar: Array<IEquipes> = [];
-  private equipesDeletar: Array<IEquipes> = [];
-  
+
+  disclaimersEquipe: Array<PoDisclaimer> = [];
+
   constructor(
     private route: Router,
     private activatedRoute: ActivatedRoute,
@@ -67,6 +73,7 @@ export class CadastroUserEditComponent implements OnInit {
     private poDialogService: PoDialogService,
     private poI18nPipe: PoI18nPipe,
     private serviceUsuario: UsuarioService,
+    private serviceEquipeUsuario: EquipeUsuarioService,
     private servEquipes: EquipesService,
   ) { }
 
@@ -81,11 +88,9 @@ export class CadastroUserEditComponent implements OnInit {
 
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
       const id = this.activatedRoute.snapshot.paramMap.get('id');
-      this.equipesSalvar = [];
-      this.equipesDeletar = [];
       if (id) {
         this.get(id);
-        
+
       }
       this.setupComponents();
     });
@@ -99,10 +104,10 @@ export class CadastroUserEditComponent implements OnInit {
       { label: 'Dev Team', value: '3' }
     ];
 
-    if (this.eventPage === 'detail'){
+    if (this.eventPage === 'detail') {
       this.properties = "true";
       this.actionsDisable = false;
-      this.propertiesPassword = "true"; 
+      this.propertiesPassword = "true";
     }
 
     if (this.eventPage !== 'edit') {
@@ -120,7 +125,7 @@ export class CadastroUserEditComponent implements OnInit {
     ];
 
     this.tableActions = [
-      { action: this.delete.bind(this), visible:this.actionsDisable, label: this.literals.delete, type: 'danger' }
+      { action: this.delete.bind(this), visible: this.actionsDisable, label: this.literals.delete, type: 'danger' }
     ];
 
     this.confirm = {
@@ -144,7 +149,7 @@ export class CadastroUserEditComponent implements OnInit {
       label: this.literals.cancel
     };
   }
-  
+
   private beforeRedirect(itemBreadcrumbLabel) {
     this.return();
   }
@@ -182,7 +187,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   public confirmePassWordModal() {
-    
+
     this.modalSenha.close();
   }
   public closePassWordModal() {
@@ -190,34 +195,20 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   public relacEquipe() {
-    for (let i in this.equipeSelected) {
-      this.getEquipe(this.equipeSelected[i])
-
+     for (let i in this.equipeSelected) {
+      this.equipeUsuar.codEquipe = this.equipeSelected[i];
+      this.equipeUsuar.IdUsuario = this.usuario.IdUsuario;
+      this.equipeUsuar.usuario = this.usuario.usuario;
+      this.saveEquipeUsuario();
     }
+    this.searchEquipeUsuario();
+
     this.closeModal();
 
   }
-  getEquipe(id: string): void {
-    
-    this.servEquipesSubscription$ = this.servEquipes
-      .getById(id)
-      .subscribe((response: IEquipes) => {
+ 
 
-
-        this.equipeItems = [... this.equipeItems, response];
-        if (this.equipeItems.length !== 0) {
-          const parsed_array = this.equipeItems.map(val => { return JSON.stringify(val) })
-          this.equipeItems = parsed_array.filter((value, ind) => parsed_array.indexOf(value) == ind).map((val) => { return JSON.parse(val) });
-
-          this.equipesSalvar = [...this.equipeItems];
-
-          this.usuario.equipes = Object.keys(this.equipeItems.reduce((acc, curr) => (acc[curr.codEquipe] = '', acc), {}));
-        }
-      });
-
-  }
-
-  delete(item: IEquipes) {
+  delete(item: IEquipeUsuario) {
     this.poDialogService.confirm({
       title: this.literals.remove,
       message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.codEquipe]),
@@ -228,27 +219,25 @@ export class CadastroUserEditComponent implements OnInit {
     });
   }
 
-  public remove(item: IEquipes) {
-    if (this.equipesSalvar) {
-      this.equipesSalvar.forEach((equipe, index) => {
-        if (equipe.codEquipe === item.codEquipe) {
-          this.equipesSalvar.splice(index, 1);
-        }
-      });
-    }
+  public remove(item: IEquipeUsuario) {
+    const idEquipeUsuario = `${this.usuario.usuario};${item.codEquipe}`;
 
-    if (this.equipeItems) {
-      this.equipeItems.forEach((equipe, index) => {
-        if (equipe.codEquipe === item.codEquipe) {
-          this.equipesDeletar.push(equipe);
-          this.equipeItems.splice(index, 1);
-          this.usuario.equipes = Object.keys(this.equipeItems.reduce((acc, curr) => (acc[curr.codEquipe] = '', acc), {}));
-        
-        }
+
+    this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
+      .delete(idEquipeUsuario)
+      .subscribe(response => {
+        this.searchEquipeUsuario();
+        this.poNotification.success(this.literals.excludedMessage);
+
       });
-    }
+
   }
 
+  saveEquipeUsuario() {
+
+    this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario.create(this.equipeUsuar).subscribe(() => {
+    });
+  }
   getTitle(): string {
     if (this.eventPage === 'edit') {
       return this.literals.editUser;
@@ -266,7 +255,7 @@ export class CadastroUserEditComponent implements OnInit {
           { label: this.literals.editUser }
         ]
       };
-    } else if(this.eventPage === 'detail'){
+    } else if (this.eventPage === 'detail') {
       return {
         items: [
           { label: this.literals.listUser, action: this.beforeRedirect.bind(this), link: '/cadastroUser' },
@@ -333,17 +322,6 @@ export class CadastroUserEditComponent implements OnInit {
     ];
   }
 
-  get(id: string): void {
-    this.usuario.equipes = [];
-    this.usuarioSubscription$ = this.serviceUsuario
-      .getById(id, [''])
-      .subscribe((response: IUsuario) => {
-        this.usuario = response;
-        for (let i in this.usuario.equipes) {
-          this.getEquipe(this.usuario.equipes[i]);
-        }
-      });
-  }
 
   abrirSenha() {
     this.modalSenha.open();
@@ -356,7 +334,6 @@ export class CadastroUserEditComponent implements OnInit {
 
   }
 
-
   searchEquipes(loadMore = false): void {
 
     if (loadMore === true) {
@@ -365,18 +342,67 @@ export class CadastroUserEditComponent implements OnInit {
       this.currentPage = 1;
     }
 
+    
     this.hasNext = false;
     this.servEquipesSubscription$ = this.servEquipes
-      .query(this.disclaimers, [], 1, 999)
+      .query([], [], 1, 999)
       .subscribe((response: TotvsResponse<IEquipes>) => {
         if (response && response.items) {
           this.equipesList = [...response.items];
           this.hasNext = response.hasNext;
-          for (let i in this.equipesList) {
+          for (let i  in this.equipesList) {
             this.optionsEquipe.push({ label: this.equipesList[i].descEquipe, value: this.equipesList[i].codEquipe });
           }
         }
-      })
+      });
+  }
+
+  
+  get(id: string): void {
+    this.usuarioSubscription$ = this.serviceUsuario
+      .getById(id, [''])
+      .subscribe((response: IUsuario) => {
+        this.usuario = response;
+        this.searchEquipeUsuario();
+
+      });
+  }
+
+  getEquipe(): void {
+
+    this.disclaimersEquipe = [];
+    for (let i  in this.equipeUsuario) {
+      this.disclaimersEquipe.push({ property: 'codEquipe', value: this.equipeUsuario[i].codEquipe });
+    }
+    
+    this.hasNext = false;
+    this.servEquipesSubscription$ = this.servEquipes
+      .query(this.disclaimersEquipe, this.expandables, 1, 9999)
+      .subscribe((response: TotvsResponse<IEquipes>) => {
+        if (response && response.items) {
+          this.equipeItems = [...this.equipeItems, ...response.items];
+          this.hasNext = response.hasNext;
+        }
+      });
+  }
+  searchEquipeUsuario() {
+    this.equipeUsuario = [];
+    this.equipeItems = [];
+   
+
+    this.hasNext = false;
+    this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
+      .query([{ property: 'IdUsuario', value: this.usuario.IdUsuario }])
+      .subscribe((response: TotvsResponse<IEquipeUsuario>) => {
+        if (response && response.items) {
+          this.equipeUsuario = [...response.items];
+          this.hasNext = response.hasNext;
+        }
+        if (this.equipeUsuario.length > 0) {
+          this.getEquipe();
+        }
+      });
+
   }
   ngOnDestroy(): void {
     if (this.usuarioSubscription$) {
@@ -384,6 +410,9 @@ export class CadastroUserEditComponent implements OnInit {
     }
     if (this.servEquipesSubscription$) {
       this.servEquipesSubscription$.unsubscribe();
+    }
+    if (this.servEquipeUsuarioSubscription$) {
+      this.servEquipeUsuarioSubscription$.unsubscribe();
     }
   }
 }

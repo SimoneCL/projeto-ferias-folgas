@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PoDialogService, PoDisclaimer, PoI18nService } from '@po-ui/ng-components';
+import { PoDialogService, PoDisclaimer, PoI18nService, PoMenuItem } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { PoModalPasswordRecoveryType, PoPageBlockedUserReasonParams, PoPageLoginCustomField, PoPageLoginLiterals, PoPageLoginRecovery } from '@po-ui/ng-templates';
 import { forkJoin, Subscription } from 'rxjs';
@@ -48,6 +48,7 @@ export class LoginComponent implements OnInit {
   private i18nSubscription: Subscription;
   userLogin: ILogin;
   
+  menus: Array<PoMenuItem>;
   constructor(
     private poI18nService: PoI18nService, 
     private poDialog: PoDialogService,
@@ -62,6 +63,14 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.i18nSubscription = this.poI18nService.getLiterals().subscribe(literals => {
       this.literalsI18n = literals;
+      this.menus = [
+        {label: 'Cadastro',icon:"po-icon-user-add",shortLabel:"Cadastro", link: '/cadastroUser'},
+        {label: 'Férias e Folgas',icon:"po-icon-calendar-ok",shortLabel:"Folgas", link: '/feriasFolga' },
+        {label: 'Agenda',icon:"po-icon-calendar",shortLabel:"Agenda", link: '/agendaUser'},
+        {label: 'Tipo evento', icon:"po-icon-document",shortLabel:"evento", link: '/tipoEvento'},
+        {label: 'Feriados',icon:"po-icon-calendar-settings",shortLabel:"Feriados", link: '/feriados'},
+        {label: 'Equipes',icon:"po-icon-users",shortLabel:"Equipes", link: '/equipes'}
+    ];
       this.exceededAttempts = 0;
       this.setupComponent();
       this.search();      
@@ -118,10 +127,10 @@ export class LoginComponent implements OnInit {
             this.loginErrors = [];
 
             localStorage.setItem('user',this.userLogin.user);
+            console.log('user',this.userLogin.user)
 
             setTimeout(() => {
               this.router.navigate(['/feriasFolga']);
-              //this.router.navigate(['/']);
             }, 500);
           } else {
             this.poDialog.alert({

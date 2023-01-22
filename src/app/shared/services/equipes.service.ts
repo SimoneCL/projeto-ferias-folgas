@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { PoDisclaimer, PoLookupFilteredItemsParams } from '@po-ui/ng-components';
-import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { PoDisclaimer, PoMultiselectOption } from '@po-ui/ng-components';
+import { map, Observable } from 'rxjs';
 
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Equipes, IEquipes } from '../model/equipes.model';
@@ -33,30 +33,38 @@ export class EquipesService {
     }
 
     getById(id: string): Observable<IEquipes> {
-        
+
         return this.http.get<IEquipes>(`${this.apiBaseUrl}/${id}`, this.headers);
     }
 
-    getMetadata(type = '', id = ''): Observable<any> {
-        let url = `${this.apiBaseUrl}/metadata`;
-        if (id) { url = `${url}/${id}`; }
-        if (type) { url = `${url}/${type}`; }
-        return this.http.get<TotvsResponse<IEquipes>>(url, this.headers);
+    // getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IEquipes> {
+    //     const header = { params: { page: params.page.toString(), pageSize: params.pageSize.toString() } };
+
+    //     if (params.filter && params.filter.length > 0) {
+    //         header.params['code'] = params.filter;
+    //     }
+
+    //     return this.http.get<IEquipes>(`${this.apiBaseUrl}`, header);
+    // }
+
+    // getObjectByValue(id: string): Observable<IEquipes> {
+    //     return this.http.get<IEquipes>(`${this.apiBaseUrl}/${id}`);
+    // }
+
+    getFilteredData({ value }): Observable<Array<PoMultiselectOption>> {
+        const params = { filter: value };
+        return this.http
+            .get(`${this.apiBaseUrl}`, { params })
+            .pipe(map((response: { items: Array<PoMultiselectOption> }) => response.items));
     }
 
-    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IEquipes> {
-        const header = { params: { page: params.page.toString(), pageSize: params.pageSize.toString() } };
-
-        if (params.filter && params.filter.length > 0) {
-            header.params['code'] = params.filter;
-        }
-
-        return this.http.get<IEquipes>(`${this.apiBaseUrl}`, header);
+    getObjectsByValues(value: Array<string | number>): Observable<Array<PoMultiselectOption>> {
+        return this.http
+            .get(`${this.apiBaseUrl}?codEquipe=${value.toString()}`)
+            .pipe(map((response: { items: Array<PoMultiselectOption> }) => response.items));
     }
 
-    getObjectByValue(id: string): Observable<IEquipes> {
-        return this.http.get<IEquipes>(`${this.apiBaseUrl}/${id}`);
-    }
+
 
     create(model: IEquipes): Observable<IEquipes> {
         return this.http.post<IEquipes>(this.apiBaseUrl, model, this.headers);

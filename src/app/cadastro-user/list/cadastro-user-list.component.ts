@@ -23,7 +23,7 @@ export class CadastroUserListComponent implements OnInit {
   usuarioTipo: Array<PoTableColumnLabel>;
 
   breadcrumb: PoBreadcrumb;
-  
+
   public items: Array<IUsuario> = new Array<IUsuario>();
   columns: Array<PoTableColumn>;
   filterSettings: PoPageFilter;
@@ -73,16 +73,19 @@ export class CadastroUserListComponent implements OnInit {
       }
     ];
 
-   
-
-    
     this.columns = [
-      { property: 'usuario', label: this.literals.usuario, type: 'string'},
+      {
+        property: 'usuario', label: this.literals.usuario,type: 'link', action: (value, row) => {
+          this.edit(row);
+        }
+      },
       { property: 'email', label: this.literals.email, type: 'string' },
-      { property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: [
-        { value: '1', color: 'color-11', label: 'Team Lead'},
-        { value: '2', color: 'color-08', label: 'Product Owner' },
-        { value: '3', color: 'color-02', label: 'Dev Team' }] },
+      {
+        property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: [
+          { value: '1', color: 'color-11', label: 'Team Lead' },
+          { value: '2', color: 'color-08', label: 'Product Owner' },
+          { value: '3', color: 'color-02', label: 'Dev Team' }]
+      },
     ];
 
 
@@ -97,9 +100,9 @@ export class CadastroUserListComponent implements OnInit {
       placeholder: this.literals.description
     };
   }
-
+  
   searchById(quickSearchValue: string) {
-   
+
     this.disclaimers = [...[{ property: 'usuario', value: quickSearchValue }]];
     this.disclaimerGroup.disclaimers = [...this.disclaimers];
   }

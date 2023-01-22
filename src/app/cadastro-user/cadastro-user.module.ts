@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PoI18nPipe, PoModule } from '@po-ui/ng-components';
 import { PoTemplatesModule } from '@po-ui/ng-templates';
 import { LoadingInterceptorModule } from '../loading-interceptor.module';
+import { EquipeUsuarioService } from '../shared/services/equipe-usuario.service';
 import { EquipesService } from '../shared/services/equipes.service';
 import { UsuarioService } from '../shared/services/usuario.service';
 import { CadastroUserRoutingModule } from './cadastro-user-routing.module';
@@ -28,6 +29,7 @@ import { CadastroUserListComponent } from './list/cadastro-user-list.component';
   ],
   providers:[
     UsuarioService,
+    EquipeUsuarioService,
     EquipesService,
     PoI18nPipe
   ]

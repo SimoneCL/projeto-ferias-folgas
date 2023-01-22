@@ -4,7 +4,6 @@ export interface IUsuario {
     email: string;
     tipoPerfil: number;
     senha: string;
-    equipes: Array<any>;
 }
 
 export class Usuario implements IUsuario {
@@ -13,7 +12,6 @@ export class Usuario implements IUsuario {
     email: string;
     tipoPerfil: number;
     senha: string;
-    equipes: Array<any>;
     constructor(values: Object = {}) {
         Object.assign(this, values);
     }

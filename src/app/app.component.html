@@ -1,5 +1,5 @@
-<div class="po-wrapper">
-    <po-menu
+<div class="po-wrapper-menu-panel">
+    <po-menu *ngIf='!ishidden'
         [p-menus]="menus"
         [p-filter]="true"
         [p-collapsed]="true">

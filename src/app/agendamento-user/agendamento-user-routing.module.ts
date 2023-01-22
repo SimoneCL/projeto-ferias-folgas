@@ -7,8 +7,11 @@ const routes: Routes = [
   {
     path: '',
     component: AgendamentoUserListComponent
-  }
-  ,
+  },
+  {
+    path: 'list/:id',
+    component: AgendamentoUserListComponent
+  },
   {
     path: 'new',
     component: AgendamentoUserEditComponent
