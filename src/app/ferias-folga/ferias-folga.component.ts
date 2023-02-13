@@ -50,6 +50,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   disclaimers: Array<PoDisclaimer> = [];
   disclaimersEquipeUser: Array<PoDisclaimer> = [];
   map1 = new Map();
+  userLogado: string;
 
   public eventOptions: Array<PoRadioGroupOption> = [];
 
@@ -85,6 +86,9 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    this.userLogado = localStorage.getItem('userLogado');
+
     forkJoin(
       [
         this.poI18nService.getLiterals(),

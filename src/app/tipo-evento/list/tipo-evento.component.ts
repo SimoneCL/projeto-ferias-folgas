@@ -33,6 +33,7 @@ export class TipoEventoComponent implements OnInit {
 
   literals: any = {};
   close: PoModalAction;
+  userLogado: string;
 
   confirm: PoModalAction;
   tipoEvento: ITipoEvento = new TipoEvento();
@@ -47,6 +48,9 @@ export class TipoEventoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.userLogado = localStorage.getItem('userLogado');
+
     forkJoin(
       [
         this.poI18nService.getLiterals(),

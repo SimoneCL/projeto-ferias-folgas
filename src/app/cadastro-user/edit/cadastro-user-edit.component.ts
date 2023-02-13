@@ -59,6 +59,7 @@ export class CadastroUserEditComponent implements OnInit {
   confirmPassword: PoModalAction;
   closePassowrd: PoModalAction;
   noShadow: true;
+  userLogado: string;
 
   optionsEquipe: Array<PoMultiselectOption> = [];
   equipeSelected: Array<string> = [];
@@ -78,6 +79,9 @@ export class CadastroUserEditComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.userLogado = localStorage.getItem('userLogado');
+
     forkJoin(
       [
         this.poI18nService.getLiterals(),
