@@ -30,6 +30,7 @@ export class AgendamentoUserListComponent implements OnInit {
   dayOffType: Array<any> = [];
   columns: Array<PoTableColumn>;
   filterSettings: PoPageFilter;
+  userLogado: string;
 
   hasNext = false;
   pageSize = 20;
@@ -50,6 +51,9 @@ export class AgendamentoUserListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    
+    this.userLogado = localStorage.getItem('userLogado');
+
     forkJoin(
       [
         this.poI18nService.getLiterals(),

@@ -31,12 +31,13 @@ export class UsuarioService {
         }
         return this.http.get<TotvsResponse<IUsuario>>(url);
     }
+    
     getById(id: string, expandables: string[]): Observable<IUsuario> {
         let lstExpandables = this.getExpandables(expandables);
         if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }
 
         return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
-    }
+    }    
 
     getMetadata(type = '', id = ''): Observable<any> {
         let url = `${this.apiBaseUrl}/metadata`;

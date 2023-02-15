@@ -28,6 +28,7 @@ export class FeriadosComponent implements OnInit{
   descricao: string;
   tipoFeriado: string;
   pontoFacultativo: boolean;
+  userLogado: string;
 
   filterSettings: PoPageFilter;
   breadcrumb: PoBreadcrumb;
@@ -59,16 +60,19 @@ export class FeriadosComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-      forkJoin(
-        [
-          this.poI18nService.getLiterals(),
-          this.poI18nService.getLiterals({ context: 'general' })
-        ]
-      ).subscribe(literals => {
-        literals.map(item => Object.assign(this.literals, item));
-        this.setupComponents();
-        this.search();                
-      })
+
+    this.userLogado = localStorage.getItem('userLogado');
+
+    forkJoin(
+      [
+        this.poI18nService.getLiterals(),
+        this.poI18nService.getLiterals({ context: 'general' })
+      ]
+    ).subscribe(literals => {
+      literals.map(item => Object.assign(this.literals, item));
+      this.setupComponents();
+      this.search();                
+    })
   }
   setupComponents() {
     

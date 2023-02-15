@@ -1,0 +1,12 @@
+.divLogin {
+    width: 90vw;
+    height: 70vh;
+    display: flex;    
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.brEnter {
+    color: blue;
+}

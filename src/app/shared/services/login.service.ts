@@ -32,7 +32,6 @@ export class LoginService {
     }
 
     getById(id: string): Observable<ILogin> {
-        
         return this.http.get<ILogin>(`${this.apiBaseUrl}/${id}`, this.headers);
     }
 
