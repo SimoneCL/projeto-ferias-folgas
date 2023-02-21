@@ -9,13 +9,13 @@
     p-striped="true"
     [p-selectable]="true"
     [p-columns]="columnsFeriados" 
-    [p-items]="feriadosItems"
+    [p-items]="itemsFeriados"
     [p-actions]="tableActions"
     p-actions-right="true"> 
   </po-table>
 </po-page-list>
 
-<po-modal #modal 
+<po-modal #modalFeriado 
     [p-title]="literals?.scheduleEvent"
     [p-primary-action]="confirm"
     [p-secondary-action]="close" >
@@ -59,4 +59,17 @@
       </div>  
     </form>
 </po-modal>
-
+<po-modal #modalFeriadosNacionais
+    p-title="feriados nacionais"
+    [p-primary-action]="confirmNacionais"
+    [p-secondary-action]="closeNacionais" >
+  
+    <po-select 
+      class="po-md-3" 
+      name="anoFeriado"       
+      [(ngModel)]="anoFeriado"
+      p-label="Ano" 
+      [p-options]="anoOptions"
+      (p-change)="onChangeYear()">
+    </po-select>
+</po-modal>

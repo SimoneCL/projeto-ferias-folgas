@@ -16,20 +16,11 @@ export class TipoEventoService {
     private expandables = [''];
 
     constructor(private http: HttpClient) { }
+    
     query(filters: PoDisclaimer[], page = 1, pageSize = 20): Observable<TotvsResponse<ITipoEvento>> {
 
-        let url = `${this.apiBaseUrl}?pageSize=${pageSize}&page=${page}`;
-
-        if (filters && filters.length > 0) {
-
-            const urlParams = new Array<string>();
-
-            filters.map(filter => {
-                urlParams.push(`${filter.property}=${filter.value}`);
-            });
-
-            url = `${url}&${urlParams.join('&')}`;
-        }
+    
+        const url = this.getUrl(this.apiBaseUrl, filters,  this.expandables, page, pageSize);
         return this.http.get<TotvsResponse<ITipoEvento>>(url);
     }
 
@@ -62,6 +53,7 @@ export class TipoEventoService {
     }
 
     create(model: ITipoEvento): Observable<ITipoEvento> {
+        console.log('create',model,this.http.post<ITipoEvento>(this.apiBaseUrl, model, this.headers))
         return this.http.post<ITipoEvento>(this.apiBaseUrl, model, this.headers);
     }
 

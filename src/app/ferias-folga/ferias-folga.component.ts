@@ -165,11 +165,11 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   }
   changeOptions(event): void { //selecionando equipes
     this.disclaimersEquipeUser = [];
-    
+
     for (let i in event) {
       this.disclaimersEquipeUser.push({ property: 'codEquipe', value: event[i].value });
     }
-    if(this.disclaimersEquipeUser.length > 0){
+    if (this.disclaimersEquipeUser.length > 0) {
       this.searchUsuarByEquipe();
     } else {
       this.items = [];
@@ -286,7 +286,8 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
         if (eventsUsers[i].type === 1) { //férias
           this.primeiroDia = new Date(eventsUsers[i].eventIniDate);
-          this.ultimoDia = new Date(eventsUsers[i].eventEndDate);
+          const end = new Date(eventsUsers[i].eventEndDate);
+          this.ultimoDia = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
           this.quantityOfDaysSchedule = Math.floor(
             (Date.UTC(this.ultimoDia.getFullYear(), this.ultimoDia.getMonth(), this.ultimoDia.getDate()) -
               Date.UTC(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate())) /
@@ -313,6 +314,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
           this.newEvent[this.itemsAux[0][0]] = this.itemsAux[0][1];
           this.newEvent[this.itemsAux[1][0]] = this.itemsAux[1][1];
         }
+        console.log('this.newEvent',this.newEvent)
         this.eventos.push(this.newEvent);
       }
       this.agrupByUser();

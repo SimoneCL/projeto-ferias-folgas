@@ -33,15 +33,12 @@ export class FeriadosService {
     }
 
     getById(id: string): Observable<IFeriados> {
-        
+
         return this.http.get<IFeriados>(`${this.apiBaseUrl}/${id}`, this.headers);
     }
+    getHoliday(ano: string): Observable<any> {
+        return this.http.get<any>(`https://brasilapi.com.br/api/feriados/v1/${ano}`);
 
-    getMetadata(type = '', id = ''): Observable<any> {
-        let url = `${this.apiBaseUrl}/metadata`;
-        if (id) { url = `${url}/${id}`; }
-        if (type) { url = `${url}/${type}`; }
-        return this.http.get<TotvsResponse<IFeriados>>(url, this.headers);
     }
 
     getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IFeriados> {
@@ -78,26 +75,16 @@ export class FeriadosService {
         return this.http.post(`${this.apiBaseUrl}/${Feriados.getInternalId(model)}/duplic`, model, this.headers);
     }
 
-    getFile(id: string): Observable<Object> {
-        const url = `/evento/${id}/file`;
-        return this.http.get(url, this.headers);
-    }
+    // changeStatus(id: string, status: number): Observable<Object> {
+    //     const model = {};
+    //     model['status'] = status;
 
-    getQrCode(text: string): Observable<Blob> {
-        const url = `/qrcode/download?text=${text}`;
-        return this.http.get(url, { responseType: 'blob' });
-    }
+    //     return this.http.post(`${this.apiBaseUrl}/${id}/changeStatus`, model, this.headers);
+    // }
 
-    changeStatus(id: string, status: number): Observable<Object> {
-        const model = {};
-        model['status'] = status;
-
-        return this.http.post(`${this.apiBaseUrl}/${id}/changeStatus`, model, this.headers);
-    }
-
-    getTotalByStatus(): Observable<Object> {
-        return this.http.get('/evento/totBySatus', this.headers);
-    }
+    // getTotalByStatus(): Observable<Object> {
+    //     return this.http.get('/evento/totBySatus', this.headers);
+    // }
 
     getUrl(urlBase: string, filters: PoDisclaimer[], expandables: string[], page: number, pageSize: number): string {
         const urlParams = new Array<String>();
