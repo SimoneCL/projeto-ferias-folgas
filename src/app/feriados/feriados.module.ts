@@ -8,6 +8,8 @@ import { PoI18nPipe, PoModule } from '@po-ui/ng-components';
 import { PoTemplatesModule } from '@po-ui/ng-templates';
 import { FeriadosComponent } from './feriados.component';
 import { FeriadosService } from '../shared/services/feriados.service';
+import { EventoService } from '../shared/services/evento.service';
+import { UsuarioService } from '../shared/services/usuario.service';
 
 
 @NgModule({
@@ -24,7 +26,9 @@ import { FeriadosService } from '../shared/services/feriados.service';
   ],
   providers: [
     PoI18nPipe,
-    FeriadosService
+    FeriadosService,
+    EventoService,
+    UsuarioService
   ]
 })
 export class FeriadosModule { }
