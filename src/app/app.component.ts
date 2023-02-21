@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
 
-        localStorage.setItem('user', null);
+        localStorage.setItem('usuarioLogado', null);
 
         forkJoin(
             [this.poI18nService.getLiterals()]

@@ -29,6 +29,7 @@ export class AgendamentoUserEditComponent implements OnInit {
   quantityOfDays: number;
   eventType: number;
   eventPage: string;
+  userLogado: string;
 
   items: Array<ITipoEvento> = new Array<ITipoEvento>();
 
@@ -53,6 +54,9 @@ export class AgendamentoUserEditComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.userLogado = localStorage.getItem('userLogado');
+    
     forkJoin(
       [
         this.poI18nService.getLiterals(),

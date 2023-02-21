@@ -1,58 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { PoDialogService, PoDisclaimer, PoI18nService, PoMenuItem } from '@po-ui/ng-components';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { PoDialogService, PoDisclaimer, PoI18nService, PoPageDefault } from '@po-ui/ng-components';
+import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { TotvsResponse } from 'dts-backoffice-util';
-import { PoModalPasswordRecoveryType, PoPageBlockedUserReasonParams, PoPageLoginCustomField, PoPageLoginLiterals, PoPageLoginRecovery } from '@po-ui/ng-templates';
 import { forkJoin, Subscription } from 'rxjs';
-import { ILogin } from '../shared/model/login.model';
-import { LoginService } from '../shared/services/login.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { IUsuario } from '../shared/model/usuario.model';
+import { UsuarioService } from '../shared/services/usuario.service';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-
-  titleApp:String;
-  attempts = 3;
-  exceededAttempts: number;
-  literalsI18n: PoPageLoginLiterals;
-  loading: boolean = false;
-  loginErrors = [];
-  passwordErrors = [];
-  params: PoPageBlockedUserReasonParams = { attempts: 3, hours: 24 };
-  passwordRecovery: PoPageLoginRecovery = {
-    url: 'https://po-sample-api.herokuapp.com/v1/users',
-    type: PoModalPasswordRecoveryType.All,
-    contactMail: 'support@mail.com'
-  };
-  showPageBlocked: boolean = false;
+export class LoginComponent {
+  @ViewChild('formLogin', { static: true }) formLogin: NgForm;
 
   items: Array<any> = new Array<any>();
-
-  private itemsLogin: Array<ILogin>;
+  private itemsLogin: Array<IUsuario>;
   public login: Array<any> = new Array<any>();
-  ItemsAux: Array<any>;
-  newLogin = {};
-  eventos: Array<any> = [];
-
+  literalsI18n: PoPageLoginLiterals;
+  loading: boolean = false;
   hasNext = false;
   currentPage = 1;
   pageSize = 20;
   expandables = [''];
   disclaimers: Array<PoDisclaimer> = [];
-  map1 = new Map();
-
+  
   servLoginSubscription$: Subscription;
-  
   private i18nSubscription: Subscription;
-  userLogin: ILogin;
-  
-  menus: Array<PoMenuItem>;
+  userLogin: IUsuario;
+
+  user: string = '';
+  password: string = '';
+
   constructor(
-    private poI18nService: PoI18nService, 
+    private poI18nService: PoI18nService,
     private poDialog: PoDialogService,
-    private servLogin: LoginService,
+    private servLogin: UsuarioService,
     private router: Router
   ) {}
 
@@ -63,21 +48,12 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.i18nSubscription = this.poI18nService.getLiterals().subscribe(literals => {
       this.literalsI18n = literals;
-      this.menus = [
-        {label: 'Cadastro',icon:"po-icon-user-add",shortLabel:"Cadastro", link: '/cadastroUser'},
-        {label: 'Férias e Folgas',icon:"po-icon-calendar-ok",shortLabel:"Folgas", link: '/feriasFolga' },
-        {label: 'Agenda',icon:"po-icon-calendar",shortLabel:"Agenda", link: '/agendaUser'},
-        {label: 'Tipo evento', icon:"po-icon-document",shortLabel:"evento", link: '/tipoEvento'},
-        {label: 'Feriados',icon:"po-icon-calendar-settings",shortLabel:"Feriados", link: '/feriados'},
-        {label: 'Equipes',icon:"po-icon-users",shortLabel:"Equipes", link: '/equipes'}
-    ];
-      this.exceededAttempts = 0;
-      this.setupComponent();
-      this.search();      
-    });
-  }
 
-  search (loadMore = false): void {
+      this.search();
+    })
+  }  
+
+  search(loadMore = false): void {
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;      
     } else {
@@ -87,8 +63,8 @@ export class LoginComponent implements OnInit {
     
     this.hasNext = false;
     this.servLoginSubscription$ = this.servLogin
-      .query(this.disclaimers || [], this.expandables, this.currentPage, this.pageSize)
-      .subscribe((response: TotvsResponse<ILogin>) => {
+      .query(this.disclaimers || [], this.currentPage, this.pageSize)
+      .subscribe((response: TotvsResponse<IUsuario>) => {
 
         if (response && response.items) {
           this.itemsLogin = [...this.items, ...response.items];
@@ -100,70 +76,49 @@ export class LoginComponent implements OnInit {
         }
 
       });
-
   }
 
-  setupComponent() {
-    this.titleApp = "Login";
-  }
-  checkLogin(formData) {
+  onClick(formLogin) {
+    
+    if (formLogin.value.user != "") {
+    
+      if (this.itemsLogin) {
 
-    if (this.itemsLogin) {
-      this.servLoginSubscription$ = this.servLogin
-        .getById(formData.login).subscribe((item: ILogin) => {
-          this.userLogin = item;          
-          
-          if (this.userLogin.email.substring(this.userLogin.email.indexOf("@")) != "@totvs.com.br") {
-            this.poDialog.alert({
-              ok: () => (this.loading = false),
-              title: 'Email Invalido',
-              message: 'usuario ou senha incorretos.'
-            }); 
+        for (let i in this.itemsLogin) {
+          if (this.user === this.itemsLogin[i].email) {
+            var idUser = this.itemsLogin[i].IdUsuario;          
           }
+        }
+        
+        this.servLoginSubscription$ = this.servLogin
+          .getById(idUser.toString(), ['']).subscribe((item: IUsuario) => {
+            this.userLogin = item;          
+            if (this.userLogin.email.substring(this.userLogin.email.indexOf("@")) != "@totvs.com.br") {
+              this.poDialog.alert({
+                ok: () => (this.loading = false),
+                title: 'Email Invalido',
+                message: 'usuario ou senha incorretos.'
+              }); 
+            }
 
-          if (formData.login === this.userLogin.email && formData.password === this.userLogin.password) {
-            this.passwordErrors = [];
-            this.exceededAttempts = 0;
-            this.loginErrors = [];
+            if (this.user === this.userLogin.email && this.password === this.userLogin.senha) {
+              
+              localStorage.setItem('usuarioLogado',this.userLogin.usuario);
+              
+              setTimeout(() => {
+                this.router.navigate(['/feriasFolga']);
+              }, 500);
+            } else {
+              this.poDialog.alert({
+                ok: () => (this.loading = false),
+                title: 'Login Invalido',
+                message: 'usuario ou senha incorretos.'
+              });            
+            }
 
-            localStorage.setItem('user',this.userLogin.user);
-            console.log('user',this.userLogin.user)
-
-            setTimeout(() => {
-              this.router.navigate(['/feriasFolga']);
-            }, 500);
-          } else {
-            this.poDialog.alert({
-              ok: () => (this.loading = false),
-              title: 'Login Invalido',
-              message: 'usuario ou senha incorretos.'
-            });            
-          }
-
-        });
-    }          
-  }
-
-  passwordChange() {
-    if (this.passwordErrors.length) {
-      this.passwordErrors = [];
+          });
+      }
     }
   }
-
-  loginChange() {
-    if (this.loginErrors.length) {
-      this.loginErrors = [];
-    }
-  }
-
-  private generateAttempts() {
-    if (this.attempts >= 1) {
-      this.attempts--;
-      this.exceededAttempts = this.attempts;
-    }
-    if (this.attempts === 0) {
-      this.showPageBlocked = true;
-    }
-  }  
+  
 }
-

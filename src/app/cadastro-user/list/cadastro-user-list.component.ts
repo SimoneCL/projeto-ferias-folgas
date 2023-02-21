@@ -28,6 +28,7 @@ export class CadastroUserListComponent implements OnInit {
   columns: Array<PoTableColumn>;
   filterSettings: PoPageFilter;
   disclaimerGroup: PoDisclaimerGroup;
+  userLogado: string;
 
 
   hasNext = false;
@@ -47,6 +48,9 @@ export class CadastroUserListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.userLogado = localStorage.getItem('userLogado');
+
     forkJoin(
       [
         this.poI18nService.getLiterals(),
