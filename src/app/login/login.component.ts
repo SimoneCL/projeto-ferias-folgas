@@ -86,9 +86,6 @@ export class LoginComponent {
       this.servLoginSubscription$ = this.servLogin
         .getByUser(this.login.usuario).subscribe((response: ILogin) => {
           this.userLogin = response;
-          console.log(this.userLogin);
-          console.log('2', this.login.senha);
-          console.log('3', this.userLogin.senha, this.userLogin.usuario);
           if ( this.login.senha != undefined && this.login.senha === this.userLogin.senha ) {
             localStorage.setItem('usuarioLogado', this.userLogin.usuario);
 
