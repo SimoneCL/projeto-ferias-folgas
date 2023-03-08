@@ -5,8 +5,8 @@ import { PoDialogService, PoDisclaimer, PoI18nService, PoPageDefault } from '@po
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
-import { IUsuario } from '../shared/model/usuario.model';
-import { UsuarioService } from '../shared/services/usuario.service';
+import { ILogin, Login } from '../shared/model/login.model';
+import { LoginService } from '../shared/services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -17,8 +17,9 @@ export class LoginComponent {
   @ViewChild('formLogin', { static: true }) formLogin: NgForm;
 
   items: Array<any> = new Array<any>();
-  private itemsLogin: Array<IUsuario>;
-  public login: Array<any> = new Array<any>();
+  private itemsLogin: Array<ILogin>;
+  //public login: Array<any> = new Array<any>();
+  public login: ILogin = Login.empty();
   literalsI18n: PoPageLoginLiterals;
   loading: boolean = false;
   hasNext = false;
@@ -29,7 +30,7 @@ export class LoginComponent {
   
   servLoginSubscription$: Subscription;
   private i18nSubscription: Subscription;
-  userLogin: IUsuario;
+  userLogin: ILogin;
 
   user: string = '';
   password: string = '';
@@ -37,7 +38,7 @@ export class LoginComponent {
   constructor(
     private poI18nService: PoI18nService,
     private poDialog: PoDialogService,
-    private servLogin: UsuarioService,
+    private servLogin: LoginService,
     private router: Router
   ) {}
 
@@ -49,7 +50,7 @@ export class LoginComponent {
     this.i18nSubscription = this.poI18nService.getLiterals().subscribe(literals => {
       this.literalsI18n = literals;
 
-      this.search();
+      //this.search();
     })
   }  
 
@@ -63,8 +64,8 @@ export class LoginComponent {
     
     this.hasNext = false;
     this.servLoginSubscription$ = this.servLogin
-      .query(this.disclaimers || [], this.currentPage, this.pageSize)
-      .subscribe((response: TotvsResponse<IUsuario>) => {
+      .query(this.disclaimers, [], this.currentPage, this.pageSize)
+      .subscribe((response: TotvsResponse<ILogin>) => {
 
         if (response && response.items) {
           this.itemsLogin = [...this.items, ...response.items];
@@ -78,47 +79,30 @@ export class LoginComponent {
       });
   }
 
-  onClick(formLogin) {
+  onClick() {
     
-    if (formLogin.value.user != "") {
-    
-      if (this.itemsLogin) {
+    if (this.login.usuario != "") {
 
-        for (let i in this.itemsLogin) {
-          if (this.user === this.itemsLogin[i].email) {
-            var idUser = this.itemsLogin[i].IdUsuario;          
+      this.servLoginSubscription$ = this.servLogin
+        .getByUser(this.login.usuario).subscribe((response: ILogin) => {
+          this.userLogin = response;
+          console.log(this.userLogin);
+          console.log('2', this.login.senha);
+          console.log('3', this.userLogin.senha, this.userLogin.usuario);
+          if ( this.login.senha != undefined && this.login.senha === this.userLogin.senha ) {
+            localStorage.setItem('usuarioLogado', this.userLogin.usuario);
+
+            setTimeout(() => {
+              this.router.navigate(['/feriasFolga']);
+            }, 500);
+          } else {
+            this.poDialog.alert({
+              ok: () => (this.loading = false),
+              title: 'Login Invalido',
+              message: 'usuario ou senha incorretos.'
+            });
           }
-        }
-        
-        this.servLoginSubscription$ = this.servLogin
-          .getById(idUser.toString(), ['']).subscribe((item: IUsuario) => {
-            this.userLogin = item;          
-            if (this.userLogin.email.substring(this.userLogin.email.indexOf("@")) != "@totvs.com.br") {
-              this.poDialog.alert({
-                ok: () => (this.loading = false),
-                title: 'Email Invalido',
-                message: 'usuario ou senha incorretos.'
-              }); 
-            }
-
-            if (this.user === this.userLogin.email && this.password === this.userLogin.senha) {
-              
-              localStorage.setItem('usuarioLogado',this.userLogin.usuario);
-              
-              setTimeout(() => {
-                this.router.navigate(['/feriasFolga']);
-              }, 500);
-            } else {
-              this.poDialog.alert({
-                ok: () => (this.loading = false),
-                title: 'Login Invalido',
-                message: 'usuario ou senha incorretos.'
-              });            
-            }
-
-          });
-      }
+        });      
     }
-  }
-  
+  }  
 }
