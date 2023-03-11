@@ -7,23 +7,23 @@
         p-no-shadow="true">
       <po-input    
         class="po-md-6 po-lg-12"
-        name="user"
-        [(ngModel)]="user"
+        name="usuario"
+        [(ngModel)]="login.usuario"
         p-icon="po-icon-user"
         p-placeholder="email@totvs.com.br"      
         p-clean> 
       </po-input>
       <po-password
         class="po-md-6 po-lg-12"
-        name="password"
-        [(ngModel)]="password"
+        name="senha"
+        [(ngModel)]="login.senha"
         p-icon="po-icon-lock"> 
       </po-password>
       <po-button
         class="btEnter po-md-6 po-lg-12 po-mt-1"        
         p-label="Entrar"
         p-kind="primary"
-        (p-click)="onClick(formLogin)"> 
+        (p-click)="onClick()"> 
       </po-button>
     </po-widget>
     </div>
