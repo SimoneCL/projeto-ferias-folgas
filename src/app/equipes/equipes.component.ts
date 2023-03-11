@@ -25,7 +25,7 @@ export class EquipesComponent implements OnInit{
   isSubscribed: boolean = false;
   literals: any = {};
   codEquipe: number;
-  descEquipe: string;
+  descEquipe: string; 
   userLogado: string;
   
   filterSettings: PoPageFilter;
@@ -116,7 +116,8 @@ export class EquipesComponent implements OnInit{
 
   private edit(item: IEquipes): void {
     this.isEdit = true;
-    this.createItems = item;    
+    this.codEquipe = item.codEquipe;
+    this.descEquipe = item.descEquipe;
     this.poModal.open();
   }
 
@@ -167,7 +168,8 @@ export class EquipesComponent implements OnInit{
 
   public newEquipes() {
     this.isEdit = false;
-    this.createItems = new Equipes();
+    this.codEquipe = 0;
+    this.descEquipe = '';
     this.poModal.open();
   }
 
@@ -179,8 +181,12 @@ export class EquipesComponent implements OnInit{
     this.event = event;    
   }
 
-  public saveEquipes() {    
+  public saveEquipes() {   
+    this.createItems = new Equipes();
+    this.createItems.codEquipe = this.codEquipe;
+    this.createItems.descEquipe = this.descEquipe;
     if (this.isEdit) {
+    
       this.servEquipesSubscription$ = this.servEquipes
       .update(this.createItems)
       .subscribe(() => {

@@ -1,5 +1,5 @@
 export interface IUsuario {
-    IdUsuario: number;
+    idUsuario: number;
     usuario: string;
     email: string;
     tipoPerfil: number;
@@ -7,7 +7,7 @@ export interface IUsuario {
 }
 
 export class Usuario implements IUsuario {
-    IdUsuario: number;
+    idUsuario: number;
     usuario: string;
     email: string;
     tipoPerfil: number;
@@ -17,6 +17,6 @@ export class Usuario implements IUsuario {
     }
 
     static getInternalId(model: IUsuario): string {
-        return `${model.IdUsuario}`;
+        return `${model.idUsuario}`;
     }
 }

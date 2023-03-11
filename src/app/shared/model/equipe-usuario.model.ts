@@ -1,11 +1,11 @@
 export interface IEquipeUsuario {
-    IdUsuario: number;
+    idUsuario: number;
     usuario: string;
     codEquipe: string;
 }
 
 export class EquipeUsuario implements IEquipeUsuario {
-    IdUsuario: number;
+    idUsuario: number;
     usuario: string;
     codEquipe: string;
 
