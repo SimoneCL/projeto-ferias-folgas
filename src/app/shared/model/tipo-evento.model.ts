@@ -1,10 +1,10 @@
 export interface ITipoEvento {
-    code: number;
+    codTipo: number;
     descTipoEvento: string;
 }
 
 export class TipoEvento implements ITipoEvento {
-    code: number;
+    codTipo: number;
     descTipoEvento: string;
 
     constructor(values: Object = {}) {
@@ -12,7 +12,7 @@ export class TipoEvento implements ITipoEvento {
     }
 
     static getInternalId(model: ITipoEvento): string {
-        return `${model.code}`; //deixei ponto e virgula, pois no mock não funciona com pipe depois alterar
+        return `${model.codTipo}`; //deixei ponto e virgula, pois no mock não funciona com pipe depois alterar
     }
   
     static dayOffType(literals: {}): Array<any> {

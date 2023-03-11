@@ -93,7 +93,7 @@ export class TipoEventoComponent implements OnInit {
     ];
 
     this.columns = [
-      { property: 'code', label: this.literals.code, type: 'number', width: '5%' },
+      { property: 'codTipo', label: this.literals.code, type: 'number', width: '5%' },
       { property: 'descTipoEvento', label: this.literals.description, type: 'string', width: '100%' },
     ];
 
@@ -169,7 +169,7 @@ export class TipoEventoComponent implements OnInit {
     const id = TipoEvento.getInternalId(item);
     this.poDialogService.confirm({
       title: this.literals.remove,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.code]),
+      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.codTipo]),
       confirm: () => {
         this.tipoEventoSubscription$ = this.serviceTipoEvento
           .delete(id)
