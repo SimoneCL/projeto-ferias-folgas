@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PoDialogService, PoDisclaimer, PoI18nService, PoPageDefault } from '@po-ui/ng-components';
+import { PoDialogService, PoDisclaimer, PoI18nService } from '@po-ui/ng-components';
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { TotvsResponse } from 'dts-backoffice-util';
-import { forkJoin, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ILogin, Login } from '../shared/model/login.model';
+import { IUsuario } from '../shared/model/usuario.model';
 import { LoginService } from '../shared/services/login.service';
 
 @Component({
@@ -79,6 +80,7 @@ export class LoginComponent {
       });
   }
 
+  
   onClick() {
     
       if (this.itemsLogin) {
@@ -90,7 +92,7 @@ export class LoginComponent {
         }
         
         this.servLoginSubscription$ = this.servLogin
-          .getById(idUser.toString(), ['']).subscribe((item: IUsuario) => {
+          .getById(idUser.toString()).subscribe((item: IUsuario) => {
             this.userLogin = item;          
             if (this.userLogin.email.substring(this.userLogin.email.indexOf("@")) != "@totvs.com.br") {
               this.poDialog.alert({
