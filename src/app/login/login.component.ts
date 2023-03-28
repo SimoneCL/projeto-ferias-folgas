@@ -28,7 +28,7 @@ export class LoginComponent {
   pageSize = 20;
   expandables = [''];
   disclaimers: Array<PoDisclaimer> = [];
-  
+
   servLoginSubscription$: Subscription;
   private i18nSubscription: Subscription;
   userLogin: ILogin;
@@ -41,7 +41,7 @@ export class LoginComponent {
     private poDialog: PoDialogService,
     private servLogin: LoginService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnDestroy() {
     this.i18nSubscription.unsubscribe();
@@ -53,16 +53,16 @@ export class LoginComponent {
 
       //this.search();
     })
-  }  
+  }
 
   search(loadMore = false): void {
     if (loadMore === true) {
-      this.currentPage = this.currentPage + 1;      
+      this.currentPage = this.currentPage + 1;
     } else {
       this.currentPage = 1;
       this.items = [];
     }
-    
+
     this.hasNext = false;
     this.servLoginSubscription$ = this.servLogin
       .query(this.disclaimers, [], this.currentPage, this.pageSize)
@@ -72,7 +72,7 @@ export class LoginComponent {
           this.itemsLogin = [...this.items, ...response.items];
           this.hasNext = response.hasNext;
         }
-        
+
         if (this.itemsLogin.length === 0) {
           this.currentPage = 1;
         }
@@ -80,46 +80,44 @@ export class LoginComponent {
       });
   }
 
-  
+
   onClick() {
-    
-      if (this.itemsLogin) {
 
-        for (let i in this.itemsLogin) {
-          if (this.user === this.itemsLogin[i].email) {
-            var idUser = this.itemsLogin[i].idUsuario;          
-          }
+    if (this.itemsLogin) {
+
+      for (let i in this.itemsLogin) {
+        if (this.user === this.itemsLogin[i].email) {
+          var idUser = this.itemsLogin[i].idUsuario;
         }
-        
-        this.servLoginSubscription$ = this.servLogin
-          .getById(idUser.toString()).subscribe((item: IUsuario) => {
-            this.userLogin = item;          
-            if (this.userLogin.email.substring(this.userLogin.email.indexOf("@")) != "@totvs.com.br") {
-              this.poDialog.alert({
-                ok: () => (this.loading = false),
-                title: 'Email Invalido',
-                message: 'usuario ou senha incorretos.'
-              }); 
-            }
-
-            if (this.user === this.userLogin.email && this.password === this.userLogin.senha) {
-              
-              localStorage.setItem('usuarioLogado',this.userLogin.usuario);
-              
-              setTimeout(() => {
-                this.router.navigate(['/feriasFolga']);
-              }, 500);
-            } else {
-              this.poDialog.alert({
-                ok: () => (this.loading = false),
-                title: 'Login Invalido',
-                message: 'usuario ou senha incorretos.'
-              });            
-            }
-
-          });
       }
+
+      this.servLoginSubscription$ = this.servLogin
+        .getById(idUser.toString()).subscribe((item: IUsuario) => {
+          this.userLogin = item;
+          if (this.userLogin.email.substring(this.userLogin.email.indexOf("@")) != "@totvs.com.br") {
+            this.poDialog.alert({
+              ok: () => (this.loading = false),
+              title: 'Email Invalido',
+              message: 'usuario ou senha incorretos.'
+            });
+          }
+
+          if (this.user === this.userLogin.email && this.password === this.userLogin.senha) {
+
+            localStorage.setItem('usuarioLogado', this.userLogin.usuario);
+
+            setTimeout(() => {
+              this.router.navigate(['/feriasFolga']);
+            }, 500);
+          } else {
+            this.poDialog.alert({
+              ok: () => (this.loading = false),
+              title: 'Login Invalido',
+              message: 'usuario ou senha incorretos.'
+            });
+          }
+
+        });
     }
   }
-  
 }
