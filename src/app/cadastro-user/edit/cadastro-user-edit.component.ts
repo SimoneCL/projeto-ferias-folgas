@@ -61,8 +61,7 @@ export class CadastroUserEditComponent implements OnInit {
   noShadow: true;
   userLogado: string;
 
- // optionsEquipe: Array<PoMultiselectOption> = [];
-  optionsEquipe: Array<PoSelectOption> = [];
+  optionsEquipe: Array<PoMultiselectOption> = [];
   equipeSelected: Array<string> = [];
 
   disclaimersEquipe: Array<PoDisclaimer> = [];
@@ -337,13 +336,13 @@ export class CadastroUserEditComponent implements OnInit {
 
   abrirEquipe() {
     console.log('abriEquipe', this.optionsEquipe)
-    //this.searchEquipes();
+    this.searchEquipes();
     this.modalEquipe.open();
 
   }
 
   searchEquipes(loadMore = false): void {
-    //this.optionsEquipe = [];
+    this.optionsEquipe = [];
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
     } else {

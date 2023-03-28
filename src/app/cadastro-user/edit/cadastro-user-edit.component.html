@@ -108,20 +108,13 @@
   [p-title]="literals?.novaEquipe"
   [p-primary-action]="confirm" 
   [p-secondary-action]="close"> 
-  <!-- <po-multiselect 
+  <po-multiselect 
     name="equipes" 
     [(ngModel)]="equipeSelected"
     [p-label]="literals?.equipe" 
     [p-options]="this.optionsEquipe"> 
-  </po-multiselect> -->
-  <po-select
-    class="po-lg-6" 
-    name="select"
-    [p-label]="literals?.equipe"
-    [(ngModel)]="equipeSelected"
-    [p-options]="optionsEquipe">
-  </po-select>
-</po-modal>
+  </po-multiselect>
+  </po-modal>
 
 <po-modal #modalSenha 
   [p-title]="literals?.editarSenha"
