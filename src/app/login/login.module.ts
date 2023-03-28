@@ -7,7 +7,7 @@ import { LoadingInterceptorModule } from '../loading-interceptor.module';
 import { PoI18nPipe, PoModule } from '@po-ui/ng-components';
 import { PoTemplatesModule } from '@po-ui/ng-templates';
 import { LoginComponent } from './login.component';
-import { UsuarioService } from '../shared/services/usuario.service';
+import { LoginService } from '../shared/services/login.service';
 
 
 @NgModule({
@@ -24,7 +24,7 @@ import { UsuarioService } from '../shared/services/usuario.service';
   ],
   providers: [
     PoI18nPipe,
-    UsuarioService
+    LoginService
   ]
 })
 export class LoginModule { }

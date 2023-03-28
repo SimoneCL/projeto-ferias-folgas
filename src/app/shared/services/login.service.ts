@@ -35,6 +35,10 @@ export class LoginService {
         return this.http.get<ILogin>(`${this.apiBaseUrl}/${id}`, this.headers);
     }
 
+    getByUser(user: string): Observable<ILogin> {
+        return this.http.get<ILogin>(`${this.apiBaseUrl}/${user}`, this.headers);
+    }
+
     getMetadata(type = '', id = ''): Observable<any> {
         let url = `${this.apiBaseUrl}/metadata`;
         if (id) { url = `${url}/${id}`; }
