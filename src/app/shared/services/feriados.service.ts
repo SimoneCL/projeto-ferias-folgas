@@ -63,7 +63,7 @@ export class FeriadosService {
         return this.http.put<IFeriados>(`${this.apiBaseUrl}/${Feriados.getInternalId(model)}`, model, this.headers);
     }
 
-    delete(id: string): Observable<any> {
+    delete(id: number): Observable<any> {
         return this.http.delete(`${this.apiBaseUrl}/${id}`);
     }
 

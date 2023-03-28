@@ -96,7 +96,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-      this.getUsuar('simone');
+      this.getUsuar(41135);
 
       this.searchTipoEvento();
 
@@ -107,10 +107,10 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     });
   }
 
-  getUsuar(id: string): void { //equipes do usuário logado
+  getUsuar(id: number): void { //equipes do usuário logado
     this.hasNext = false;
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
-      .query([{ property: 'usuario', value: id }])
+      .query([{ property: 'idUsuario', value: id }])
       .subscribe((response: TotvsResponse<IEquipeUsuario>) => {
         if (response && response.items) {
           this.equipeUsuario = [...this.equipeUsuario, ...response.items];
@@ -225,7 +225,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
         this.tipoEventos = response.items;
 
         for (let i in this.tipoEventos) {
-          this.dayOffType.push({ value: this.tipoEventos[i].descTipoEvento, color: `color-0${this.tipoEventos[i].code}`, label: this.tipoEventos[i].descTipoEvento.substring(0, 1), tooltip: this.tipoEventos[i].descTipoEvento });
+          this.dayOffType.push({ value: this.tipoEventos[i].descTipoEvento, color: `color-0${this.tipoEventos[i].codTipo}`, label: this.tipoEventos[i].descTipoEvento.substring(0, 1), tooltip: this.tipoEventos[i].descTipoEvento });
         }
       });
   }
@@ -250,7 +250,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
     this.disclaimers = [];
     this.equipeUsuario.forEach((equipe, index) => {
-      this.disclaimers.push({ property: 'user', value: equipe.usuario });
+      this.disclaimers.push({ property: 'user', value: equipe.idUsuario });
 
     });
 
@@ -279,14 +279,14 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     this.itemsAux = [];
     if (eventsUsers.length > 0) {
       for (var i = 0; i < eventsUsers.length; i++) {
-        let labelType = this.tipoEventos.find(element => element.code === eventsUsers[i].type).descTipoEvento;
+        let labelType = this.tipoEventos.find(element => element.codTipo === eventsUsers[i].codTipo).descTipoEvento;
 
         this.map1 = new Map();
-        this.map1.set('user', eventsUsers[i].user);
+        this.map1.set('idUsuario', eventsUsers[i].idUsuario);
 
-        if (eventsUsers[i].type === 1) { //férias
-          this.primeiroDia = new Date(eventsUsers[i].eventIniDate);
-          const end = new Date(eventsUsers[i].eventEndDate);
+        if (eventsUsers[i].codTipo === 1) { //férias
+          this.primeiroDia = new Date(eventsUsers[i].dataEventoIni);
+          const end = new Date(eventsUsers[i].dataEventoFim);
           this.ultimoDia = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
           this.quantityOfDaysSchedule = Math.floor(
             (Date.UTC(this.ultimoDia.getFullYear(), this.ultimoDia.getMonth(), this.ultimoDia.getDate()) -
@@ -306,7 +306,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
             this.newEvent[this.itemsAux[y][0]] = this.itemsAux[y][1];
           }
         } else {
-          this.map1.set(eventsUsers[i].eventIniDate, labelType);
+          this.map1.set(eventsUsers[i].dataEventoIni, labelType);
           this.itemsAux = [...this.map1];
           if (this.newEvent[this.itemsAux[0][0]] !== this.itemsAux[0][1]) {
             this.newEvent = {};

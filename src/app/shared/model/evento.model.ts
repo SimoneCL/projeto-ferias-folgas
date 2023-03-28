@@ -1,24 +1,24 @@
 export interface IEvento {
     id: number;
-    user: string;
-    eventIniDate: string;
-    eventEndDate: string;
-    type: number | string;
+    idUsuario: number;
+    dataEventoIni: string;
+    dataEventoFim: string;
+    codTipo: number | string;
 }
 
 export class Evento implements IEvento {
     id: number;
-    user: string;
-    eventIniDate: string;
-    eventEndDate: string;
-    type: number | string;
+    idUsuario: number;
+    dataEventoIni: string;
+    dataEventoFim: string;
+    codTipo: number | string;
 
     constructor(values: Object = {}) {
         Object.assign(this, values);
     }
 
     static getInternalId(model: IEvento): string {
-        return `${model.id};${model.user}`; //deixei ponto e virgula, pois no mock não funciona com pipe depois alterar
+        return `${model.id};${model.idUsuario}`; //deixei ponto e virgula, pois no mock não funciona com pipe depois alterar
     }
     static FormataStringData(data) {
         var dia = data.split("/")[0];

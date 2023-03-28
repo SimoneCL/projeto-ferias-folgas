@@ -45,7 +45,7 @@ export class FeriadosComponent implements OnInit {
   tableActions: Array<PoTableAction>;
 
   typeOptions: Array<PoSelectOption> = [];
-  createItems: IFeriados = new Feriados();
+  feriados: IFeriados = new Feriados();
 
   public itemsFeriados: Array<IFeriados> = new Array<IFeriados>();
 
@@ -94,7 +94,7 @@ export class FeriadosComponent implements OnInit {
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
       this.setupComponents();
-      this.search();                
+      this.search();
     })
   }
   setupComponents() {
@@ -137,7 +137,7 @@ export class FeriadosComponent implements OnInit {
     const data = new Date(Date.now());
     for (let y = 0; y <= 3; y++) {
       let yearCalc = this.getYear(data, y);
-      this.anoOptions = [...this.anoOptions,{label: `${yearCalc}`, value: yearCalc}]
+      this.anoOptions = [...this.anoOptions, { label: `${yearCalc}`, value: yearCalc }]
     }
     this.typeOptions = [
       { label: 'Municipal', value: 'Municipal' },
@@ -147,7 +147,7 @@ export class FeriadosComponent implements OnInit {
 
     this.columnsFeriados = [
       { property: 'data', label: 'Data', type: 'string' },
-      { property: 'tipoFeriado', label: 'Tipo Feriado', type: 'string' },
+      { property: 'tipoFeriaDo', label: 'Tipo Feriado', type: 'string' },
       { property: 'descricao', label: 'Descrição', type: 'string' },
       { property: 'pontoFacultativo', label: 'Facultativo', type: 'boolean' }
     ];
@@ -167,17 +167,13 @@ export class FeriadosComponent implements OnInit {
 
     return year;
   }
-  
+
   searchByDate(quickSearchValue: string) {
     this.disclaimers = [...[{ property: 'descricao', value: quickSearchValue }]];
     this.disclaimerGroup.disclaimers = [...this.disclaimers];
   }
 
-  private edit(item: IFeriados): void {
-    this.isEdit = true;
-    this.createItems = item;
-    this.modalFeriado.open();
-  }
+ 
 
   public onChangeDisclaimer(disclaimers): void {
     this.disclaimers = disclaimers;
@@ -196,25 +192,30 @@ export class FeriadosComponent implements OnInit {
       .query(this.disclaimers || [], this.expandables, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<IFeriados>) => {
         if (response && response.items) {
+
           this.itemsFeriados = [...response.items];
+          for (const i in response.items) {
+            this.itemsFeriados[i].data = Feriados.formatoDataList(response.items[i].data);
+
+          }
           this.hasNext = response.hasNext;
         }
       })
   }
 
   public readonly actions: Array<PoPageAction> = [
-    { label: 'Novo', action: this.feriados.bind(this) },
-    { label: 'Gerar feriados nacionais', action: this.feriadosNacionais.bind(this) }
+    { label: 'Novo', action: this.newferiados.bind(this) },
+    { label: 'Gerar feriados nacionais', action: this.openModalferiadosNacionais.bind(this) }
   ];
 
   delete(item: IFeriados): void {
-    const id = Feriados.getInternalId(item);
+
     this.poDialogService.confirm({
       title: this.literals.delete,
       message: this.PoI18nPipe.transform(this.literals.modalDeleteMessage, [item.data]),
       confirm: () => {
         this.servFeriadosSubscription$ = this.servFeriados
-          .delete(id)
+          .delete(item.idFeriado)
           .subscribe(response => {
             this.poNotification.success(this.literals.excludedMessage);
             this.search();
@@ -231,9 +232,16 @@ export class FeriadosComponent implements OnInit {
     console.log('closeModalNacionais')
     this.modalFeriadosNacionais.close();
   }
-  public feriados() {
+  public newferiados() {
     this.isEdit = false;
-    this.createItems = new Feriados();
+    this.feriados = new Feriados();
+    this.modalFeriado.open();
+  }
+  private edit(item: IFeriados): void {
+    this.isEdit = true;
+    this.feriados = new Feriados();
+    this.feriados = item;
+    this.feriados.dataFormat = Feriados.formataData(item.data);
     this.modalFeriado.open();
   }
 
@@ -251,17 +259,17 @@ export class FeriadosComponent implements OnInit {
     this.disclaimerGroup.disclaimers = [...this.disclaimers];
   }
 
-  public feriadosNacionais() {
-    this.openModalferiadosNacionais();
-  }
+  // public feriadosNacionais() {
+  //   this.openModalferiadosNacionais();
+  // }
   onChangeYear() {
-   
+
     this.servFeriadosSubscription$ = this.servFeriados.getHoliday('2023')
-    .subscribe(response => {
-      this.itemFeriadosNacionais = [...response];
-      this.searchUsuarios();
-    });
-    console.log('onChangeYear - anoFeriado',this.anoFeriado)
+      .subscribe(response => {
+        this.itemFeriadosNacionais = [...response];
+        this.searchUsuarios();
+      });
+    console.log('onChangeYear - anoFeriado', this.anoFeriado)
   }
   searchUsuarios(loadMore = false) {
     console.log('searchUsuarios')
@@ -278,9 +286,10 @@ export class FeriadosComponent implements OnInit {
 
           this.itemFeriadosNacionais.forEach(feriados => {
             evento = [{
-              "user": user.usuario,
-              "eventIniDate": feriados.date,
-              "eventEndDate": feriados.date,
+              // "user": user.usuario,
+              "user": 'user.usuario',
+              "dataEventoIni": feriados.date,
+              "dataEventoFim": feriados.date,
               "type": 6,
               "id": Math.floor(Math.random() * 65536)
             }];
@@ -296,21 +305,22 @@ export class FeriadosComponent implements OnInit {
 
 
   public saveFeriadosNacionais() {
-    console.log('saveFeriadosNacionais - this.eventUser',this.eventUser)
-    this.eventUser.forEach((evento) =>{
+    console.log('saveFeriadosNacionais - this.eventUser', this.eventUser)
+    this.eventUser.forEach((evento) => {
       console.log('aaevento', evento)
 
       this.eventoUserSubscription$ = this.serviceEvento.create(evento).subscribe(() => {
       });
     });
     this.poNotification.success(this.literals.createdMessage);
-    this.closeModalNacionais();   
+    this.closeModalNacionais();
 
   }
   public saveFeriados() {
+    this.feriados.data = this.feriados.dataFormat;
     if (this.isEdit) {
       this.servFeriadosSubscription$ = this.servFeriados
-        .update(this.createItems)
+        .update(this.feriados)
         .subscribe(() => {
           this.poNotification.success(this.literals.updatedMessage);
           this.modalFeriado.close();
@@ -318,7 +328,7 @@ export class FeriadosComponent implements OnInit {
         });
     } else {
       this.servFeriadosSubscription$ = this.servFeriados
-        .create(this.createItems)
+        .create(this.feriados)
         .subscribe(() => {
           this.poNotification.success(this.literals.createdMessage);
           this.modalFeriado.close();
@@ -329,14 +339,14 @@ export class FeriadosComponent implements OnInit {
   }
   public saveFeriado() {
     let evento = {
-      "user": 'simone',
-      "eventIniDate": this.createItems.data,
-      "eventEndDate": this.createItems.data,
+      "idUsuario": 41135,
+      "dataEventoIni": this.feriados.data,
+      "dataEventoFim": this.feriados.data,
       "type": 6,
       "id": Math.floor(Math.random() * 65536)
     };
-    this.eventoUserSubscription$ = this.serviceEvento.create(evento).subscribe(() => {
-    });
+    // this.eventoUserSubscription$ = this.serviceEvento.create(evento).subscribe(() => {
+    // });
   }
 
   ngOnDestroy(): void {
