@@ -98,15 +98,16 @@ export class AgendamentoUserEditComponent implements OnInit {
     this.route.navigate(['/agendaUser']);;
   }
   save() {
-    this.eventUser.user = 'simone';
-    this.eventUser.type = this.formVacationSuggestion.get('eventType').value;
-    if (this.eventUser.type === 1) {
-      this.eventUser.eventIniDate = this.formVacationSuggestion.get('datepickerRange').value.start;
-      this.eventUser.eventEndDate = this.formVacationSuggestion.get('datepickerRange').value.end;
+    console.log('save')
+    this.eventUser.idUsuario = 41135;
+    this.eventUser.codTipo = this.formVacationSuggestion.get('eventType').value;
+    if (this.eventUser.codTipo === 1) {
+      this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;
+      this.eventUser.dataEventoFim = this.formVacationSuggestion.get('datepickerRange').value.end;
 
     } else {
-      this.eventUser.eventIniDate = this.formVacationSuggestion.get('datepickerRange').value.start;
-      this.eventUser.eventEndDate = this.eventUser.eventIniDate;
+      this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;
+      this.eventUser.dataEventoFim = this.eventUser.dataEventoIni;
     }
 
     if (this.eventPage !== 'edit') {
@@ -115,6 +116,7 @@ export class AgendamentoUserEditComponent implements OnInit {
   }
   create() {
     this.save();
+    console.log('create - this.eventUser', this.eventUser)
     this.eventoUserSubscription$ = this.serviceEvento.create(this.eventUser).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
@@ -122,6 +124,7 @@ export class AgendamentoUserEditComponent implements OnInit {
   }
   update() {
     this.save();
+    console.log('update - this.eventUser', this.eventUser)
     this.eventoUserSubscription$ = this.serviceEvento.update(this.eventUser).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
@@ -209,10 +212,10 @@ export class AgendamentoUserEditComponent implements OnInit {
 
         this.eventUser = response;
         this.datepickerRangeAux = {
-          start: this.eventUser.eventIniDate,
-          end: this.eventUser.eventEndDate
+          start: this.eventUser.dataEventoIni,
+          end: this.eventUser.dataEventoFim
         }
-        this.formVacationSuggestion.get("eventType").patchValue(this.eventUser.type);
+        this.formVacationSuggestion.get("eventType").patchValue(this.eventUser.codTipo);
         this.formVacationSuggestion.get("datepickerRange").patchValue(this.datepickerRangeAux);
       });
   }
@@ -224,7 +227,7 @@ export class AgendamentoUserEditComponent implements OnInit {
         this.items = [...this.items, ...response.items];
 
         for (let i in this.items) {
-          this.eventOptions.push({ label: this.items[i].descTipoEvento, value: this.items[i].code });
+          this.eventOptions.push({ label: this.items[i].descTipoEvento, value: this.items[i].codTipo });
         }
       });
   }
@@ -233,12 +236,12 @@ export class AgendamentoUserEditComponent implements OnInit {
     const start = new Date(this.formVacationSuggestion.get('datepickerRange').value.start);
     const end = new Date(this.formVacationSuggestion.get('datepickerRange').value.end);
 
-    if (this.eventUser.type === 1) {
-      this.eventUser.eventIniDate = start.getFullYear() + "-" + ((start.getMonth() + 1)) + "-" + ((start.getDate() + 1));
-      this.eventUser.eventEndDate = end.getFullYear() + "-" + ((end.getMonth() + 1)) + "-" + ((end.getDate() + 1));
+    if (this.eventUser.codTipo === 1) {
+      this.eventUser.dataEventoIni = start.getFullYear() + "-" + ((start.getMonth() + 1)) + "-" + ((start.getDate() + 1));
+      this.eventUser.dataEventoFim = end.getFullYear() + "-" + ((end.getMonth() + 1)) + "-" + ((end.getDate() + 1));
     } else {
-      this.eventUser.eventIniDate = start.getFullYear() + "-" + ((start.getMonth() + 1)) + "-" + ((start.getDate() + 1));
-      this.eventUser.eventEndDate = this.eventUser.eventIniDate;
+      this.eventUser.dataEventoIni = start.getFullYear() + "-" + ((start.getMonth() + 1)) + "-" + ((start.getDate() + 1));
+      this.eventUser.dataEventoFim = this.eventUser.dataEventoIni;
     }
 
 

@@ -25,7 +25,7 @@
         <po-datepicker 
           class="po-md-3" 
           name="data" 
-          [(ngModel)]="createItems.data"
+          [(ngModel)]="feriados.dataFormat"             
           [p-disabled]="isEdit"
           p-required="true"
           p-clean 
@@ -34,14 +34,14 @@
         <po-select 
           class="po-md-3" 
           name="tipoFeriado"       
-          [(ngModel)]="createItems.tipoFeriado"
+          [(ngModel)]="feriados.tipoFeriado"
           p-label="Tipo" 
           [p-options]="typeOptions">
         </po-select>
         <po-input 
           class="po-md-6" 
           name="descricao"      
-          [(ngModel)]="createItems.descricao" 
+          [(ngModel)]="feriados.descricao" 
           p-label="Descrição" 
           p-required> 
         </po-input>    
@@ -52,7 +52,7 @@
           class="po-md-6"
           name="pontoFacultativo"                  
           p-label="Ponto Facultativo"
-          [(ngModel)]="createItems.pontoFacultativo"
+          [(ngModel)]="feriados.pontoFacultativo"
           (p-change)="changeEvent('p-change')"
         >
         </po-checkbox>        

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoCheckboxGroupOption, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoRadioGroupOption, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoCheckboxGroupOption, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoRadioGroupOption, PoSelectOption, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { EquipeUsuario, IEquipeUsuario } from '../../shared/model/equipe-usuario.model';
@@ -61,7 +61,8 @@ export class CadastroUserEditComponent implements OnInit {
   noShadow: true;
   userLogado: string;
 
-  optionsEquipe: Array<PoMultiselectOption> = [];
+ // optionsEquipe: Array<PoMultiselectOption> = [];
+  optionsEquipe: Array<PoSelectOption> = [];
   equipeSelected: Array<string> = [];
 
   disclaimersEquipe: Array<PoDisclaimer> = [];
@@ -92,6 +93,7 @@ export class CadastroUserEditComponent implements OnInit {
 
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
       const id = this.activatedRoute.snapshot.paramMap.get('id');
+      console.log('id', id)
       if (id) {
         this.get(id);
 
@@ -101,6 +103,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   setupComponents() {
+    this.searchEquipes();
     this.breadcrumb = this.getBreadcrumb();
     this.perfilOptions = [
       { label: 'Team Lead', value: '1' },
@@ -162,7 +165,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
   save() {
     if (this.eventPage !== 'edit') {
-      this.usuario.IdUsuario = Math.floor(Math.random() * 65536);
+      this.usuario.idUsuario = Math.floor(Math.random() * 65536);
     }
     if (this.confirmNewPassword === this.newPassword) {
       this.usuario.senha = this.newPassword;
@@ -199,10 +202,11 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   public relacEquipe() {
+    console.log('equipeSelected', this.equipeSelected)
      for (let i in this.equipeSelected) {
+     
       this.equipeUsuar.codEquipe = this.equipeSelected[i];
-      this.equipeUsuar.IdUsuario = this.usuario.IdUsuario;
-      this.equipeUsuar.usuario = this.usuario.usuario;
+      this.equipeUsuar.idUsuario = this.usuario.idUsuario;
       this.saveEquipeUsuario();
     }
     this.searchEquipeUsuario();
@@ -224,7 +228,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   public remove(item: IEquipeUsuario) {
-    const idEquipeUsuario = `${this.usuario.usuario};${item.codEquipe}`;
+    const idEquipeUsuario = `${this.usuario.idUsuario};${item.codEquipe}`;
 
 
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
@@ -238,7 +242,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   saveEquipeUsuario() {
-
+    console.log('this.equipeUsuar', this.equipeUsuar)
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario.create(this.equipeUsuar).subscribe(() => {
     });
   }
@@ -332,21 +336,21 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   abrirEquipe() {
-    this.optionsEquipe = [];
-    this.searchEquipes();
+    console.log('abriEquipe', this.optionsEquipe)
+    //this.searchEquipes();
     this.modalEquipe.open();
 
   }
 
   searchEquipes(loadMore = false): void {
-
+    //this.optionsEquipe = [];
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
     } else {
       this.currentPage = 1;
     }
 
-    
+    console.log('searchEquipes')
     this.hasNext = false;
     this.servEquipesSubscription$ = this.servEquipes
       .query([], [], 1, 999)
@@ -354,19 +358,25 @@ export class CadastroUserEditComponent implements OnInit {
         if (response && response.items) {
           this.equipesList = [...response.items];
           this.hasNext = response.hasNext;
+          console.log('equipesList',this.equipesList)
           for (let i  in this.equipesList) {
             this.optionsEquipe.push({ label: this.equipesList[i].descEquipe, value: this.equipesList[i].codEquipe });
+            console.log('this.optionsEquipe', this.optionsEquipe)
           }
         }
       });
+      console.log(' this.optionsEquipe',  this.optionsEquipe)
   }
 
   
   get(id: string): void {
+    console.log('get id', id)
     this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])
       .subscribe((response: IUsuario) => {
+       
         this.usuario = response;
+        console.log('this.usuario ', this.usuario )
         this.searchEquipeUsuario();
 
       });
@@ -376,7 +386,9 @@ export class CadastroUserEditComponent implements OnInit {
 
     this.disclaimersEquipe = [];
     for (let i  in this.equipeUsuario) {
+     
       this.disclaimersEquipe.push({ property: 'codEquipe', value: this.equipeUsuario[i].codEquipe });
+      console.log('getEquipe', this.disclaimersEquipe);
     }
     
     this.hasNext = false;
@@ -384,6 +396,7 @@ export class CadastroUserEditComponent implements OnInit {
       .query(this.disclaimersEquipe, this.expandables, 1, 9999)
       .subscribe((response: TotvsResponse<IEquipes>) => {
         if (response && response.items) {
+          console.log('response.items', response.items)
           this.equipeItems = [...this.equipeItems, ...response.items];
           this.hasNext = response.hasNext;
         }
@@ -396,10 +409,11 @@ export class CadastroUserEditComponent implements OnInit {
 
     this.hasNext = false;
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
-      .query([{ property: 'IdUsuario', value: this.usuario.IdUsuario }])
+      .query([{ property: 'idUsuario', value: this.usuario.idUsuario }])
       .subscribe((response: TotvsResponse<IEquipeUsuario>) => {
         if (response && response.items) {
           this.equipeUsuario = [...response.items];
+          console.log('this.equipeUsuario', this.equipeUsuario)
           this.hasNext = response.hasNext;
         }
         if (this.equipeUsuario.length > 0) {

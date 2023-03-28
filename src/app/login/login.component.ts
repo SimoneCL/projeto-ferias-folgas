@@ -86,7 +86,7 @@ export class LoginComponent {
 
         for (let i in this.itemsLogin) {
           if (this.user === this.itemsLogin[i].email) {
-            var idUser = this.itemsLogin[i].IdUsuario;          
+            var idUser = this.itemsLogin[i].idUsuario;          
           }
         }
         

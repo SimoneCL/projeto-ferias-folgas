@@ -1,12 +1,10 @@
 export interface IEquipeUsuario {
     idUsuario: number;
-    usuario: string;
     codEquipe: string;
 }
 
 export class EquipeUsuario implements IEquipeUsuario {
     idUsuario: number;
-    usuario: string;
     codEquipe: string;
 
     constructor(values: Object = {}) {
@@ -18,6 +16,6 @@ export class EquipeUsuario implements IEquipeUsuario {
     }
 
     static getInternalId(model: IEquipeUsuario): string {
-        return `${model.usuario}|${model.codEquipe}`;
+        return `${model.idUsuario}|${model.codEquipe}`;
     }
 }
