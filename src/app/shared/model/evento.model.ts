@@ -1,5 +1,5 @@
 export interface IEvento {
-    id: number;
+    idEvento: number;
     idUsuario: number;
     dataEventoIni: string;
     dataEventoFim: string;
@@ -7,7 +7,7 @@ export interface IEvento {
 }
 
 export class Evento implements IEvento {
-    id: number;
+    idEvento: number;
     idUsuario: number;
     dataEventoIni: string;
     dataEventoFim: string;
@@ -18,7 +18,7 @@ export class Evento implements IEvento {
     }
 
     static getInternalId(model: IEvento): string {
-        return `${model.id};${model.idUsuario}`; //deixei ponto e virgula, pois no mock não funciona com pipe depois alterar
+        return `${model.idEvento}`; //deixei ponto e virgula, pois no mock não funciona com pipe depois alterar
     }
     static FormataStringData(data) {
         var dia = data.split("/")[0];

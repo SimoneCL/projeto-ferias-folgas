@@ -33,6 +33,21 @@ export class EventoService {
         return this.http.get<TotvsResponse<IEvento>>(url);
     }
 
+    queryEvento(filters: PoDisclaimer[], page = 1, pageSize = 20): Observable<TotvsResponse<any>> {
+        let url = `${this.apiBaseUrl}/?pageSize=${pageSize}&page=${page}`;
+
+        if (filters && filters.length > 0) {
+
+            const urlParams = new Array<string>();
+
+            filters.map(filter => {
+                urlParams.push(`${filter.property}=${filter.value}`);
+            });
+
+            url = `${url}&${urlParams.join('&')}`;
+        }
+        return this.http.get<TotvsResponse<any>>(url);
+    }
     getById(id: string, expandables: string[]): Observable<IEvento> {
         let lstExpandables = this.getExpandables(expandables);
         if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }

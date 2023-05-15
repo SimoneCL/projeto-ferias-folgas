@@ -16,7 +16,6 @@ export class EquipeUsuarioService {
 
     constructor(private http: HttpClient) { }
     query(filters: PoDisclaimer[], page = 1, pageSize = 9999): Observable<TotvsResponse<IEquipeUsuario>> {
-        
         let url = `${this.apiBaseUrl}?pageSize=${pageSize}&page=${page}`;
 
         if (filters && filters.length > 0) {
@@ -31,6 +30,23 @@ export class EquipeUsuarioService {
         }
         return this.http.get<TotvsResponse<IEquipeUsuario>>(url);
     }
+    queryByEquipe(filters: PoDisclaimer[], page = 1, pageSize = 9999): Observable<TotvsResponse<IEquipeUsuario>> {
+        let url = `${this.apiBaseUrl}/byEquipe?pageSize=${pageSize}&page=${page}`;
+
+        if (filters && filters.length > 0) {
+
+            const urlParams = new Array<string>();
+
+            filters.map(filter => {
+                urlParams.push(`${filter.property}=${filter.value}`);
+            });
+
+            url = `${url}&${urlParams.join('&')}`;
+        }
+        return this.http.get<TotvsResponse<IEquipeUsuario>>(url);
+    }
+
+  
 
     getById(id: string, expandables: string[]): Observable<IEquipeUsuario> {
         let lstExpandables = this.getExpandables(expandables);

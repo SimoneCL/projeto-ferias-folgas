@@ -53,7 +53,7 @@ export class AgendamentoUserListComponent implements OnInit {
   ngOnInit(): void {
     
     this.userLogado = localStorage.getItem('userLogado');
-    console.log('this.userLogado ', this.userLogado )
+    
 
     forkJoin(
       [
@@ -71,7 +71,6 @@ export class AgendamentoUserListComponent implements OnInit {
   private setupComponents(): void {
 
     const id  = this.activatedRoute.snapshot.paramMap.get('id');
-    console.log('id', id)
     if(id !== null){
       this.title = this.literals.scheduleEventUser + ': ' + id[0].toUpperCase() + id.substring(1);
     } else {
@@ -92,7 +91,7 @@ export class AgendamentoUserListComponent implements OnInit {
     ];
     
     this.columns = [
-      { property: 'type', label: this.literals.type, type: 'label', labels: this.dayOffType },
+      { property: 'codTipo', label: this.literals.type, type: 'label', labels: this.dayOffType },
       { property: 'dataEventoIni', label: this.literals.dateIni, type: 'date' },
       { property: 'dataEventoFim', label: this.literals.dateEnd, type: 'date' },
     ];
@@ -117,8 +116,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
   search(loadMore = false): void {
 
-    this.disclaimers = [...[{ property: 'idUsuario', value: '43115' }]];
-    //const disclaimer = this.disclaimers || [];
+    this.disclaimers = [...[{ property: 'idUsuario', value: '63380' }]];
 
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
@@ -126,13 +124,11 @@ export class AgendamentoUserListComponent implements OnInit {
       this.items = [];
       this.currentPage = 1;
     }
-console.log('this.disclaimers', this.disclaimers)
     this.isLoading = true;
     this.eventoUserSubscription$ = this.serviceEvento
       .query(this.disclaimers, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<IEvento>) => {
-        this.items = [...this.items, ...response.items];
-        console.log('items', this.items)
+        this.items = [...response.items];
         this.hasNext = response.hasNext;
         this.isLoading = false;
       }, (err: any) => {
@@ -145,7 +141,7 @@ console.log('this.disclaimers', this.disclaimers)
     const id = Evento.getInternalId(item);
     this.poDialogService.confirm({
       title: this.literals.remove,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.id]),
+      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.idEvento]),
       confirm: () => {
         this.eventoUserSubscription$ = this.serviceEvento
           .delete(id)
@@ -187,8 +183,6 @@ console.log('this.disclaimers', this.disclaimers)
           this.dayOffType.push({ label: this.tipoEventos[i].descTipoEvento, value: this.tipoEventos[i].codTipo });
         }
       });
-  
-      console.log('searchTipoEvento', this.dayOffType)
   }
 
   ngOnDestroy(): void {
