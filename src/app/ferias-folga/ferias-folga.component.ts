@@ -4,7 +4,7 @@ import { PoDatepickerRange, PoDisclaimer, PoI18nService, PoMultiselectFilter, Po
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { ConfiguracaoFeriasFolga } from '../shared/model/config-ferias-folga.model';
-import { EquipeUsuario, IEquipeUsuario } from '../shared/model/equipe-usuario.model';
+import { IEquipeUsuario } from '../shared/model/equipe-usuario.model';
 import { IEquipes } from '../shared/model/equipes.model';
 import { Evento, IEvento } from '../shared/model/evento.model';
 import { ITipoEvento } from '../shared/model/tipo-evento.model';
@@ -51,18 +51,15 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   disclaimersEquipeUser: Array<PoDisclaimer> = [];
   map1 = new Map();
   userLogado: string;
+  idUsuario: number;
 
-  public eventOptions: Array<PoRadioGroupOption> = [];
 
   servEventSubscription$: Subscription;
   tipoEventoSubscription$: Subscription;
   servEquipeSubscription$: Subscription;
   servEquipeUsuarioSubscription$: Subscription;
 
-  debounce = 500;
-  filterService: PoMultiselectFilter;
-  public itemsEquipe: Array<IEquipes>;
-  EquipesItems: Array<IEquipes> = new Array<IEquipes>();
+  equipesItems: Array<IEquipes> = new Array<IEquipes>();
   optionsMultiSeletc: Array<PoMultiselectOption> = [];
 
   private usuarioSubscription$: Subscription;
@@ -82,13 +79,11 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     private serviceEquipeUsuario: EquipeUsuarioService,
     private router: Router
   ) {
-    this.filterService = serviceEquipe;
   }
-
   ngOnInit(): void {
 
     this.userLogado = localStorage.getItem('userLogado');
-
+    console.log('this.userLogado ====>>>>', this.userLogado)
     forkJoin(
       [
         this.poI18nService.getLiterals(),
@@ -96,81 +91,66 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-      this.getUsuar(41135);
-
+      this.idUsuario = 63380;
+      this.searchEquipesUsuario();
       this.searchTipoEvento();
 
-      this.setupComponents();
+      if (this.equipesItems) {
+        this.setupComponents();
 
-
-
+      }
     });
   }
 
-  getUsuar(id: number): void { //equipes do usuário logado
+  searchEquipesUsuario(): void { //equipes do usuário logado
     this.hasNext = false;
+
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
-      .query([{ property: 'idUsuario', value: id }])
+      .query([{ property: 'idUsuario', value: this.idUsuario }])
       .subscribe((response: TotvsResponse<IEquipeUsuario>) => {
         if (response && response.items) {
           this.equipeUsuario = [...this.equipeUsuario, ...response.items];
           this.hasNext = response.hasNext;
         }
-        this.searchEquipe(this.equipeUsuario);
-      })
-  }
-
-  searchUsuarByEquipe(): void {
-
-    this.equipeUsuario = [];
-    this.hasNext = false;
-    this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
-      .query(this.disclaimersEquipeUser)
-      .subscribe((response: TotvsResponse<IEquipeUsuario>) => {
-        if (response && response.items) {
-          this.equipeUsuario = [...this.equipeUsuario, ...response.items];
-          this.hasNext = response.hasNext;
+        for (let i in this.equipeUsuario) {
+          this.disclaimersEquipeUser.push({ property: 'codEquipe', value: this.equipeUsuario[i].codEquipe });
         }
-        this.searchEventos();
+        this.searchEquipe(); //alimenta o multiselect de equipe do usuário
       })
   }
 
-  searchEquipe(equipe: Array<IEquipeUsuario>): void {
-    this.onDisclaimersEquipeUser(equipe);
+  searchEquipe(): void {
     this.hasNext = false;
     this.servEquipeSubscription$ = this.serviceEquipe
       .query(this.disclaimersEquipeUser || [], this.expandables, 1, 9999)
       .subscribe((response: TotvsResponse<IEquipes>) => {
         if (response && response.items) {
-          this.EquipesItems = [...this.EquipesItems, ...response.items];
-          for (let i in this.EquipesItems) {
-            this.optionsMultiSeletc.push(
-              { value: this.EquipesItems[i].codEquipe, label: this.EquipesItems[i].descEquipe },
-            );
-            this.multiSelectEquipe = [...this.multiSelectEquipe, ...this.EquipesItems[i].codEquipe.toString()];
-          }
+          this.equipesItems = [...this.equipesItems, ...response.items];
+          this.atualizaMultiSelect(this.equipesItems);
+
         }
-        this.searchUsuarByEquipe();
       });
   }
 
-  onDisclaimersEquipeUser(equipeUser) {
-
-    this.disclaimersEquipeUser = [];
-    for (let i in equipeUser) {
-      this.disclaimersEquipeUser.push({ property: 'codEquipe', value: equipeUser[i].codEquipe });
+  atualizaMultiSelect(equipesItems: Array<IEquipes>) {
+    for (let i in equipesItems) {
+      this.optionsMultiSeletc.push(
+        { value: equipesItems[i].codEquipe.toString(), label: equipesItems[i].descEquipe },
+      );
+      this.multiSelectEquipe = [...this.multiSelectEquipe, ...equipesItems[i].codEquipe.toString()];
     }
-
-    return this.disclaimersEquipeUser;
+    if (this.disclaimersEquipeUser) {
+      this.searchEventosEquipes();
+    }
   }
-  changeOptions(event): void { //selecionando equipes
-    this.disclaimersEquipeUser = [];
 
+  changeOptions(event): void { //selecionando equipes
+    this.disclaimersEquipeUser = []
     for (let i in event) {
       this.disclaimersEquipeUser.push({ property: 'codEquipe', value: event[i].value });
     }
     if (this.disclaimersEquipeUser.length > 0) {
-      this.searchUsuarByEquipe();
+      this.searchEventosEquipes();
     } else {
       this.items = [];
     }
@@ -202,7 +182,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     this.dataCalc = new Date();
 
     this.columns = [{
-      property: 'user', label: 'Nome', type: 'link', action: (value, row) => {
+      property: 'nomeUsuario', label: 'Nome', type: 'link', action: (value, row) => {
         this.redirect(value, row);
       }
     }];
@@ -241,18 +221,38 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       this.primeiroDia = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1)
       this.ultimoDia = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
       this.setColumnsList();
+      if (this.disclaimersEquipeUser) {
+        this.searchEventosEquipes();
+
+      }
+
     }
   }
 
-  searchEventos(loadMore = false): void {
+
+  getUsuario(id: number): void {
+    this.usuarioSubscription$ = this.serviceUsuario
+      .getById(id, [''])
+      .subscribe((response: IUsuario) => {
+
+        this.itemsUsers = [...this.itemsUsers, response];
+      });
+  }
+
+  searchEventosEquipes(loadMore = false): void { //coloquei novo
     this.itemsEventosAux = [];
     this.items = [];
 
     this.disclaimers = [];
-    this.equipeUsuario.forEach((equipe, index) => {
-      this.disclaimers.push({ property: 'user', value: equipe.idUsuario });
-
-    });
+    let codEquipe = [];
+    for (let i in this.disclaimersEquipeUser) {
+      codEquipe.push(this.disclaimersEquipeUser[i].value);
+    }
+    if (this.config.datePickerRange !== undefined) {
+      this.disclaimers.push({ property: 'dataEventoIni', value: this.config.datePickerRange.start },
+        { property: 'dataEventoFim', value: this.config.datePickerRange.end },
+        { property: 'codEquipe', value: codEquipe });
+    }
 
     const disclaimer = this.disclaimers || [];
 
@@ -263,60 +263,55 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       this.currentPage = 1;
     }
     this.servEventSubscription$ = this.serviceEvento
-      .query(disclaimer, this.currentPage, this.pageSize)
-      .subscribe((response: TotvsResponse<IEvento>) => {
+      .queryEvento(disclaimer, this.currentPage, this.pageSize)
+      .subscribe((response: TotvsResponse<any>) => {
 
         this.itemsEventosAux = [...response.items];
         this.hasNext = response.hasNext;
+
         if (this.itemsEventosAux.length === 0) { this.currentPage = 1; }
         if (this.itemsEventosAux.length > 0) {
           this.changeObjectProperty(this.itemsEventosAux);
         }
       });
+
   }
-  private changeObjectProperty(eventsUsers: Array<IEvento>): void {
+  
+  private changeObjectProperty(eventsUsers: Array<any>): void {
     this.eventos = [];
     this.itemsAux = [];
     if (eventsUsers.length > 0) {
       for (var i = 0; i < eventsUsers.length; i++) {
-        let labelType = this.tipoEventos.find(element => element.codTipo === eventsUsers[i].codTipo).descTipoEvento;
 
         this.map1 = new Map();
         this.map1.set('idUsuario', eventsUsers[i].idUsuario);
+        this.primeiroDia = new Date(eventsUsers[i].dataEventoIni);
+        const end = new Date(eventsUsers[i].dataEventoFim);
+        this.ultimoDia = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
+        this.quantityOfDaysSchedule = Math.floor(
+          (Date.UTC(this.ultimoDia.getFullYear(), this.ultimoDia.getMonth(), this.ultimoDia.getDate()) -
+            Date.UTC(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate())) /
+          (1000 * 60 * 60 * 24)
+        );
+        this.dataCalc = new Date();
+        for (let y = 0; y <= this.quantityOfDaysSchedule; y++) {
+          this.dataCalc = new Date(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), (this.primeiroDia.getDate()) + y);
 
-        if (eventsUsers[i].codTipo === 1) { //férias
-          this.primeiroDia = new Date(eventsUsers[i].dataEventoIni);
-          const end = new Date(eventsUsers[i].dataEventoFim);
-          this.ultimoDia = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
-          this.quantityOfDaysSchedule = Math.floor(
-            (Date.UTC(this.ultimoDia.getFullYear(), this.ultimoDia.getMonth(), this.ultimoDia.getDate()) -
-              Date.UTC(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate())) /
-            (1000 * 60 * 60 * 24)
-          );
-          this.dataCalc = new Date();
-          for (let y = 1; y <= this.quantityOfDaysSchedule; y++) {
-            this.dataCalc = new Date(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate() + y);
-            this.map1.set(this.formatoProperty(this.dataCalc), labelType);
-            this.itemsAux = [...this.map1];
-
-            if (this.newEvent[this.itemsAux[0][0]] !== this.itemsAux[0][1]) {
-              this.newEvent = {};
-            }
-            this.newEvent[this.itemsAux[0][0]] = this.itemsAux[0][1];
-            this.newEvent[this.itemsAux[y][0]] = this.itemsAux[y][1];
-          }
-        } else {
-          this.map1.set(eventsUsers[i].dataEventoIni, labelType);
+          this.map1.set(this.formatoProperty(this.dataCalc), eventsUsers[i].descTipoEvento);
           this.itemsAux = [...this.map1];
           if (this.newEvent[this.itemsAux[0][0]] !== this.itemsAux[0][1]) {
             this.newEvent = {};
           }
           this.newEvent[this.itemsAux[0][0]] = this.itemsAux[0][1];
-          this.newEvent[this.itemsAux[1][0]] = this.itemsAux[1][1];
+          this.newEvent[this.itemsAux[y][0]] = this.itemsAux[y][1];
+          this.newEvent['nomeUsuario'] = eventsUsers[i].nomeUsuario;
         }
-        console.log('this.newEvent',this.newEvent)
+
         this.eventos.push(this.newEvent);
+
       }
+
+
       this.agrupByUser();
     }
   }
@@ -327,12 +322,15 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     let objTitle = '';
     // Declare an empty object
     let uniqueObject = {};
+
     // Loop for the array elements
     for (let i in this.eventos) {
+
       // Extract the title
-      objTitle = this.eventos[i]['user'];
+      objTitle = this.eventos[i]['idUsuario'];
+
       // Use the title as the index
-      if (objTitle === this.eventos[i].user) {
+      if (objTitle === this.eventos[i].idUsuario) {
         uniqueObject[objTitle] = { ...uniqueObject[objTitle], ...this.eventos[i] };
       } else {
         uniqueObject[objTitle] = [this.eventos[i]];
@@ -342,6 +340,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     // Loop to push unique object into array
     for (let i in uniqueObject) {
       this.items.push(uniqueObject[i]);
+
     }
   }
 

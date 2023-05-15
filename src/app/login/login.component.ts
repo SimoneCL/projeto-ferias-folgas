@@ -104,7 +104,7 @@ export class LoginComponent {
 
           if (this.user === this.userLogin.email && this.password === this.userLogin.senha) {
 
-            localStorage.setItem('usuarioLogado', this.userLogin.usuario);
+           localStorage.setItem('usuarioLogado', this.userLogin.idUsuario.toString());
 
             setTimeout(() => {
               this.router.navigate(['/feriasFolga']);

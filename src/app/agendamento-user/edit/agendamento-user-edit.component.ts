@@ -98,8 +98,7 @@ export class AgendamentoUserEditComponent implements OnInit {
     this.route.navigate(['/agendaUser']);;
   }
   save() {
-    console.log('save')
-    this.eventUser.idUsuario = 41135;
+    this.eventUser.idUsuario = 63380;
     this.eventUser.codTipo = this.formVacationSuggestion.get('eventType').value;
     if (this.eventUser.codTipo === 1) {
       this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;
@@ -109,14 +108,10 @@ export class AgendamentoUserEditComponent implements OnInit {
       this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;
       this.eventUser.dataEventoFim = this.eventUser.dataEventoIni;
     }
-
-    if (this.eventPage !== 'edit') {
-      this.eventUser.id = Math.floor(Math.random() * 65536);
-    }
+   
   }
   create() {
     this.save();
-    console.log('create - this.eventUser', this.eventUser)
     this.eventoUserSubscription$ = this.serviceEvento.create(this.eventUser).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
@@ -124,7 +119,6 @@ export class AgendamentoUserEditComponent implements OnInit {
   }
   update() {
     this.save();
-    console.log('update - this.eventUser', this.eventUser)
     this.eventoUserSubscription$ = this.serviceEvento.update(this.eventUser).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
@@ -209,7 +203,6 @@ export class AgendamentoUserEditComponent implements OnInit {
     this.eventoUserSubscription$ = this.serviceEvento
       .getById(id, [''])
       .subscribe((response: IEvento) => {
-
         this.eventUser = response;
         this.datepickerRangeAux = {
           start: this.eventUser.dataEventoIni,

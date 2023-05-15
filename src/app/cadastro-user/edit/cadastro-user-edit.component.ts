@@ -91,8 +91,7 @@ export class CadastroUserEditComponent implements OnInit {
       literals.map(item => Object.assign(this.literals, item));
 
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
-      const id = this.activatedRoute.snapshot.paramMap.get('id');
-      console.log('id', id)
+      const id = parseInt(this.activatedRoute.snapshot.paramMap.get('id'));
       if (id) {
         this.get(id);
 
@@ -201,7 +200,6 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   public relacEquipe() {
-    console.log('equipeSelected', this.equipeSelected)
      for (let i in this.equipeSelected) {
      
       this.equipeUsuar.codEquipe = this.equipeSelected[i];
@@ -241,7 +239,6 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   saveEquipeUsuario() {
-    console.log('this.equipeUsuar', this.equipeUsuar)
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario.create(this.equipeUsuar).subscribe(() => {
     });
   }
@@ -335,7 +332,6 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   abrirEquipe() {
-    console.log('abriEquipe', this.optionsEquipe)
     this.searchEquipes();
     this.modalEquipe.open();
 
@@ -349,7 +345,6 @@ export class CadastroUserEditComponent implements OnInit {
       this.currentPage = 1;
     }
 
-    console.log('searchEquipes')
     this.hasNext = false;
     this.servEquipesSubscription$ = this.servEquipes
       .query([], [], 1, 999)
@@ -357,25 +352,21 @@ export class CadastroUserEditComponent implements OnInit {
         if (response && response.items) {
           this.equipesList = [...response.items];
           this.hasNext = response.hasNext;
-          console.log('equipesList',this.equipesList)
           for (let i  in this.equipesList) {
             this.optionsEquipe.push({ label: this.equipesList[i].descEquipe, value: this.equipesList[i].codEquipe });
-            console.log('this.optionsEquipe', this.optionsEquipe)
           }
         }
       });
-      console.log(' this.optionsEquipe',  this.optionsEquipe)
   }
 
   
-  get(id: string): void {
-    console.log('get id', id)
+  get(id: number): void {
     this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])
       .subscribe((response: IUsuario) => {
        
         this.usuario = response;
-        console.log('this.usuario ', this.usuario )
+
         this.searchEquipeUsuario();
 
       });
@@ -387,7 +378,6 @@ export class CadastroUserEditComponent implements OnInit {
     for (let i  in this.equipeUsuario) {
      
       this.disclaimersEquipe.push({ property: 'codEquipe', value: this.equipeUsuario[i].codEquipe });
-      console.log('getEquipe', this.disclaimersEquipe);
     }
     
     this.hasNext = false;
@@ -395,7 +385,6 @@ export class CadastroUserEditComponent implements OnInit {
       .query(this.disclaimersEquipe, this.expandables, 1, 9999)
       .subscribe((response: TotvsResponse<IEquipes>) => {
         if (response && response.items) {
-          console.log('response.items', response.items)
           this.equipeItems = [...this.equipeItems, ...response.items];
           this.hasNext = response.hasNext;
         }
@@ -412,7 +401,6 @@ export class CadastroUserEditComponent implements OnInit {
       .subscribe((response: TotvsResponse<IEquipeUsuario>) => {
         if (response && response.items) {
           this.equipeUsuario = [...response.items];
-          console.log('this.equipeUsuario', this.equipeUsuario)
           this.hasNext = response.hasNext;
         }
         if (this.equipeUsuario.length > 0) {

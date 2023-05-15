@@ -1,6 +1,6 @@
 export interface IUsuario {
     idUsuario: number;
-    usuario: string;
+    nomeUsuario: string;
     email: string;
     tipoPerfil: number;
     senha: string;
@@ -8,7 +8,7 @@ export interface IUsuario {
 
 export class Usuario implements IUsuario {
     idUsuario: number;
-    usuario: string;
+    nomeUsuario: string;
     email: string;
     tipoPerfil: number;
     senha: string;

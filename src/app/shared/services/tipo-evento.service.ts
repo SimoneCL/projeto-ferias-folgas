@@ -53,7 +53,6 @@ export class TipoEventoService {
     }
 
     create(model: ITipoEvento): Observable<ITipoEvento> {
-        console.log('create',model,this.http.post<ITipoEvento>(this.apiBaseUrl, model, this.headers))
         return this.http.post<ITipoEvento>(this.apiBaseUrl, model, this.headers);
     }
 

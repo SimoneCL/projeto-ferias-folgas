@@ -229,7 +229,6 @@ export class FeriadosComponent implements OnInit {
   }
 
   public closeModalNacionais() {
-    console.log('closeModalNacionais')
     this.modalFeriadosNacionais.close();
   }
   public newferiados() {
@@ -269,10 +268,8 @@ export class FeriadosComponent implements OnInit {
         this.itemFeriadosNacionais = [...response];
         this.searchUsuarios();
       });
-    console.log('onChangeYear - anoFeriado', this.anoFeriado)
   }
   searchUsuarios(loadMore = false) {
-    console.log('searchUsuarios')
 
     this.isLoading = true;
     this.usuarioSubscription$ = this.serviceUsuario
@@ -283,15 +280,12 @@ export class FeriadosComponent implements OnInit {
         this.eventUser = [];
         this.items.forEach((user, index) => {
 
-
           this.itemFeriadosNacionais.forEach(feriados => {
             evento = [{
-              // "user": user.usuario,
-              "user": 'user.usuario',
+              "idUsuario": user.idUsuario,
               "dataEventoIni": feriados.date,
               "dataEventoFim": feriados.date,
-              "type": 6,
-              "id": Math.floor(Math.random() * 65536)
+              "codTipo": 6
             }];
             this.eventUser = [...this.eventUser, ...evento];
 
@@ -305,16 +299,8 @@ export class FeriadosComponent implements OnInit {
 
 
   public saveFeriadosNacionais() {
-    console.log('saveFeriadosNacionais - this.eventUser', this.eventUser)
-    this.eventUser.forEach((evento) => {
-      console.log('aaevento', evento)
-
-      this.eventoUserSubscription$ = this.serviceEvento.create(evento).subscribe(() => {
-      });
-    });
     this.poNotification.success(this.literals.createdMessage);
     this.closeModalNacionais();
-
   }
   public saveFeriados() {
     this.feriados.data = this.feriados.dataFormat;
@@ -339,7 +325,7 @@ export class FeriadosComponent implements OnInit {
   }
   public saveFeriado() {
     let evento = {
-      "idUsuario": 41135,
+      "idUsuario": 63380,
       "dataEventoIni": this.feriados.data,
       "dataEventoFim": this.feriados.data,
       "type": 6,
