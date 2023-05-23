@@ -30,6 +30,10 @@ const routes: Routes = [
         path: 'cadastroUser',
         loadChildren: () => import('./cadastro-user/cadastro-user.module').then(m => m.CadastroUserModule)
     },
+    {
+        path: 'perfilUsuario',
+        loadChildren: () => import('./tipo-perfil-usuario/tipo-perfil-usuario.module').then(m => m.TipoPerfilUsuarioModule)
+    },
     
 ];
 @NgModule({
