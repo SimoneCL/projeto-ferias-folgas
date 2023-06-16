@@ -36,9 +36,8 @@ export class FeriadosService {
 
         return this.http.get<IFeriados>(`${this.apiBaseUrl}/${id}`, this.headers);
     }
-    getHoliday(ano: string): Observable<any> {
+    getHoliday(ano: number): Observable<any> {
         return this.http.get<any>(`https://brasilapi.com.br/api/feriados/v1/${ano}`);
-
     }
 
     getFilteredItems(params: PoLookupFilteredItemsParams): Observable<IFeriados> {
@@ -57,6 +56,11 @@ export class FeriadosService {
 
     create(model: IFeriados): Observable<IFeriados> {
         return this.http.post<IFeriados>(this.apiBaseUrl, model, this.headers);
+    }
+
+    createFeriadosNacionais(model: Array<IFeriados>): Observable<IFeriados> {
+        const url = 'http://localhost:3000/feriadosNacionais';
+        return this.http.post<IFeriados>(url, model, this.headers);
     }
 
     update(model: IFeriados): Observable<IFeriados> {
