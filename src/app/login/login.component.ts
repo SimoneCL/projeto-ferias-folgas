@@ -80,35 +80,30 @@ export class LoginComponent {
       });
   }
 
-
   onClick() {
-
-    if (this.itemsLogin) {
-
-      for (let i in this.itemsLogin) {
-        if (this.user === this.itemsLogin[i].email) {
-          var idUser = this.itemsLogin[i].idUsuario;
-        }
-      }
-
+    
+    if (this.login.usuario != "") {    
+      
       this.servLoginSubscription$ = this.servLogin
-        .getById(idUser.toString()).subscribe((item: IUsuario) => {
-          this.userLogin = item;
-          if (this.userLogin.email.substring(this.userLogin.email.indexOf("@")) != "@totvs.com.br") {
-            this.poDialog.alert({
-              ok: () => (this.loading = false),
-              title: 'Email Invalido',
-              message: 'usuario ou senha incorretos.'
-            });
-          }
+        .getByUser(this.login.usuario).subscribe((response: ILogin) => {
+          
+          if (response.email != undefined) {            
+            this.userLogin = response;
+            
+            if ( this.login.senha != undefined && this.login.senha === this.userLogin.senha ) {  
+            
+              localStorage.setItem('usuarioLogado', this.userLogin.usuario);
 
-          if (this.user === this.userLogin.email && this.password === this.userLogin.senha) {
-
-           localStorage.setItem('usuarioLogado', this.userLogin.idUsuario.toString());
-
-            setTimeout(() => {
-              this.router.navigate(['/feriasFolga']);
-            }, 500);
+              setTimeout(() => {
+                this.router.navigate(['/feriasFolga']);
+              }, 500);
+            } else {
+              this.poDialog.alert({
+                ok: () => (this.loading = false),
+                title: 'Login Invalido',
+                message: 'usuario ou senha incorretos.'
+              });
+            }
           } else {
             this.poDialog.alert({
               ok: () => (this.loading = false),
@@ -116,7 +111,6 @@ export class LoginComponent {
               message: 'usuario ou senha incorretos.'
             });
           }
-
         });
     }
   }

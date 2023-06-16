@@ -67,6 +67,11 @@ export const generalPt = {
     perfil: 'Perfil usuário',
     equipe: 'Equipe',
     novaEquipe: 'Incluir equipe',
-    editarSenha: 'Alterar senha'
+    editarSenha: 'Alterar senha',
+    tipoUsuario: 'Tipo Usuário',
+    descricaoPerfil: 'Descrição',
+    perfilUsuario: 'Tipo Perfil Usuário',
+    gestor: 'Gestor',
+    titleTipoPerfil: 'Perfil Usuário',
     
 };
