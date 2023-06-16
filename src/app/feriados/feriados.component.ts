@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { PoDialogService, PoNotificationService, PoDisclaimer, PoI18nService, PoSelectOption, PoTableAction, PoBreadcrumb, PoDisclaimerGroup, PoPageFilter, PoI18nPipe } from '@po-ui/ng-components';
+import { PoDialogService, PoNotificationService, PoDisclaimer, PoI18nService, PoSelectOption, PoTableAction, PoBreadcrumb, PoDisclaimerGroup, PoPageFilter, PoI18nPipe, PoDatepickerRange } from '@po-ui/ng-components';
 import { forkJoin, observable, Subscription } from 'rxjs';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Feriados, IFeriados } from '../shared/model/feriados.model';
@@ -19,6 +19,7 @@ import { Evento, IEvento } from '../shared/model/evento.model';
   templateUrl: './feriados.component.html'
 })
 export class FeriadosComponent implements OnInit {
+  @ViewChild('modalAdvanceSearch', { static: true }) modalAdvanceSearch: PoModalComponent;
   @ViewChild('modalFeriado', { static: false }) modalFeriado: PoModalComponent;
   @ViewChild('modalFeriadosNacionais', { static: false }) modalFeriadosNacionais: PoModalComponent;
   @ViewChild('formFeriados', { static: false }) formFeriados: NgForm;
@@ -27,6 +28,9 @@ export class FeriadosComponent implements OnInit {
   close: PoModalAction;
   confirmNacionais: PoModalAction;
   closeNacionais: PoModalAction;
+  confirmAdvSearchAction: PoModalAction;
+  cancelAdvSearchAction: PoModalAction;
+
 
   titleApp: String;
   email: string = undefined;
@@ -36,8 +40,10 @@ export class FeriadosComponent implements OnInit {
   descricao: string;
   tipoFeriado: string;
   pontoFacultativo: boolean;
+  
   userLogado: string;
 
+  datePickerRangeFilter: PoDatepickerRange;
   filterSettings: PoPageFilter;
   breadcrumb: PoBreadcrumb;
   disclaimerGroup: PoDisclaimerGroup;
@@ -48,22 +54,24 @@ export class FeriadosComponent implements OnInit {
   feriados: IFeriados = new Feriados();
 
   public itemsFeriados: Array<IFeriados> = new Array<IFeriados>();
-
+  public feriadosNacionais: Array<IFeriados> = new Array<IFeriados>();
   hasNext = false;
   currentPage = 1;
   pageSize = 20;
   expandables = [''];
   disclaimers: Array<PoDisclaimer> = [];
+  quickSearch: string;
   event: string;
   isEdit: boolean = true;
 
   anoOptions: Array<PoSelectOption> = [];
-  anoFeriado: number;
+  anoFeriado: Array<number>;
   itemFeriadosNacionais: Array<IFeriadosNacionais> = new Array<IFeriadosNacionais>();
   servFeriadosSubscription$: Subscription;
 
   private usuarioSubscription$: Subscription;
   private eventoUserSubscription$: Subscription;
+  private servFeriadosNacionaisSubscription$: Subscription;
   public items: Array<IUsuario> = new Array<IUsuario>();
   public eventUser: Array<IEvento> = new Array<IEvento>();
   public eventUserAux: Array<IEvento> = new Array<IEvento>();
@@ -123,16 +131,20 @@ export class FeriadosComponent implements OnInit {
       label: this.literals.cancel
     };
 
+
+    this.confirmAdvSearchAction = {
+      action: () => this.onConfirmAdvAction(), label: this.literals['search']
+    };
+
+    this.cancelAdvSearchAction = {
+      action: () => this.modalAdvanceSearch.close(), label: this.literals['cancel']
+    };
     this.tableActions = [
       { action: this.edit.bind(this), label: this.literals.edit },
       { action: this.delete.bind(this), label: this.literals.delete, type: 'danger' }
     ];
 
-    this.disclaimerGroup = {
-      title: this.literals.filters,
-      disclaimers: [],
-      change: this.onChangeDisclaimer.bind(this)
-    };
+   
 
     const data = new Date(Date.now());
     for (let y = 0; y <= 3; y++) {
@@ -147,19 +159,55 @@ export class FeriadosComponent implements OnInit {
 
     this.columnsFeriados = [
       { property: 'data', label: 'Data', type: 'string' },
-      { property: 'tipoFeriaDo', label: 'Tipo Feriado', type: 'string' },
+      { property: 'tipoFeriado', label: 'Tipo Feriado', type: 'string' },
       { property: 'descricao', label: 'Descrição', type: 'string' },
       { property: 'pontoFacultativo', label: 'Facultativo', type: 'boolean' }
     ];
 
     this.pontoFacultativo = false;
-
+    const dataAtual = new Date();
+    const dataInicial = this.formatoProperty(`${dataAtual.getFullYear()}-01-01`, 'yyyymmdd');
+    const dataFinal = this.formatoProperty(`${dataAtual.getFullYear()}-12-31`, 'yyyymmdd');
+    this.datePickerRangeFilter = {
+      start: dataInicial,
+      end: dataFinal
+    }
+    this.disclaimers = [];
+    this.disclaimerGroup = {
+      title: this.literals.filters,
+      disclaimers: [],
+      change: this.onChangeDisclaimer.bind(this)
+    };
+    this.disclaimers = [
+      { property: 'dataInicial', value: this.datePickerRangeFilter.start, label: this.formatoProperty(this.datePickerRangeFilter.start.toString(), 'ddmmyyyy') },
+      { property: 'dataFinal', value: this.datePickerRangeFilter.end, label: this.formatoProperty(this.datePickerRangeFilter.end.toString(), 'ddmmyyyy') }];
+    this.disclaimerGroup.disclaimers = [...this.disclaimers];
+    
     this.filterSettings = {
-      action: this.searchByDate.bind(this),
+      action: this.searchByDescricao.bind(this),
+      advancedAction: this.advancedSearch.bind(this),
       placeholder: this.literals.description
     };
 
+
   }
+  advancedSearch(): void {
+     this.modalAdvanceSearch.open();
+  }
+
+  onConfirmAdvAction(): void {
+
+    this.disclaimers = [
+      { property: 'dataInicial', value: this.datePickerRangeFilter.start, label: this.formatoProperty(this.datePickerRangeFilter.start.toString(), 'ddmmyyyy') },
+      { property: 'dataFinal', value: this.datePickerRangeFilter.end, label: this.formatoProperty(this.datePickerRangeFilter.end.toString(), 'ddmmyyyy') }
+    ];
+
+    this.disclaimerGroup.disclaimers = [...this.disclaimers];
+    this.search();
+    this.modalAdvanceSearch.close();
+
+  }
+
   private getYear(data: Date, i: number): number {
     const d = new Date(data),
 
@@ -168,12 +216,10 @@ export class FeriadosComponent implements OnInit {
     return year;
   }
 
-  searchByDate(quickSearchValue: string) {
-    this.disclaimers = [...[{ property: 'descricao', value: quickSearchValue }]];
+  searchByDescricao(quickSearchValue: string) {
+    this.disclaimers = [...this.disclaimers,...[{ property: 'descricao', value: quickSearchValue }]];
     this.disclaimerGroup.disclaimers = [...this.disclaimers];
   }
-
- 
 
   public onChangeDisclaimer(disclaimers): void {
     this.disclaimers = disclaimers;
@@ -252,22 +298,16 @@ export class FeriadosComponent implements OnInit {
     this.event = event;
   }
 
-  searchByDesc(quickSearchValue: string) {
 
-    this.disclaimers = [...[{ property: 'tipoFeriado', value: quickSearchValue }]];
-    this.disclaimerGroup.disclaimers = [...this.disclaimers];
-  }
 
-  // public feriadosNacionais() {
-  //   this.openModalferiadosNacionais();
-  // }
   onChangeYear() {
-
-    this.servFeriadosSubscription$ = this.servFeriados.getHoliday('2023')
-      .subscribe(response => {
-        this.itemFeriadosNacionais = [...response];
-        this.searchUsuarios();
-      });
+    this.itemFeriadosNacionais = [];
+    this.anoFeriado.forEach(ano => {
+      this.servFeriadosNacionaisSubscription$ = this.servFeriados.getHoliday(ano)
+        .subscribe(response => {
+          this.itemFeriadosNacionais = [...this.itemFeriadosNacionais, ...response];
+        });
+    });
   }
   searchUsuarios(loadMore = false) {
 
@@ -299,8 +339,25 @@ export class FeriadosComponent implements OnInit {
 
 
   public saveFeriadosNacionais() {
-    this.poNotification.success(this.literals.createdMessage);
-    this.closeModalNacionais();
+    this.feriadosNacionais = [];
+    this.itemFeriadosNacionais.forEach(element => {
+      this.feriadosNacionais = [...this.feriadosNacionais, {
+        "idFeriado": 0,
+        "data": element.date,
+        "descricao": element.name,
+        "tipoFeriado": 'nacional',
+        "pontoFacultativo": false,
+        "dataFormat": Feriados.formataData(element.date)
+      }];
+    });
+    this.servFeriadosSubscription$ = this.servFeriados
+      .createFeriadosNacionais(this.feriadosNacionais)
+      .subscribe(() => {
+        this.poNotification.success(this.literals.createdMessage);
+        this.closeModalNacionais();
+        this.search();
+      });
+
   }
   public saveFeriados() {
     this.feriados.data = this.feriados.dataFormat;
@@ -318,21 +375,26 @@ export class FeriadosComponent implements OnInit {
         .subscribe(() => {
           this.poNotification.success(this.literals.createdMessage);
           this.modalFeriado.close();
-          this.saveFeriado();
           this.search();
         });
     }
   }
-  public saveFeriado() {
-    let evento = {
-      "idUsuario": 63380,
-      "dataEventoIni": this.feriados.data,
-      "dataEventoFim": this.feriados.data,
-      "type": 6,
-      "id": Math.floor(Math.random() * 65536)
-    };
-    // this.eventoUserSubscription$ = this.serviceEvento.create(evento).subscribe(() => {
-    // });
+  private formatoProperty(data: string, formato: string) {
+
+    let day = '' + data.toString().substring(8, 10).trim();
+    let month = '' + data.toString().substring(5, 7).trim();
+    const year = data.toString().substring(0, 4).trim();
+
+    if (month.length < 2)
+      month = '0' + month;
+    if (day.length < 2)
+      day = '0' + day;
+    if (formato === 'yyyymmdd') {
+      return [year, month, day].join('-');
+    } else {
+      return [day, month, year].join('/');
+    }
+
   }
 
   ngOnDestroy(): void {
