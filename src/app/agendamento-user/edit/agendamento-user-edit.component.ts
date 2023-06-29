@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoDatepickerRange, PoDialogService, PoI18nService, PoNotificationService, PoPageAction, PoRadioGroupOption } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDatepickerRange, PoI18nService, PoNotificationService, PoPageAction, PoSelectOption } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
-import { forkJoin, Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 import { Evento, IEvento } from 'src/app/shared/model/evento.model';
 import { EventoService } from 'src/app/shared/services/evento.service';
 import { ITipoEvento } from '../../shared/model/tipo-evento.model';
@@ -30,10 +30,12 @@ export class AgendamentoUserEditComponent implements OnInit {
   eventType: number;
   eventPage: string;
   userLogado: string;
+  id: string = '';
+  isEdit: boolean = false;
 
   items: Array<ITipoEvento> = new Array<ITipoEvento>();
 
-  public eventOptions: Array<PoRadioGroupOption> = [];
+  public eventOptions: Array<PoSelectOption> = []; //Array<PoRadioGroupOption> = [];
   public isHidden: boolean;
 
   get validateForm() {
@@ -56,7 +58,7 @@ export class AgendamentoUserEditComponent implements OnInit {
   ngOnInit(): void {
 
     this.userLogado = localStorage.getItem('userLogado');
-    
+
     forkJoin(
       [
         this.poI18nService.getLiterals(),
@@ -70,21 +72,24 @@ export class AgendamentoUserEditComponent implements OnInit {
         eventType: [undefined]
       });
 
-      this.search();
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
+      this.isEdit = this.eventPage === 'edit';
       const id = this.activatedRoute.snapshot.paramMap.get('id');
+      this.search();
+
+
       if (id) {
         this.get(id);
       }
       this.setupComponents();
+
+
     });
   }
 
   setupComponents() {
     this.isHidden = this.eventPage === 'new';
-    this.formVacationSuggestion.get("eventType").patchValue(1);
     this.breadcrumb = this.getBreadcrumb();
-  
   }
   private beforeRedirect(itemBreadcrumbLabel) {
     if (this.formVacationSuggestion.valid) {
@@ -92,6 +97,9 @@ export class AgendamentoUserEditComponent implements OnInit {
     }
   }
   changeEvent(event) {
+    this.hiddenQtdDay();
+  }
+  hiddenQtdDay() {
     this.isHidden = this.formVacationSuggestion.get('eventType').value === 1;
   }
   return() {
@@ -108,7 +116,7 @@ export class AgendamentoUserEditComponent implements OnInit {
       this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;
       this.eventUser.dataEventoFim = this.eventUser.dataEventoIni;
     }
-   
+
   }
   create() {
     this.save();
@@ -205,22 +213,24 @@ export class AgendamentoUserEditComponent implements OnInit {
       .subscribe((response: IEvento) => {
         this.eventUser = response;
         this.datepickerRangeAux = {
-          start: this.eventUser.dataEventoIni,
-          end: this.eventUser.dataEventoFim
+          start: new Date(this.eventUser.dataEventoIni),
+          end: new Date(this.eventUser.dataEventoFim)
         }
+
         this.formVacationSuggestion.get("eventType").patchValue(this.eventUser.codTipo);
+        this.hiddenQtdDay();
         this.formVacationSuggestion.get("datepickerRange").patchValue(this.datepickerRangeAux);
       });
   }
 
   search(): void {
+    this.eventOptions = [];
     this.tipoEventoSubscription$ = this.serviceTipoEvento
       .query([], 1, 999)
       .subscribe((response: TotvsResponse<ITipoEvento>) => {
         this.items = [...this.items, ...response.items];
-
         for (let i in this.items) {
-          this.eventOptions.push({ label: this.items[i].descTipoEvento, value: this.items[i].codTipo });
+          this.eventOptions = [...this.eventOptions, { label: this.items[i].descTipoEvento, value: this.items[i].codTipo.toString() }];
         }
       });
   }
