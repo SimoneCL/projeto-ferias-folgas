@@ -15,14 +15,14 @@
     </po-table>
 </po-page-list> 
 <po-modal #modalAdvanceSearch
-    p-size="auto"
+    p-size="md"
     [p-title]="literals?.modalAdvanceSearch"
     [p-primary-action]="confirmAdvSearchAction"
     [p-secondary-action]="cancelAdvSearchAction">
 
     <div class="po-row">
       <po-datepicker-range
-          class="po-lg-10 po-md-10"
+          class="po-lg-6 po-md-6"
           p-label="Período"
           [(ngModel)]="datePickerRangeFilter">
           
