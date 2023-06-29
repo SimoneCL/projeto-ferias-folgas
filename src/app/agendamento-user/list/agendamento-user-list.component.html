@@ -1,14 +1,47 @@
  <po-page-list
     [p-title]="title"
-    [p-actions]="pageActions"
-    [p-filter]="filterSettings">
-  <po-table
-    p-striped="true"
-    [p-columns]="columns"
-    [p-items]="items"
-    [p-actions]="tableActions"
-    [p-show-more-disabled]="!hasNext"
-    (p-show-more)="search(true)"
-    p-actions-right="true">
+    [p-disclaimer-group]="disclaimerGroup"
+    [p-filter]="filterSettings"
+    [p-breadcrumb]="breadcrumb"
+    [p-actions]="pageActions">
+    <po-table
+      p-striped="true"
+      [p-columns]="columns"
+      [p-items]="items"
+      [p-actions]="tableActions"
+      [p-show-more-disabled]="!hasNext"
+      (p-show-more)="search(true)"
+      p-actions-right="true">
     </po-table>
 </po-page-list> 
+<po-modal #modalAdvanceSearch
+    p-size="md"
+    [p-title]="literals?.modalAdvanceSearch"
+    [p-primary-action]="confirmAdvSearchAction"
+    [p-secondary-action]="cancelAdvSearchAction">
+
+    <div class="po-row">
+      <po-datepicker-range
+          class="po-lg-6 po-md-6"
+          p-label="Período"
+          [(ngModel)]="datePickerRangeFilter">
+          
+      </po-datepicker-range>
+
+      <po-multiselect
+            class="po-md-12"
+            name="eventTypeFilter"
+            [(ngModel)]="eventTypeFilter"
+            [p-label]="literals?.eventType" 
+            [p-options]="eventFilterOptions">
+      </po-multiselect>
+      <po-input 
+            class="po-md-6" 
+            [(ngModel)]="descriptionFilter" 
+            p-clean 
+            [p-label]="literals?.description">
+      </po-input>
+      
+    </div>
+
+</po-modal>
