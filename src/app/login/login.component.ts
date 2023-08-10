@@ -89,10 +89,10 @@ export class LoginComponent {
           
           if (response.email != undefined) {            
             this.userLogin = response;
-            
+
             if ( this.login.senha != undefined && this.login.senha === this.userLogin.senha ) {  
             
-              localStorage.setItem('usuarioLogado', this.userLogin.usuario);
+              localStorage.setItem('usuarioLogado', this.userLogin.idUsuario.toString());
 
               setTimeout(() => {
                 this.router.navigate(['/feriasFolga']);
