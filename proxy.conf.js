@@ -26,8 +26,9 @@ const PROXY_CONFIG = [
            "/jobScheduler",
            "/evento",
            "/evento",
-           "tipoEventos",
-           "feriados"
+           "/tipoEventos",
+           "/feriados",
+           "/tipoPerfilUsuario"
        ],
        target: "http://localhost:3000",
        secure: false,

@@ -116,8 +116,8 @@ export class AgendamentoUserListComponent implements OnInit {
     ];
 
     this.columns = [
+      { property: 'descricao', label: this.literals.description, type: 'link', action: (value, row) => this.edit(row) },
       { property: 'codTipo', label: this.literals.type, type: 'label', labels: this.dayOffType },
-      { property: 'descricao', label: this.literals.description, type: 'string' },
       { property: 'dataEventoIni', label: this.literals.dateIni, type: 'date' },
       { property: 'dataEventoFim', label: this.literals.dateEnd, type: 'date' },
 

@@ -17,12 +17,11 @@
   [p-title]="literals?.newEventType"
   [p-primary-action]="confirm" 
   [p-secondary-action]="close"> 
-  <po-number class="po-md-2"
+  <po-number class="po-md-2" *ngIf="isEdit"
     name="code" 
     [p-label]="literals?.code"
     [(ngModel)]="tipoEvento.codTipo"
     [p-disabled]="isEdit"
-    p-required="true"
     (p-change-model)="changeValue($event)"
     p-maxlength="4"> 
   </po-number>
@@ -30,6 +29,6 @@
     name="description" 
     [p-label]="literals?.description"
     [(ngModel)]="tipoEvento.descTipoEvento"
-    p-required="true"> 
+    p-required> 
   </po-input>
 </po-modal>
