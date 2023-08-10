@@ -91,7 +91,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-      this.idUsuario = 63380;
+      this.idUsuario = parseInt(localStorage.getItem('usuarioLogado'));
       this.searchEquipesUsuario();
       this.searchTipoEvento();
 

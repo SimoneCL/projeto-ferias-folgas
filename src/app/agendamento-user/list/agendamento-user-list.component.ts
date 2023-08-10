@@ -209,7 +209,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
   search(loadMore = false): void {
 
-    this.disclaimers = [...this.disclaimers, ...[{ property: 'idUsuario', value: '63380' }]];
+    this.disclaimers = [...this.disclaimers, ...[{ property: 'idUsuario', value: localStorage.getItem('usuarioLogado') }]];
 
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
