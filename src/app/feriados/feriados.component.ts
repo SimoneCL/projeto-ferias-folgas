@@ -152,9 +152,9 @@ export class FeriadosComponent implements OnInit {
       this.anoOptions = [...this.anoOptions, { label: `${yearCalc}`, value: yearCalc }]
     }
     this.typeOptions = [
-      { label: 'Municipal', value: 'Municipal' },
-      { label: 'Estadual', value: 'Estadual' },
-      { label: 'Nacional', value: 'Nacional' }
+      { label: 'Municipal', value: 'municipal' },
+      { label: 'Estadual', value: 'estadual' },
+      { label: 'Nacional', value: 'nacional' }
     ];
 
     this.columnsFeriados = [
@@ -286,6 +286,7 @@ export class FeriadosComponent implements OnInit {
     this.isEdit = true;
     this.feriados = new Feriados();
     this.feriados = item;
+    console.log('item', item, this.feriados)
     this.feriados.dataFormat = Feriados.formataData(item.data);
     this.modalFeriado.open();
   }
