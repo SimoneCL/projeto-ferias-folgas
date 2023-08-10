@@ -158,12 +158,12 @@ export class FeriadosComponent implements OnInit {
     ];
 
     this.columnsFeriados = [
-      { property: 'data', label: 'Data', type: 'string' },
+      { property: 'data', label: 'Data', type: 'link', action: (value, row) => this.edit(row)   },
+      { property: 'descricao', label: 'Descrição', type: 'link', action: (value, row) => this.edit(row)   },
       { property: 'tipoFeriado', label: 'Tipo Feriado', type: 'string' },
-      { property: 'descricao', label: 'Descrição', type: 'string' },
       { property: 'pontoFacultativo', label: 'Facultativo', type: 'boolean' }
     ];
-
+  
     this.pontoFacultativo = false;
     const dataAtual = new Date();
     const dataInicial = this.formatoProperty(`${dataAtual.getFullYear()}-01-01`, 'yyyymmdd');
