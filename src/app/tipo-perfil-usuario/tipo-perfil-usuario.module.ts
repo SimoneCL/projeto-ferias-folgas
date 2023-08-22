@@ -8,12 +8,10 @@ import { PoI18nPipe, PoModule } from '@po-ui/ng-components';
 import { TipoPerfilUsuarioListComponent } from './list/tipo-perfil-usuario-list.component';
 import { PoTemplatesModule } from '@po-ui/ng-templates';
 import { TipoPerfilUsuarioService } from '../shared/services/tipo-perfil-usuario.service';
-import { TipoPerfilUsuarioEditComponent } from './edit/tipo-perfil-usuario-edit.component';
 
 @NgModule({
   declarations: [
-    TipoPerfilUsuarioListComponent,
-    TipoPerfilUsuarioEditComponent
+    TipoPerfilUsuarioListComponent
   ],
   imports: [
     CommonModule,
