@@ -30,6 +30,9 @@ export class CadastroUserListComponent implements OnInit {
   disclaimerGroup: PoDisclaimerGroup;
   userLogado: string;
 
+  codTipoPerfil: number;
+  descTipoPerfil: string;
+  isEdit: boolean;
 
   hasNext = false;
   pageSize = 20;
