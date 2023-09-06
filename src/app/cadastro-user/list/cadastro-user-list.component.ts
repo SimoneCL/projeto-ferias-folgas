@@ -6,6 +6,8 @@ import { forkJoin, Subscription } from 'rxjs';
 import { Evento, IEvento } from '../../shared/model/evento.model';
 import { IUsuario, Usuario } from '../../shared/model/usuario.model';
 import { UsuarioService } from '../../shared/services/usuario.service';
+import { ITipoPerfilUsuario, TipoPerfilUsuario } from 'src/app/shared/model/tipo-perfil-usuario.model';
+import { TipoPerfilUsuarioService } from 'src/app/shared/services/tipo-perfil-usuario.service';
 
 @Component({
   selector: 'app-cadastro-user-list',
@@ -15,6 +17,7 @@ import { UsuarioService } from '../../shared/services/usuario.service';
 export class CadastroUserListComponent implements OnInit {
 
   private usuarioSubscription$: Subscription;
+  private servTipoPerfilUsuarioSubscription$: Subscription;
   private disclaimers: Array<PoDisclaimer> = [];
 
   pageActions: Array<PoPageAction>;
@@ -45,6 +48,7 @@ export class CadastroUserListComponent implements OnInit {
     private poDialogService: PoDialogService,
     private poNotification: PoNotificationService,
     private router: Router,
+    private servTipoPerfilUsuario: TipoPerfilUsuarioService
   ) { }
 
   ngOnInit(): void {
@@ -63,6 +67,8 @@ export class CadastroUserListComponent implements OnInit {
     });
   }
 
+  
+
   private setupComponents(): void {
 
     this.tableActions = [
@@ -79,7 +85,7 @@ export class CadastroUserListComponent implements OnInit {
 
     this.columns = [
       {
-        property: 'usuario', label: this.literals.usuario,type: 'link', action: (value, row) => {
+        property: 'nomeUsuario', label: this.literals.usuario,type: 'link', action: (value, row) => {
           this.edit(row);
         }
       },
@@ -100,14 +106,14 @@ export class CadastroUserListComponent implements OnInit {
     };
 
     this.filterSettings = {
-      action: this.searchById.bind(this),
+      action: this.searchByName.bind(this),
       placeholder: this.literals.description
     };
   }
   
-  searchById(quickSearchValue: string) {
+  searchByName(quickSearchValue: string) {
 
-    this.disclaimers = [...[{ property: 'usuario', value: quickSearchValue }]];
+    this.disclaimers = [...[{ property: 'nomeUsuario', value: quickSearchValue }]];
     this.disclaimerGroup.disclaimers = [...this.disclaimers];
   }
 
