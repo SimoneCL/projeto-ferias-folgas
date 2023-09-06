@@ -11,6 +11,7 @@ import { UsuarioService } from '../shared/services/usuario.service';
 import { CadastroUserRoutingModule } from './cadastro-user-routing.module';
 import { CadastroUserEditComponent } from './edit/cadastro-user-edit.component';
 import { CadastroUserListComponent } from './list/cadastro-user-list.component';
+import { TipoPerfilUsuarioService } from '../shared/services/tipo-perfil-usuario.service';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { CadastroUserListComponent } from './list/cadastro-user-list.component';
     UsuarioService,
     EquipeUsuarioService,
     EquipesService,
-    PoI18nPipe
+    PoI18nPipe,
+    TipoPerfilUsuarioService
   ]
 })
 export class CadastroUserModule { }

@@ -9,6 +9,8 @@ import { IUsuario, Usuario } from '../../shared/model/usuario.model';
 import { EquipeUsuarioService } from '../../shared/services/equipe-usuario.service';
 import { EquipesService } from '../../shared/services/equipes.service';
 import { UsuarioService } from '../../shared/services/usuario.service';
+import { TipoPerfilUsuarioService } from 'src/app/shared/services/tipo-perfil-usuario.service';
+import { ITipoPerfilUsuario } from 'src/app/shared/model/tipo-perfil-usuario.model';
 
 @Component({
   selector: 'app-cadastro-user-edit',
@@ -21,6 +23,7 @@ export class CadastroUserEditComponent implements OnInit {
 
   private usuarioSubscription$: Subscription;
   private servEquipesSubscription$: Subscription;
+  private servTipoPerfilUsuarioSubscription$: Subscription;
   private servEquipeUsuarioSubscription$: Subscription;
   public usuario: IUsuario = new Usuario();
   public equipeUsuar: IEquipeUsuario = new EquipeUsuario();
@@ -36,7 +39,8 @@ export class CadastroUserEditComponent implements OnInit {
 
   eventPage: string;
 
-  public perfilOptions: Array<PoRadioGroupOption>;
+  public perfilOptions: Array<PoSelectOption>;
+
   public newPassword: string;
   public confirmNewPassword: string;
 
@@ -46,6 +50,7 @@ export class CadastroUserEditComponent implements OnInit {
 
   equipeItems: Array<IEquipes> = new Array<IEquipes>();
   equipes: Array<IEquipes> = new Array<IEquipes>();
+  public itemsPerfil: Array<ITipoPerfilUsuario> = new Array<ITipoPerfilUsuario>();
   columns: Array<PoTableColumn>;
 
   hasNext = false;
@@ -65,6 +70,7 @@ export class CadastroUserEditComponent implements OnInit {
   equipeSelected: Array<string> = [];
 
   disclaimersEquipe: Array<PoDisclaimer> = [];
+  private disclaimers: Array<PoDisclaimer> = [];
 
   constructor(
     private route: Router,
@@ -76,6 +82,7 @@ export class CadastroUserEditComponent implements OnInit {
     private serviceUsuario: UsuarioService,
     private serviceEquipeUsuario: EquipeUsuarioService,
     private servEquipes: EquipesService,
+    private servTipoPerfilUsuario: TipoPerfilUsuarioService
   ) { }
 
   ngOnInit(): void {
@@ -100,14 +107,41 @@ export class CadastroUserEditComponent implements OnInit {
     });
   }
 
+  searchPerfil(): void {
+    this.currentPage = 1;
+        
+    this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
+      .query(this.disclaimers || [], [], this.currentPage, this.pageSize)
+      .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
+        if (response && response.items) {
+          this.itemsPerfil = [...response.items];
+          console.log(this.itemsPerfil);
+          this.hasNext = response.hasNext;             
+        }
+        this.atualizaPerfilUsuario(this.itemsPerfil);
+      })      
+  } 
+
+  atualizaPerfilUsuario(itensPerfilUsuario:Array<ITipoPerfilUsuario>){
+    console.log(itensPerfilUsuario);
+    for (let i in itensPerfilUsuario) {
+      this.perfilOptions.push(
+        { value: itensPerfilUsuario[i].idTipoPerfil, label: itensPerfilUsuario[i].descricaoPerfil },
+      );
+      console.log(this.perfilOptions);
+    }
+  }
+
   setupComponents() {
     this.searchEquipes();
+    this.perfilOptions = [];
+    this.searchPerfil();
     this.breadcrumb = this.getBreadcrumb();
-    this.perfilOptions = [
+    /*this.perfilOptions = [];[
       { label: 'Team Lead', value: '1' },
       { label: 'Product Owner', value: '2' },
       { label: 'Dev Team', value: '3' }
-    ];
+    ];*/
 
     if (this.eventPage === 'detail') {
       this.properties = "true";
@@ -172,6 +206,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
   create() {
     this.save();
+    console.log(this.usuario);
     this.usuarioSubscription$ = this.serviceUsuario.create(this.usuario).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
