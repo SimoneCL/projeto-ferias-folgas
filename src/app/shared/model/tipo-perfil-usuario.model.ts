@@ -4,6 +4,9 @@ export interface ITipoPerfilUsuario {
 }
 
 export class TipoPerfilUsuario implements ITipoPerfilUsuario {
+    query(arg0: undefined[], arg1: undefined[], arg2: number, arg3: number) {
+      throw new Error('Method not implemented.');
+    }
     idTipoPerfil: number;
     descricaoPerfil: string;
 

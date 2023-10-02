@@ -1,5 +1,4 @@
 import { PoDatepickerRange } from '@po-ui/ng-components';
-import { GeneralUtils } from '../utils/general-utils';
 
 export class ConfiguracaoFeriasFolga {
     public datePickerRange: PoDatepickerRange;

@@ -26,6 +26,7 @@ export const generalEn = {
     search: 'Search',
     advancedSearch: 'Advanced search',
     updatedMessage: 'Change made successfully.',
+    updatedPasswordMessage: 'Change Password  made successfully.',
     yes: 'Yes',
     excludeTitle: 'Delete',
     createdMessage: 'Record created',

@@ -7,6 +7,9 @@ export const generalPt = {
     confirm: 'Confirmar',
     warning: 'Advertência',
     edit: 'Editar',
+    relacEquipe: 'Relac Usuário x Equipe',
+    relacEquipeUsuario: 'Vincular usuário à equipe: {0}',
+    link: 'Relacionar',
     copy: 'Copiar',
     detail: 'Detalhes',
     email: 'E-mail',
@@ -26,6 +29,7 @@ export const generalPt = {
     search: 'Buscar',
     advancedSearch: 'Busca avançada',
     updatedMessage: 'Registro alterado',
+    updatedPasswordMessage: 'Senha alterada com sucesso',
     yes: 'Sim',
     excludeTitle: 'Eliminar',
     createdMessage: 'Registro criado',
@@ -73,5 +77,7 @@ export const generalPt = {
     perfilUsuario: 'Tipo Perfil Usuário',
     gestor: 'Gestor',
     titleTipoPerfil: 'Perfil Usuário',
+    txtUsuario: 'Selecione os usuários para vincular à equipe',
+    txtUsuarioRelac: 'Usuários relacionados à equipe',
     
 };

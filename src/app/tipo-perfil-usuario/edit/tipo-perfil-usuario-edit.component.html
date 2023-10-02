@@ -1,0 +1,24 @@
+<po-page-edit
+    [p-title]="literals?.titleTipoPerfil"
+    [p-breadcrumb]="breadcrumb"
+    (p-cancel)="cancel()"
+    (p-save)="save()">
+
+    <po-divider></po-divider>            
+    <div class="po-row">
+        <po-input 
+            class="po-md-1"
+            name="tipoUsuario"
+            [(ngModel)]="itemsTipoPerfil.idTipoPerfil"
+            [p-label]="literals?.tipoUsuario"
+            [p-disabled]="isEdit">
+        </po-input>
+
+        <po-input
+            class="po-md-8"
+            name="descTipoUsuario"
+            [(ngModel)]="itemsTipoPerfil.descricaoPerfil"
+            [p-label]="literals?.descricaoPerfil">        
+        </po-input>
+    </div>        
+</po-page-edit>

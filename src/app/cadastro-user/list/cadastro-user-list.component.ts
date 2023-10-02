@@ -6,6 +6,8 @@ import { forkJoin, Subscription } from 'rxjs';
 import { Evento, IEvento } from '../../shared/model/evento.model';
 import { IUsuario, Usuario } from '../../shared/model/usuario.model';
 import { UsuarioService } from '../../shared/services/usuario.service';
+import { ITipoPerfilUsuario, TipoPerfilUsuario } from 'src/app/shared/model/tipo-perfil-usuario.model';
+import { TipoPerfilUsuarioService } from 'src/app/shared/services/tipo-perfil-usuario.service';
 
 @Component({
   selector: 'app-cadastro-user-list',
@@ -15,24 +17,24 @@ import { UsuarioService } from '../../shared/services/usuario.service';
 export class CadastroUserListComponent implements OnInit {
 
   private usuarioSubscription$: Subscription;
+  private servTipoPerfilUsuarioSubscription$: Subscription;
   private disclaimers: Array<PoDisclaimer> = [];
 
-  pageActions: Array<PoPageAction>;
-  tableActions: Array<PoTableAction>;
+  pageActions: Array<PoPageAction> = [];
+  tableActions: Array<PoTableAction> = [];
 
-  usuarioTipo: Array<PoTableColumnLabel>;
+  usuarioTipo: Array<PoTableColumnLabel> = [];
+  public itemsPerfil: Array<ITipoPerfilUsuario> = new Array<ITipoPerfilUsuario>();
+
 
   breadcrumb: PoBreadcrumb;
 
-  public items: Array<IUsuario> = new Array<IUsuario>();
-  columns: Array<PoTableColumn>;
+  public items: Array<IUsuario> = []; //= new Array<IUsuario>();
+  columns: Array<PoTableColumn> = [];
   filterSettings: PoPageFilter;
-  disclaimerGroup: PoDisclaimerGroup;
+  disclaimerGroup: PoDisclaimerGroup ;
   userLogado: string;
 
-  codTipoPerfil: number;
-  descTipoPerfil: string;
-  isEdit: boolean;
 
   hasNext = false;
   pageSize = 20;
@@ -48,6 +50,7 @@ export class CadastroUserListComponent implements OnInit {
     private poDialogService: PoDialogService,
     private poNotification: PoNotificationService,
     private router: Router,
+    private servTipoPerfilUsuario: TipoPerfilUsuarioService
   ) { }
 
   ngOnInit(): void {
@@ -61,13 +64,16 @@ export class CadastroUserListComponent implements OnInit {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-      this.setupComponents();
+     
       this.search();
+     
+      
     });
   }
 
-  private setupComponents(): void {
 
+
+  private setupComponents(): void {
     this.tableActions = [
       { action: this.edit.bind(this), label: this.literals.edit },
       { action: this.detail.bind(this), label: this.literals.detail },
@@ -79,20 +85,21 @@ export class CadastroUserListComponent implements OnInit {
         action: () => this.router.navigate(['cadastroUser/new'])
       }
     ];
-
+  
+    for (let i in this.itemsPerfil) {
+      this.usuarioTipo.push(
+        { value: this.itemsPerfil[i].idTipoPerfil, label: this.itemsPerfil[i].descricaoPerfil },
+      );
+    }
     this.columns = [
       {
-        property: 'usuario', label: this.literals.usuario,type: 'link', action: (value, row) => {
+        property: 'nomeUsuario', label: this.literals.usuario, type: 'link', action: (value, row) => {
           this.edit(row);
         }
       },
       { property: 'email', label: this.literals.email, type: 'string' },
       {
-        property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: [
-          { value: '1', color: 'color-11', label: 'Team Lead' },
-          { value: '2', color: 'color-08', label: 'Product Owner' },
-          { value: '3', color: 'color-02', label: 'Dev Team' }]
-      },
+        property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: this.usuarioTipo  },
     ];
 
 
@@ -103,14 +110,14 @@ export class CadastroUserListComponent implements OnInit {
     };
 
     this.filterSettings = {
-      action: this.searchById.bind(this),
+      action: this.searchByName.bind(this),
       placeholder: this.literals.description
     };
   }
-  
-  searchById(quickSearchValue: string) {
 
-    this.disclaimers = [...[{ property: 'usuario', value: quickSearchValue }]];
+  searchByName(quickSearchValue: string) {
+
+    this.disclaimers = [...[{ property: 'nomeUsuario', value: quickSearchValue }]];
     this.disclaimerGroup.disclaimers = [...this.disclaimers];
   }
 
@@ -127,7 +134,9 @@ export class CadastroUserListComponent implements OnInit {
     this.usuarioSubscription$ = this.serviceUsuario
       .query(this.disclaimers, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<IUsuario>) => {
-        this.items = [...this.items, ...response.items];
+        this.items = response.items;
+        this.searchPerfil();
+
         this.hasNext = response.hasNext;
         this.isLoading = false;
       });
@@ -171,6 +180,22 @@ export class CadastroUserListComponent implements OnInit {
     this.disclaimers = disclaimers;
     this.search();
   }
+
+  searchPerfil(): void {
+    this.currentPage = 1;
+
+    this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
+      .query([], [], this.currentPage, 9999)
+      .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
+        if (response && response.items) {
+          this.itemsPerfil = [...response.items];
+          this.setupComponents();
+          this.hasNext = response.hasNext;
+        }
+
+      })
+  }
+
 
   ngOnDestroy(): void {
     if (this.usuarioSubscription$) {

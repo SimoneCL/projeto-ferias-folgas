@@ -1,4 +1,4 @@
- <po-page-list
+ <po-page-list *ngIf="!isLoading"
     [p-title]="literals?.listUser"
     [p-actions]="pageActions"
     [p-disclaimer-group]="disclaimerGroup"

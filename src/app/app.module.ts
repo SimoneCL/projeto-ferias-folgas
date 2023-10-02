@@ -14,6 +14,7 @@ import { LoadingInterceptorModule } from './loading-interceptor.module';
 import { generalEn } from './shared/literals/i18n/general-en';
 import { generalEs } from './shared/literals/i18n/general-es';
 import { generalPt } from './shared/literals/i18n/general-pt';
+import { HttpClientModule } from '@angular/common/http';
 
 
 
@@ -42,6 +43,7 @@ const i18nConfig: PoI18nConfig = {
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
+        HttpClientModule,
         LoadingInterceptorModule,
         PoModule,
         PoTemplatesModule,

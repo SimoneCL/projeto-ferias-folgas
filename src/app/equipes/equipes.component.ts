@@ -8,6 +8,7 @@ import { NgForm } from '@angular/forms';
 import { PoModalAction, PoModalComponent } from '@po-ui/ng-components';
 import { PoPageAction } from '@po-ui/ng-components';
 import { PoTableColumn } from '@po-ui/ng-components';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-equipes',
@@ -54,6 +55,7 @@ export class EquipesComponent implements OnInit{
     private servEquipes: EquipesService,
     private poDialogService: PoDialogService,
     private PoI18nPipe: PoI18nPipe,
+    private router: Router,
     private poNotification: PoNotificationService
   ) {}
 
@@ -88,6 +90,7 @@ export class EquipesComponent implements OnInit{
 
     this.tableActions = [
       { action: this.edit.bind(this), label: this.literals.edit },
+      { action: this.relacEquipe.bind(this), label: this.literals.relacEquipe },
       { action: this.delete.bind(this), label: this.literals.delete, type: 'danger' }
     ];
 
@@ -98,8 +101,8 @@ export class EquipesComponent implements OnInit{
     };
        
     this.columnsEquipes = [
-      { property: 'codEquipe', label: 'Código',  width: '5%', type: 'link', action: (value, row) => this.edit(row) },
-      { property: 'descEquipe', label: 'Descrição', type: 'link', action: (value, row) => this.edit(row)  }
+      { property: 'codEquipe', label: 'Código', type: 'number', width: '5%' },
+      { property: 'descEquipe', label: 'Descrição', type: 'string' }
     ];
     
     this.filterSettings = {
@@ -120,7 +123,9 @@ export class EquipesComponent implements OnInit{
     this.descEquipe = item.descEquipe;
     this.poModal.open();
   }
-
+  private relacEquipe(item: IEquipes): void {
+    this.router.navigate(['/equipes', 'relacEquipe', Equipes.getInternalId(item)]);
+  }
   public onChangeDisclaimer(disclaimers): void {
     this.disclaimers = disclaimers;
     this.search();
@@ -186,6 +191,7 @@ export class EquipesComponent implements OnInit{
     this.createItems.codEquipe = this.codEquipe;
     this.createItems.descEquipe = this.descEquipe;
     if (this.isEdit) {
+    
       this.servEquipesSubscription$ = this.servEquipes
       .update(this.createItems)
       .subscribe(() => {

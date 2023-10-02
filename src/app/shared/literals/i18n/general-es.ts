@@ -26,6 +26,7 @@ export const generalEs = {
     search: 'Buscar',
     advancedSearch: 'Búsqueda avanzada',
     updatedMessage: 'Cambio efectuado con éxito.',
+    updatedPasswordMessage: 'Senha efectuado con éxito',
     yes: 'Sí',
     excludeTitle: 'Eliminar',
     createdMessage: 'Registro creado',
