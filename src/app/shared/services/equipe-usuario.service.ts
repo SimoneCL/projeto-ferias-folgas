@@ -91,11 +91,6 @@ export class EquipeUsuarioService {
         return this.http.delete<IEquipeUsuario>(`${this.apiBaseUrl}/${id}`);
     }
 
-    // delete(model: INfeItemReferXmlDoc): Observable<INfeItemReferXmlDoc> {
-    //     const id = encodeURIComponent(NfeItemReferXmlDoc.getInternalId(model));
-    //     return this.http.delete<INfeItemReferXmlDoc>(`${this.apiUrl}/${id}`);
-    // }
-
     getUrl(urlBase: string, filters: PoDisclaimer[], expandables: string[], page: number, pageSize: number): string {
         const urlParams = new Array<String>();
 

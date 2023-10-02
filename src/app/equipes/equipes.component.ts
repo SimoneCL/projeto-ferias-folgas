@@ -101,8 +101,8 @@ export class EquipesComponent implements OnInit{
     };
        
     this.columnsEquipes = [
-      { property: 'codEquipe', label: 'Código', type: 'number', width: '5%' },
-      { property: 'descEquipe', label: 'Descrição', type: 'string' }
+      { property: 'codEquipe', label: 'Código',  width: '5%', type: 'link', action: (value, row) => this.edit(row) },
+      { property: 'descEquipe', label: 'Descrição', type: 'link', action: (value, row) => this.edit(row)  }
     ];
     
     this.filterSettings = {
