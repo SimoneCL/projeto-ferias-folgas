@@ -18,7 +18,6 @@ export class UsuarioService {
     query(filters: PoDisclaimer[], page = 1, pageSize = 9999): Observable<TotvsResponse<IUsuario>> {
 
         let url = `${this.apiBaseUrl}?pageSize=${pageSize}&page=${page}`;
-        console.log('filters', filters)
         if (filters && filters.length > 0) {
 
             const urlParams = new Array<string>();
@@ -29,7 +28,6 @@ export class UsuarioService {
 
             url = `${url}&${urlParams.join('&')}`;
         }
-        console.log('query url', url)
         return this.http.get<TotvsResponse<IUsuario>>(url);
     }
     
@@ -63,7 +61,6 @@ export class UsuarioService {
     }
 
     getObjectByValue(id: string): Observable<IUsuario> {
-        console.log('getObjectByValue', id)
         return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}`);
     }
 
