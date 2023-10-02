@@ -18,7 +18,7 @@ export class UsuarioService {
     query(filters: PoDisclaimer[], page = 1, pageSize = 9999): Observable<TotvsResponse<IUsuario>> {
 
         let url = `${this.apiBaseUrl}?pageSize=${pageSize}&page=${page}`;
-
+        console.log('filters', filters)
         if (filters && filters.length > 0) {
 
             const urlParams = new Array<string>();
@@ -29,6 +29,7 @@ export class UsuarioService {
 
             url = `${url}&${urlParams.join('&')}`;
         }
+        console.log('query url', url)
         return this.http.get<TotvsResponse<IUsuario>>(url);
     }
     
@@ -37,6 +38,12 @@ export class UsuarioService {
         if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }
         return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
     }    
+
+    getlookup(id: number, expandables: string[]): Observable<TotvsResponse<IUsuario>> {
+        let lstExpandables = this.getExpandables(expandables);
+        if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }
+        return this.http.get<TotvsResponse<IUsuario>>(`${this.apiBaseUrl}/lookup/${id}${lstExpandables}`, this.headers);
+    }   
 
     getMetadata(type = '', id = ''): Observable<any> {
         let url = `${this.apiBaseUrl}/metadata`;
@@ -49,13 +56,14 @@ export class UsuarioService {
         const header = { params: { page: params.page.toString(), pageSize: params.pageSize.toString() } };
 
         if (params.filter && params.filter.length > 0) {
-            header.params['code'] = params.filter;
+            header.params['nomeUsuario'] = params.filter;
         }
 
         return this.http.get<IUsuario>(`${this.apiBaseUrl}`, header);
     }
 
     getObjectByValue(id: string): Observable<IUsuario> {
+        console.log('getObjectByValue', id)
         return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}`);
     }
 
@@ -65,6 +73,10 @@ export class UsuarioService {
 
     update(model: IUsuario): Observable<IUsuario> {
         return this.http.put<IUsuario>(`${this.apiBaseUrl}/${Usuario.getInternalId(model)}`, model, this.headers);
+    }
+
+    updatePassword(model: IUsuario): Observable<IUsuario> {
+        return this.http.put<IUsuario>(`${this.apiBaseUrl}/alterarSenha/${Usuario.getInternalId(model)}`, model, this.headers);
     }
 
     delete(id: string): Observable<any> {

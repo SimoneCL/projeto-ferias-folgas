@@ -4,18 +4,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	<parent>
 		<groupId>com.totvs.thf</groupId>
 		<artifactId>totvs-thf2-parent</artifactId>
-    <version>11.5.X-SNAPSHOT</version>
+    <version>11.5.X-CL-SNAPSHOT</version>
 	</parent>
   <artifactId>geren-ferias-folgas-tomcat</artifactId>  
   <packaging>war</packaging>
   <name>artifactId Maven Webapp</name>
-  <dependencies>
-    <dependency>
-      <groupId>com.totvs.framework</groupId>
-      <artifactId>totvs-fwk-sso</artifactId>
-      <version>11.5.X-NFRW-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
   <build>
     <finalName>geren-ferias-folgas</finalName>
     <plugins>

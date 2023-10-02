@@ -1,9 +1,6 @@
 <po-page-list
-    #poPageList
     [p-title]="literals?.perfilUsuario"
-    [p-actions]="pageActions"
-    [p-disclaimer-group]="disclaimerGroup"
-    [p-filter]="filterSettings">
+    [p-actions]="pageActions">
     
     <po-table
         p-striped="true"
@@ -13,49 +10,3 @@
         p-actions-right="true">
     </po-table>   
 </po-page-list>
-
-<po-modal #modalTipoPerfil 
-    [p-title]="literals?.scheduleEvent"
-    [p-primary-action]="confirmTipoPerfil"
-    [p-secondary-action]="closeTipoPerfil" >
-
-    <form #formTipoPerfilUsuario="ngForm">
-      <div class="po-row">        
-        <po-input *ngIf="isEdit"
-          class="po-md-2" 
-          name="codTipoPerfil"      
-          [(ngModel)]="tipoPerfilUsuario.idTipoPerfil" 
-          [p-disabled]="isEdit"
-          p-label="Código" 
-          p-required> 
-        </po-input>
-        <po-input 
-          class="po-md-6" 
-          name="descTipoPerfil"      
-          [(ngModel)]="tipoPerfilUsuario.descricaoPerfil" 
-          p-label="Descrição" 
-          p-required> 
-        </po-input>
-       
-      </div>      
-    </form>
-</po-modal>
-
-<po-modal 
-  #modalAdvSearchTipoPerfil
-  p-title="Pesquisa"
-  [p-primary-action]="confirmAdvancedSearch"
-  [p-secondary-action]="cancelAdvancedSearch">  
-  <po-lookup
-    class="po-md-12"
-    name="fiterTipoPerfil"    
-    [(ngModel)]="tipoPerfilFilter"
-    p-label="Tipo Perfil"
-    p-multiple="false"
-    [p-columns]="zoomColumnsTipoPerfil"
-    [p-field-format]="fieldFormatTipoPerfil"
-    [p-filter-service]="servTipoPerfilUsuario"
-    p-field-label="descricaoPerfil"
-    p-field-value="descricaoPerfil">
-  </po-lookup>
-</po-modal>

@@ -76,18 +76,25 @@ export class EquipeUsuarioService {
         return this.http.get<IEquipeUsuario>(`${this.apiBaseUrl}/${id}`);
     }
 
+    c
     create(model: IEquipeUsuario): Observable<IEquipeUsuario> {
         return this.http.post<IEquipeUsuario>(this.apiBaseUrl, model, this.headers);
     }
+
 
     update(model: IEquipeUsuario): Observable<IEquipeUsuario> {
         return this.http.put<IEquipeUsuario>(`${this.apiBaseUrl}/${EquipeUsuario.getInternalId(model)}`, model, this.headers);
     }
 
-    delete(id: string): Observable<any> {
-      
-        return this.http.delete(`${this.apiBaseUrl}/${id}`);
+    delete (model: IEquipeUsuario): Observable<IEquipeUsuario>  {
+        const id = encodeURIComponent(EquipeUsuario.getInternalId(model));
+        return this.http.delete<IEquipeUsuario>(`${this.apiBaseUrl}/${id}`);
     }
+
+    // delete(model: INfeItemReferXmlDoc): Observable<INfeItemReferXmlDoc> {
+    //     const id = encodeURIComponent(NfeItemReferXmlDoc.getInternalId(model));
+    //     return this.http.delete<INfeItemReferXmlDoc>(`${this.apiUrl}/${id}`);
+    // }
 
     getUrl(urlBase: string, filters: PoDisclaimer[], expandables: string[], page: number, pageSize: number): string {
         const urlParams = new Array<String>();

@@ -69,13 +69,15 @@ export class TipoEventoComponent implements OnInit {
       action: () => {
         this.closeModal();
       },
-      label: this.literals.close
+      label: this.literals.close,
+      danger: true
     };
     this.confirm = {
       action: () => {
         this.salvarTipoEvento();
       },
-      label: this.literals.save
+      label: this.literals.save,
+      disabled: true
     };
 
     this.tableActions = [
@@ -91,8 +93,8 @@ export class TipoEventoComponent implements OnInit {
     ];
 
     this.columns = [
-      { property: 'codTipo', label: this.literals.code, width: '5%', type: 'link', action: (value, row) => this.edit(row) },
-      { property: 'descTipoEvento', label: this.literals.description, width: '95%', type: 'link', action: (value, row) => this.edit(row)  },
+      { property: 'codTipo', label: this.literals.code, type: 'number', width: '5%' },
+      { property: 'descTipoEvento', label: this.literals.description, type: 'string', width: '100%' },
     ];
 
     this.disclaimerGroup = {

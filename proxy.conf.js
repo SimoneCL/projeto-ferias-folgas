@@ -1,58 +1,37 @@
-/*const PROXY_CONFIG = [
- {
-      context: [
-         // "/receivingParameters"
-      ],
-      target: "http://localhost:3000",
-      secure: false,
-      changeOrigin: true,
-      logLevel: "debug",
-      autoRewrite: true
-  }
-]
+const PROXY_CONFIG_embau = [
+    {
+         context: [
+             "/josso",
+             "/dts/datasul-rest",
+         ],
+         target: "http://embau:8680",
+         secure: false,
+         changeOrigin: true,
+         logLevel: "debug",
+         autoRewrite: true,
+         headers: {
+             Authorization: "Basic c3VwZXI6c3N6a0AxMjM=" // super sszk@123
+             // Authorization: "Basic MTM6MTM=" // 13 13
+         }
+     }
+ ]
 
-module.exports = PROXY_CONFIG;*/
+// caraiva:8180
+const PROXY_CONFIG_caraiva = [
+    {
+        context: [
+            "/josso",
+            "/dts/datasul-rest",
+        ],
+        target: "https://caraiva:8180",
+        secure: false,
+        changeOrigin: true,
+        logLevel: "debug",
+        autoRewrite: true,
+        headers: {
+            Authorization: "Basic c3VwZXI6c3VwZXJAMTIz"
+        }
+    }
+] 
 
-const PROXY_CONFIG = [
-   {
-       context: [
-           "/totvs-rest",
-           "/totvs-login",
-           "/customer",
-           "/country",
-           "/contact",
-           "/order",
-           "/genericsZoom",
-           "/jobScheduler",
-           "/evento",
-           "/evento",
-           "/tipoEventos",
-           "/feriados",
-           "/tipoPerfilUsuario"
-       ],
-       target: "http://localhost:3000",
-       secure: false,
-       changeOrigin: true,
-       logLevel: "debug",
-       autoRewrite: true
-   }, {
-       context: [
-           "/josso",
-           "/dts/datasul-rest",
-           "/qrcode/download"
-       ],
-       //target: "http://vigia:8480",
-       target: "https://gales:8180",
-       secure: false,
-       changeOrigin: true,
-       logLevel: "debug",
-       autoRewrite: true,
-       headers: {
-           //Cookie: "loginMode=normal; JOSSO_SESSIONID=72B88B2C5A5000AFF9C23C56A3908603; JSESSIONID=F5201606657FDB646AF59E2C9D93ECB4"
-           // vigia Authorization: "Basic XXXXXXXXX"
-           Authorization: "Basic XXXXXXXXX"
-       }
-   }
-]
-
-module.exports = PROXY_CONFIG;
+module.exports = PROXY_CONFIG_caraiva;

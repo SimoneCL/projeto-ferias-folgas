@@ -92,15 +92,15 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "codeCoverage" : true,
+            "codeCoverage": true,
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-                "node_modules/@totvs/po-theme/css/po-theme-default-variables.min.css",
-                "node_modules/@totvs/po-theme/css/po-theme-default.min.css",
-                "node_modules/@po-ui/style/css/po-theme-core.min.css"  
+              "node_modules/@totvs/po-theme/css/po-theme-default-variables.min.css",
+              "node_modules/@totvs/po-theme/css/po-theme-default.min.css",
+              "node_modules/@po-ui/style/css/po-theme-core.min.css"
             ],
             "scripts": []
           }
@@ -134,5 +134,13 @@
     "schematicCollections": [
       "@angular-eslint/schematics"
     ]
+  },
+  "schematics": {
+    "@angular-eslint/schematics:application": {
+      "setParserOptionsProject": true
+    },
+    "@angular-eslint/schematics:library": {
+      "setParserOptionsProject": true
+    }
   }
 }

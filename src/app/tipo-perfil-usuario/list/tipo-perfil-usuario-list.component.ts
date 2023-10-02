@@ -1,11 +1,11 @@
 //Angular
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 //PO-UI
-import { PoDialogService, PoDisclaimer, PoPageListComponent, PoI18nService, PoBreadcrumb, PoNotificationService, PoPageAction, PoTableAction, PoTableColumn, PoPageFilter, PoI18nPipe, PoModalAction, PoModalComponent, PoBreadcrumbItem, PoDisclaimerGroup, PoLookupColumn } from '@po-ui/ng-components';
+import { PoDialogService, PoDisclaimer, PoI18nService, PoBreadcrumb, PoNotificationService, PoPageAction, PoTableAction, PoTableColumn, PoPageFilter, PoI18nPipe } from '@po-ui/ng-components';
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
-import { DisclaimerUtil, TotvsResponse } from 'dts-backoffice-util';
+import { TotvsResponse } from 'dts-backoffice-util';
 //Services
 import { forkJoin, Subscription } from 'rxjs';
 import { ITipoPerfilUsuario, TipoPerfilUsuario } from '../../shared/model/tipo-perfil-usuario.model';
@@ -17,10 +17,6 @@ import { TipoPerfilUsuarioService } from '../../shared/services/tipo-perfil-usua
   styleUrls: ['./tipo-perfil-usuario-list.component.css']
 })
 export class TipoPerfilUsuarioListComponent implements OnInit {
-  @ViewChild('poPageList', { static: true }) poPageList: PoPageListComponent;
-  @ViewChild('modalTipoPerfil', { static: true }) modalTipoPerfil: PoModalComponent;
-  @ViewChild('modalAdvSearchTipoPerfil', { static: true }) modalAdvSearchTipoPerfil: PoModalComponent;
-  @ViewChild('formTipoPerfilUsuario', { static: true }) formTipoPerfilUsuario: NgForm;
 
   private i18nSubscription: Subscription;
   public tipoPerfilUsuario: ITipoPerfilUsuario = TipoPerfilUsuario.empty();
@@ -28,36 +24,20 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
 
   literalsI18n: PoPageLoginLiterals;
   literals: any = {};
+  breadcrumb: PoBreadcrumb;
   eventPage: string;  
   expandables = [''];
   disclaimers: Array<PoDisclaimer> = [];
   pageActions: Array<PoPageAction>;
   tableActions: Array<PoTableAction>;
   columnsPerfil: Array<PoTableColumn>;
+  filterSettings: PoPageFilter;
   userLogado: string;
 
-  breadcrumb: PoBreadcrumb;
-  filterSettings: PoPageFilter;
-  disclaimerGroup: PoDisclaimerGroup;
-  disclaimerUtil: DisclaimerUtil;
-
-  confirmAdvancedSearch: PoModalAction;
-  cancelAdvancedSearch: PoModalAction;
-  
   hasNext = false;
   pageSize = 20;
   currentPage = 0;
   isLoading = true;
-
-  codTipoPerfil: number;
-  descTipoPerfil: string;
-  isEdit: boolean;
-
-  zoomColumnsTipoPerfil: Array<PoLookupColumn>;
-  tipoPerfilFilter: string;
-    
-  confirmTipoPerfil: PoModalAction;
-  closeTipoPerfil: PoModalAction;
 
   servTipoPerfilUsuarioSubscription$: Subscription;
   
@@ -65,7 +45,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private poI18nPipe: PoI18nPipe,
     private poI18nService: PoI18nService,
-    public servTipoPerfilUsuario: TipoPerfilUsuarioService,
+    private servTipoPerfilUsuario: TipoPerfilUsuarioService,
     private poDialog: PoDialogService,
     private poNotification: PoNotificationService,
     private router: Router
@@ -89,47 +69,12 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
   } 
 
   setupComponents() {
-
-    this.confirmTipoPerfil = {
-      action: () => {
-        this.saveTipoPerfilUsuario();
-      },
-      label: this.literals.save
-    };
-
-    this.closeTipoPerfil = {
-      action: () => this.closeModal(),
-      label: this.literals.cancel
-    };
-
     this.pageActions = [
       {
         label: this.literals.add,
-        action: this.addPerfil.bind(this)
+        action: () => this.router.navigate(['perfilUsuario/new'])
       }
     ];
-
-    this.confirmAdvancedSearch = {
-      action: () => this.onConfirmAdvancedSearch(),
-      label: 'Confirma'
-    };
-
-    this.cancelAdvancedSearch = {
-      action: () => this.modalAdvSearchTipoPerfil.close(),
-      label: 'Cancel'
-    };
-
-    this.filterSettings = {
-      action: this.searchAdvById.bind(this),
-      advancedAction: this.advancedSearch.bind(this),
-      placeholder: 'Busca perfil'
-    };
-
-    this.disclaimerGroup = {
-      title: this.literals['filters'],
-      disclaimers: [],
-      change: this.onChangeDisclaimer.bind(this)
-    };
 
     this.tableActions = [
       { action: this.edit.bind(this), label: this.literals.edit },
@@ -140,30 +85,11 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
       { property: 'idTipoPerfil', label: this.literals.perfilUsuario, type: 'link', action: (value, row) => this.edit(row) , width: '200px' },
       { property: 'descricaoPerfil', label: this.literals.descricaoPerfil, type: 'link', action: (value, row) => this.edit(row) },
     ];    
-
-    this.zoomColumnsTipoPerfil = [
-      { property: 'idTipoPerfil', label: this.literals.perfilUsuario, width: '30%' },
-      { property: 'descricaoPerfil', label: this.literals.descricaoPerfil, width: '70%' }
-    ];    
-  }
-
-  fieldFormatTipoPerfil(value) {
-    return `${value.idTipoPerfil} - ${value.descricaoPerfil}`;
-  }
-  
-  advancedSearch(): void {
-    this.modalAdvSearchTipoPerfil.open();
-  }  
-
-  onConfirmAdvancedSearch(): void {
-    this.refreshDisclaimer();
-    this.modalAdvSearchTipoPerfil.close();
   }
 
   search(): void {
     this.currentPage = 1;
-    this.itemsPerfil = [];
-    
+        
     this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
       .query(this.disclaimers || [], this.expandables, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
@@ -174,111 +100,8 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
       })      
   }
 
-  refreshDisclaimer(): void {
-    this.disclaimers = [];
-    
-    // Inclui campo do filtro no Disclaimer
-    this.addDisclaimer([
-      { property: 'descricaoPerfil', value: this.tipoPerfilFilter }
-    ]);    
-  }
-
-  addDisclaimer(disclaimerListItems: Array<PoDisclaimer>): void {
-    if (!disclaimerListItems) { return; }
-    
-    disclaimerListItems.map(disclaimerItem => {      
-      if (disclaimerItem.property !== '') {
-        this.disclaimers.push(disclaimerItem);
-      }
-    });
-    this.disclaimerGroup.disclaimers = [...this.disclaimers];
-  }
-
-  onChangeDisclaimer(disclaimers: Array<PoDisclaimer>): void {
-    this.disclaimers = disclaimers;
-    this.refreshFilters();
-    this.search();
-  }
-
-  resetFilters(): void {
-      // Inicia os Campos de Filtros
-      this.tipoPerfilFilter = '';
-  }
-
-  refreshFilters(): void {
-      if (!this.disclaimers || this.disclaimers.length === 0) {
-          this.poPageList.clearInputSearch();
-          this.resetFilters();
-          return;
-      }
-
-      if (this.disclaimers.findIndex(disclaimer => disclaimer.property === 'descricaoPerfil') === -1) {
-          this.poPageList.clearInputSearch();
-      }
-      
-      // Atualizar os Campos de Filtro conforme o Disclaimer
-      this.disclaimers.map(disclaimer => {
-                
-        
-        // ERRO Acontecia devido ao lookup verificar...
-
-
-        //this.tipoPerfilFilter = disclaimer.value;
-      });      
-  }  
-
-  searchAdvById(quickSearchValue = null): void {
-    this.disclaimers = [];
-    this.addDisclaimer([
-      { property: 'descricaoPerfil', value: quickSearchValue }
-    ]);
-  }
-
-  searchById(idTipoPerfil: string): void {
-    this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
-      .getById(idTipoPerfil)
-      .subscribe((response: ITipoPerfilUsuario) => {
-        this.tipoPerfilUsuario = response;           
-      })
-  } 
-
-  addPerfil(tipoPerfil) {
-    this.tipoPerfilUsuario.descricaoPerfil = '';
-    this.modalTipoPerfil.open();    
-  }
-
-  closeModal() {
-    this.isEdit = false;
-    this.modalTipoPerfil.close();    
-  }
-
   edit(valueRow) {
-    this.isEdit = true;
-    this.searchById(valueRow.idTipoPerfil);
-    this.modalTipoPerfil.open();
-  }
-
-  saveTipoPerfilUsuario() {
-    if(this.isEdit) {
-      this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
-        .update(this.tipoPerfilUsuario)
-        .subscribe((response: ITipoPerfilUsuario) => {
-          if(response) {
-            this.poNotification.success(this.literals.updatedMessage);
-            this.search();
-          }          
-        })
-    } else {
-      this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
-        .create(this.tipoPerfilUsuario)
-        .subscribe((response: ITipoPerfilUsuario) => {
-          if(response) {            
-            this.poNotification.success(this.literals.createdMessage);
-            this.search();
-           }          
-        })
-    }    
-    this.modalTipoPerfil.close();
+    this.router.navigate(['perfilUsuario/edit', valueRow.idTipoPerfil]);    
   }
 
   delete(tipoPerfil: ITipoPerfilUsuario) {
@@ -289,7 +112,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
         this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
           .delete(tipoPerfil.idTipoPerfil.toString())
           .subscribe((response: ITipoPerfilUsuario) => {
-            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, tipoPerfil.descricaoPerfil));
+            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, tipoPerfil.idTipoPerfil.toString()));
             this.search();
           });
       }

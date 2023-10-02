@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
                 { label: 'Cadastro', icon: "po-icon-user-add", shortLabel: "Cadastro", link: '/cadastroUser' },
                 { label: 'Férias e Folgas', icon: "po-icon-calendar-ok", shortLabel: "Folgas", link: '/feriasFolga' },
                 { label: 'Agenda', icon: "po-icon-calendar", shortLabel: "Agenda", link: '/agendaUser' },
-                { label: 'Tipo evento', icon: "po-icon-document", shortLabel: "evento", link: '/tipoEvento' },
+                { label: 'Tipo evento', icon: "po-icon-document", shortLabel: "Evento", link: '/tipoEvento' },
                 { label: 'Feriados', icon: "po-icon-calendar-settings", shortLabel: "Feriados", link: '/feriados' },
                 { label: 'Equipes', icon: "po-icon-users", shortLabel: "Equipes", link: '/equipes' },
                 { label: 'Perfil', icon: "po-icon-waiter", shortLabel: "Perfil", link: '/perfilUsuario' },

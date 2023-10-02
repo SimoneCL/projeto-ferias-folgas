@@ -1,0 +1,35 @@
+<po-page-default
+    [p-actions]="getActions()" 
+    [p-breadcrumb]="breadcrumb" 
+    [p-title]="getTitle()">
+    <div class="po-row po-pb-2">
+    <div class="po-md-6">
+        <div class="po-font-text-bold">{{literals?.txtUsuario}}</div>
+        <po-table
+        #POItemsOri
+        [p-columns]="columns"
+        [p-infinite-scroll]="true"
+        p-selectable="true"
+        [p-hide-select-all]="true"
+        p-infinite-scroll-distance="80"
+        (p-selected)="changeOptions($event, 'new')"
+        (p-unselected)="changeOptions($event, 'change')"
+        p-height="300"
+        [p-items]="items"
+        (p-delete-items)="deleteItems($event)">
+        </po-table>
+    </div>
+    <div class="po-md-6">
+        <div class="po-font-text-bold">{{literals?.txtUsuarioRelac}}s</div>
+        <po-table
+        #POItemsSelected
+        [p-columns]="columns"
+        [p-striped]="true"
+        [p-infinite-scroll]="true"
+        p-height="300"
+        [p-items]="itemsSelected"
+        >
+        </po-table>
+    </div>
+    </div>
+</po-page-default>
