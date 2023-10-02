@@ -105,26 +105,16 @@ export class RelacEquipeEditComponent implements OnInit {
 
 
   searchEquipeUsuario(): void {
-    // if (loadMore === true) {
-    //   this.currentPage = this.currentPage + 1;
-    // } else {
-    //   this.items = [];
-    //   this.currentPage = 1;
-    // }
-    this.itemsEquipeUsuario = [];
+   this.itemsEquipeUsuario = [];
     this.disclaimers = [{ property: 'codEquipe', value: this.idEquipe }]
-    console.log('searchEquipeUsuario - this.disclaimers', this.disclaimers)
     this.isLoading = true;
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
       .queryByEquipe(this.disclaimers, this.currentPage, 99999)
       .subscribe((response: TotvsResponse<IEquipeUsuario>) => {
         this.itemsEquipeUsuario = response.items;
-        console.log(' this.itemsEquipeUsuario', this.itemsEquipeUsuario)
         this.searchUsuarioselect(this.itemsEquipeUsuario);
         //this.searchPerfil();
 
-        // this.hasNext = response.hasNext;
-        // this.isLoading = false;
       });
 
 
@@ -155,13 +145,10 @@ export class RelacEquipeEditComponent implements OnInit {
     this.disclaimersUsuario = [];
     this.itemsSelected = [];
     this.usuarioRelac = [];
-    console.log('searchUsuarioSelect - equipeUsuario', equipeUsuario)
-    console.log('searchUsuarioSelect', equipeUsuario)
     for (let i in equipeUsuario) {
       this.disclaimersUsuario.push({ property: 'idUsuario', value: equipeUsuario[i].idUsuario });
     }
     this.itemsSelected = [];
-    console.log('this.disclaimersUsuario', this.disclaimersUsuario.length)
 
     this.isLoading = true;
 
@@ -169,9 +156,7 @@ export class RelacEquipeEditComponent implements OnInit {
       this.usuarioSubscription$ = this.serviceUsuario
         .query(this.disclaimersUsuario, 1, 99999)
         .subscribe((response: TotvsResponse<IUsuario>) => {
-          console.log('response.items', response.items)
           this.itemsSelected = response.items;
-         // this.usuarioRelac = response.items;
 
           this.selectRow();
 
@@ -187,7 +172,6 @@ export class RelacEquipeEditComponent implements OnInit {
   selectRow() {
     for (let i in this.itemsSelected) {
       this.poItemsOri.getUnselectedRows().findIndex((row, indexR) => {
-        console.log('selectRow', this.itemsSelected[i].idUsuario)
         if (row.idUsuario === this.itemsSelected[i].idUsuario) {
           this.poItemsOri.selectRowItem(row);
 
@@ -201,7 +185,6 @@ export class RelacEquipeEditComponent implements OnInit {
 
 
   changeOptions(event, type): void {
-    console.log('changeOptions', event, type)
     this.equipeUsuar = {
       idUsuario: event.idUsuario,
       codEquipe: this.idEquipe
@@ -218,24 +201,17 @@ export class RelacEquipeEditComponent implements OnInit {
       this.itemsSelected = [...this.itemsSelected];
       this.create();
     } else {
-      if (type === 'update') {
-
-      } else {
+      
         const index = this.itemsSelected.findIndex(el => el.idUsuario === event.idUsuario);
-        console.log('teste index', index)
         this.poItemsSelected.removeItem(index);
         this.itemsSelected = [...this.poItemsSelected.items];
         this.delete();
-
-      }
-
 
     }
 
   }
 
   deleteItems(items: Array<any>) {
-    console.log('deleteItems', items)
     this.items = items;
     this.itemsSelected = [];
   }
