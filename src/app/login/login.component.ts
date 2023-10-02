@@ -1,13 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PoDialogService, PoDisclaimer, PoI18nService } from '@po-ui/ng-components';
+import { PoDialogService, PoDisclaimer, PoI18nService, PoModalComponent, PoModalAction } from '@po-ui/ng-components';
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Subscription } from 'rxjs';
 import { ILogin, Login } from '../shared/model/login.model';
 import { IUsuario } from '../shared/model/usuario.model';
 import { LoginService } from '../shared/services/login.service';
+import { PoModalPasswordRecoveryComponent, PoModalPasswordRecoveryType } from '@po-ui/ng-templates';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,12 @@ import { LoginService } from '../shared/services/login.service';
 })
 export class LoginComponent {
   @ViewChild('formLogin', { static: true }) formLogin: NgForm;
+  @ViewChild('modalRecSenha', { static: false }) modalRecSenha: PoModalComponent;
+
+  literals: any = {};
+  confirm: PoModalAction;
+  close: PoModalAction;
+  eventPage: string;
 
   items: Array<any> = new Array<any>();
   private itemsLogin: Array<ILogin>;
@@ -43,6 +50,8 @@ export class LoginComponent {
     private router: Router
   ) { }
 
+  
+
   ngOnDestroy() {
     this.i18nSubscription.unsubscribe();
   }
@@ -51,8 +60,24 @@ export class LoginComponent {
     this.i18nSubscription = this.poI18nService.getLiterals().subscribe(literals => {
       this.literalsI18n = literals;
 
+      this.setupComponents();
+
       //this.search();
     })
+  }
+
+  setupComponents() {
+    this.confirm = {
+      action: () => {
+       /* this.relacEquipe();*/
+      },
+      label: this.literalsI18n?.enviar
+    };
+
+    this.close = {
+      action: () => this.closeModal(),
+      label: this.literalsI18n?.cancel
+    };
   }
 
   search(loadMore = false): void {
@@ -114,4 +139,16 @@ export class LoginComponent {
         });
     }
   }
+
+  abrirRecSenha() {
+    this.modalRecSenha.open();
+  }
+
+  public closeModal() {
+    /*this.equipeSelected = [];*/
+    this.modalRecSenha.close();
+  }
+
+
+
 }

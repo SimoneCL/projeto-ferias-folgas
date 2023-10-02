@@ -1,10 +1,14 @@
 <po-page-default>  
   <form #formLogin="ngForm">
+    <div class="p-label">Férias e Folgas</div>
     <div class="divLogin">
       <po-widget 
-        class="po-lg-4"
-        p-height="210"
-        p-no-shadow="true">
+      p-primary="true"
+      (p-primary-action)="abrirRecSenha()"
+      p-primary-label="Recuperar Senha"
+      class="po-lg-6"
+      p-height="250"
+      p-no-shadow="true">
       <po-input    
         class="po-md-6 po-lg-12"
         name="usuario"
@@ -28,4 +32,21 @@
     </po-widget>
     </div>
   </form>
+
+
 </po-page-default>
+
+<po-modal #modalRecSenha 
+  [p-title]="literalsI18n?.recuperar"
+  [p-primary-action]="confirm" 
+  [p-secondary-action]="close"> 
+  <po-input    
+  class="po-md-6 po-lg-12"
+  name="recUsuario"
+  [(ngModel)]="login.email"
+  p-label="Digite um e-mail válido para receber uma senha de recuperação"
+  p-icon="po-icon-user"
+  p-placeholder="email@totvs.com.br"      
+  p-clean> 
+ </po-input>
+  </po-modal>

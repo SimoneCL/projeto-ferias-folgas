@@ -73,5 +73,7 @@ export const generalPt = {
     perfilUsuario: 'Tipo Perfil Usuário',
     gestor: 'Gestor',
     titleTipoPerfil: 'Perfil Usuário',
+    recuperar: 'Recuperar Senha',
+    enviar: 'Enviar',
     
 };
