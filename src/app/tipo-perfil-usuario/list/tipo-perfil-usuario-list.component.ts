@@ -137,8 +137,8 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
     ];
 
     this.columnsPerfil = [
-      { property: 'idTipoPerfil', label: this.literals.perfilUsuario, type: 'link', action: (value, row) => this.edit(row) , width: '200px' },
-      { property: 'descricaoPerfil', label: this.literals.descricaoPerfil, type: 'link', action: (value, row) => this.edit(row) },
+      { property: 'idTipoPerfil', label: this.literals.code, type: 'number',  width: '5%' },
+      { property: 'descricaoPerfil', label: this.literals.perfilUsuario, type: 'link',tooltip: this.literals.edit, action: (value, row) => this.edit(row) },
     ];    
 
     this.zoomColumnsTipoPerfil = [

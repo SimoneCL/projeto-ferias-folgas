@@ -164,7 +164,6 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   create() {
-    this.save();
     this.usuarioSubscription$ = this.serviceUsuario.create(this.usuario).subscribe(() => {
       this.return();
       this.poNotification.success(this.literals.createdMessage);
@@ -273,7 +272,7 @@ export class CadastroUserEditComponent implements OnInit {
     return [
       {
         label: this.literals.save,
-        disabled: (this.newPassword === undefined || this.confirmNewPassword !== this.newPassword),
+        disabled: (this.eventPage !== 'new' && (this.newPassword === undefined || this.confirmNewPassword !== this.newPassword)),
         action: this.create.bind(this),
         icon: 'po-icon-plus'
       }, {
