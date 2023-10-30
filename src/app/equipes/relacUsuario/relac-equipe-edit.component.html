@@ -1,11 +1,21 @@
-<po-page-default
+<po-page-default 
     [p-actions]="getActions()" 
     [p-breadcrumb]="breadcrumb" 
     [p-title]="getTitle()">
     <div class="po-row po-pb-2">
     <div class="po-md-6">
-        <div class="po-font-text-bold">{{literals?.txtUsuario}}</div>
-        <po-table
+        <div class="po-font-text-bold po-md-12">{{literals?.txtUsuario}}</div>
+        <po-input #inputUsuario
+            class="po-offset-lg-6 po-offset-xl-6 po-md-6"
+            name="quickSearchUsuario"
+            [(ngModel)]="quickSearchUsuario"
+            p-placeholder="Nome"
+            p-clean="true"
+            p-icon="po-icon-search"
+            (keypress)="onKeyQuickSearchUsuar($event.keyCode)"
+            (p-change)="onChangeQuickSearchUsuar($event)">
+        </po-input>
+        <po-table class="po-md-12"
         #POItemsOri
         [p-columns]="columns"
         [p-infinite-scroll]="true"
@@ -14,19 +24,29 @@
         p-infinite-scroll-distance="80"
         (p-selected)="changeOptions($event, 'new')"
         (p-unselected)="changeOptions($event, 'change')"
-        p-height="300"
+        p-height="400"
         [p-items]="items"
         (p-delete-items)="deleteItems($event)">
         </po-table>
     </div>
     <div class="po-md-6">
-        <div class="po-font-text-bold">{{literals?.txtUsuarioRelac}}s</div>
-        <po-table
+        <div class="po-font-text-bold">{{literals?.txtUsuarioRelac}}</div>
+        <po-input #inputUsuarioSelectUsuarioSelect
+            class="po-offset-lg-6 po-offset-xl-6 po-md-6"
+            name="quickSearchUsuarioSelect"
+            [(ngModel)]="quickSearchUsuarioSelect"
+            p-placeholder="Nome"
+            p-clean="true"
+            p-icon="po-icon-search"
+            (keypress)="onKeyQuickSearchUsuarioSelect($event.keyCode)"
+            (p-change)="onChangeQuickSearchUsuarioSelect($event)">
+        </po-input>
+        <po-table class="po-md-12"
         #POItemsSelected
         [p-columns]="columns"
         [p-striped]="true"
         [p-infinite-scroll]="true"
-        p-height="300"
+        p-height="400"
         [p-items]="itemsSelected"
         >
         </po-table>

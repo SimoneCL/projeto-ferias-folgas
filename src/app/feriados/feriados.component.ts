@@ -158,8 +158,8 @@ export class FeriadosComponent implements OnInit {
     ];
 
     this.columnsFeriados = [
-      { property: 'data', label: 'Data', type: 'link', action: (value, row) => this.edit(row)   },
-      { property: 'descricao', label: 'Descrição', type: 'link', action: (value, row) => this.edit(row)   },
+      { property: 'data', label: 'Data', type: 'link',tooltip: this.literals.edit, action: (value, row) => this.edit(row)   },
+      { property: 'descricao', label: 'Descrição', type: 'link',tooltip: this.literals.edit, action: (value, row) => this.edit(row)   },
       { property: 'tipoFeriado', label: 'Tipo Feriado', type: 'string' },
       { property: 'pontoFacultativo', label: 'Facultativo', type: 'boolean' }
     ];
@@ -263,7 +263,7 @@ export class FeriadosComponent implements OnInit {
         this.servFeriadosSubscription$ = this.servFeriados
           .delete(item.idFeriado)
           .subscribe(response => {
-            this.poNotification.success(this.literals.excludedMessage);
+            this.poNotification.success(this.PoI18nPipe.transform(this.literals.excludedMessage, item.descricao));
             this.search();
           });
       }

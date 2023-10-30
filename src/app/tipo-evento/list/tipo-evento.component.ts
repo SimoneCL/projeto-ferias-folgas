@@ -91,8 +91,8 @@ export class TipoEventoComponent implements OnInit {
     ];
 
     this.columns = [
-      { property: 'codTipo', label: this.literals.code, width: '5%', type: 'link', action: (value, row) => this.edit(row) },
-      { property: 'descTipoEvento', label: this.literals.description, width: '95%', type: 'link', action: (value, row) => this.edit(row)  },
+      { property: 'codTipo', label: this.literals.code, width: '5%'},
+      { property: 'descTipoEvento', label: this.literals.description, width: '95%', type: 'link',tooltip: this.literals.edit, action: (value, row) => this.edit(row)  },
     ];
 
     this.disclaimerGroup = {
@@ -155,7 +155,7 @@ export class TipoEventoComponent implements OnInit {
 
     this.isLoading = true;
     this.tipoEventoSubscription$ = this.serviceTipoEvento
-      .query(this.disclaimers, this.currentPage, this.pageSize)
+      .query(disclaimer, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<ITipoEvento>) => {
         this.items = [...this.items, ...response.items];
         this.hasNext = response.hasNext;
@@ -172,7 +172,8 @@ export class TipoEventoComponent implements OnInit {
         this.tipoEventoSubscription$ = this.serviceTipoEvento
           .delete(id)
           .subscribe(response => {
-            this.poNotification.success(this.literals.excludedMessage);
+            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, item.descTipoEvento));
+
             this.search();
           });
       }

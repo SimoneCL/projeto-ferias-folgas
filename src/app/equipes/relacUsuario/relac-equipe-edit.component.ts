@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoSelectOption, PoTableAction, PoTableColumn, PoTableColumnLabel, PoTableComponent } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoInputComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoTableColumn, PoTableColumnLabel, PoTableComponent } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Subscription, forkJoin } from 'rxjs';
-import { ITipoPerfilUsuario } from 'src/app/shared/model/tipo-perfil-usuario.model';
-import { TipoPerfilUsuarioService } from 'src/app/shared/services/tipo-perfil-usuario.service';
 import { EquipeUsuario, IEquipeUsuario } from '../../shared/model/equipe-usuario.model';
-import { IUsuario, Usuario } from '../../shared/model/usuario.model';
+import { Equipes, IEquipes } from '../../shared/model/equipes.model';
+import { ITipoPerfilUsuario } from '../../shared/model/tipo-perfil-usuario.model';
+import { IUsuario } from '../../shared/model/usuario.model';
+import { EquipeUsuarioService } from '../../shared/services/equipe-usuario.service';
+import { EquipesService } from '../../shared/services/equipes.service';
+import { TipoPerfilUsuarioService } from '../../shared/services/tipo-perfil-usuario.service';
 import { UsuarioService } from '../../shared/services/usuario.service';
-import { EquipesService } from 'src/app/shared/services/equipes.service';
-import { Equipes, IEquipes } from 'src/app/shared/model/equipes.model';
-import { EquipeUsuarioService } from 'src/app/shared/services/equipe-usuario.service';
 
 @Component({
   selector: 'app-relac-equipe-edit',
@@ -20,6 +20,8 @@ import { EquipeUsuarioService } from 'src/app/shared/services/equipe-usuario.ser
 export class RelacEquipeEditComponent implements OnInit {
   @ViewChild('POItemsOri', { static: true }) poItemsOri: PoTableComponent;
   @ViewChild('POItemsSelected', { static: true }) poItemsSelected: PoTableComponent;
+  @ViewChild('inputUsuario', { static: true }) inputUsuario: PoInputComponent;
+  @ViewChild('inputUsuarioSelectUsuarioSelect', { static: true }) inputUsuarioSelectUsuarioSelect: PoInputComponent;
 
   private usuarioSubscription$: Subscription;
   private servEquipesSubscription$: Subscription;
@@ -29,6 +31,8 @@ export class RelacEquipeEditComponent implements OnInit {
   public equipeUsuar: IEquipeUsuario = new EquipeUsuario();
   public equipeTitle = '';
 
+  public quickSearchUsuario = '';
+  public quickSearchUsuarioSelect = '';
 
   private idEquipe = '';
 
@@ -50,22 +54,13 @@ export class RelacEquipeEditComponent implements OnInit {
   public itemsEquipeUsuario: Array<IEquipeUsuario> = new Array<IEquipeUsuario>();
   public items: Array<IUsuario> = new Array<IUsuario>();
   public itemsSelected: Array<IUsuario> = new Array<IUsuario>();
-  public usuarioRelac: Array<IUsuario> = new Array<IUsuario>();
   usuarioTipo: Array<PoTableColumnLabel> = [];
 
-
-  optionsEquipe: Array<PoMultiselectOption> = [];
-  equipeSelected: Array<string> = [];
-
-  disclaimersEquipe: Array<PoDisclaimer> = [];
   disclaimersUsuario: Array<PoDisclaimer> = [];
+  disclaimersUsuarSelect: Array<PoDisclaimer> = [];
   private disclaimers: Array<PoDisclaimer> = [];
 
-
-
-  /**lookup */
   loading: boolean = false;
-  multiLookup: Array<any> = [];
 
   constructor(
     private route: Router,
@@ -95,9 +90,16 @@ export class RelacEquipeEditComponent implements OnInit {
 
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
       this.idEquipe = this.activatedRoute.snapshot.paramMap.get('id');
+      this.searchPerfil();
       this.get(this.idEquipe);
       this.searchUsuario();
-      this.setupComponents();
+      const interval = setInterval(() => { // aguarda ate que carregue metadata e nf-e
+        if (this.itemsPerfil && this.equipe) {
+          clearInterval(interval);
+          this.setupComponents();
+        }
+      }, 60);
+
 
 
     });
@@ -105,7 +107,7 @@ export class RelacEquipeEditComponent implements OnInit {
 
 
   searchEquipeUsuario(): void {
-   this.itemsEquipeUsuario = [];
+    this.itemsEquipeUsuario = [];
     this.disclaimers = [{ property: 'codEquipe', value: this.idEquipe }]
     this.isLoading = true;
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario
@@ -113,13 +115,22 @@ export class RelacEquipeEditComponent implements OnInit {
       .subscribe((response: TotvsResponse<IEquipeUsuario>) => {
         this.itemsEquipeUsuario = response.items;
         this.searchUsuarioselect(this.itemsEquipeUsuario);
-        //this.searchPerfil();
 
       });
-
-
   }
 
+  searchPerfil(): void {
+    this.currentPage = 1;
+
+    this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
+      .query(this.disclaimers || [], [], this.currentPage, this.pageSize)
+      .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
+        if (response && response.items) {
+          this.itemsPerfil = [...response.items];
+          this.hasNext = response.hasNext;
+        }
+      })
+  }
   searchUsuario(loadMore = false): void {
 
     if (loadMore === true) {
@@ -129,38 +140,46 @@ export class RelacEquipeEditComponent implements OnInit {
       this.currentPage = 1;
     }
 
+    if (this.quickSearchUsuario === '') {
+      this.disclaimersUsuario = [];
+    } else {
+      this.disclaimersUsuario = [{ property: 'nomeUsuario', value: this.quickSearchUsuario }]
+    }
+
     this.isLoading = true;
     this.usuarioSubscription$ = this.serviceUsuario
-      .query([], this.currentPage, 99999)
+      .query(this.disclaimersUsuario, this.currentPage, 99999)
       .subscribe((response: TotvsResponse<IUsuario>) => {
         this.items = response.items;
-        //this.searchPerfil();
-
+        this.selectRow();
 
         this.hasNext = response.hasNext;
         this.isLoading = false;
       });
   }
   searchUsuarioselect(equipeUsuario: Array<IEquipeUsuario>): void {
-    this.disclaimersUsuario = [];
+    this.disclaimersUsuarSelect = [];
     this.itemsSelected = [];
-    this.usuarioRelac = [];
-    for (let i in equipeUsuario) {
-      this.disclaimersUsuario.push({ property: 'idUsuario', value: equipeUsuario[i].idUsuario });
+
+    if (this.quickSearchUsuarioSelect !== '') {
+      this.disclaimersUsuarSelect = [{ property: 'nomeUsuario', value: this.quickSearchUsuarioSelect }]
     }
-    this.itemsSelected = [];
+    for (let i in equipeUsuario) {
+
+      this.disclaimersUsuarSelect.push({ property: 'idUsuario', value: equipeUsuario[i].idUsuario },
+                                       {property: 'codEquipe', value: equipeUsuario[i].codEquipe}  );
+    }
 
     this.isLoading = true;
 
-    if (this.disclaimersUsuario.length) {
+    if (equipeUsuario.length > 0 && this.disclaimersUsuarSelect.length) {
       this.usuarioSubscription$ = this.serviceUsuario
-        .query(this.disclaimersUsuario, 1, 99999)
+        .query(this.disclaimersUsuarSelect, 1, 99999)
         .subscribe((response: TotvsResponse<IUsuario>) => {
           this.itemsSelected = response.items;
-
-          this.selectRow();
-
-          //this.searchPerfil();
+          if (this.quickSearchUsuarioSelect === '') {
+            this.selectRow();
+          }
 
           this.hasNext = response.hasNext;
           this.isLoading = false;
@@ -174,15 +193,45 @@ export class RelacEquipeEditComponent implements OnInit {
       this.poItemsOri.getUnselectedRows().findIndex((row, indexR) => {
         if (row.idUsuario === this.itemsSelected[i].idUsuario) {
           this.poItemsOri.selectRowItem(row);
-
-        } else {
+          this.poItemsOri.updateItem(row, this.itemsSelected[i]);
 
         }
       });
     }
-
   }
 
+  public onKeyQuickSearchUsuar(key: number) {
+
+    if (key === 13) { // enter
+      this.searchUsuario();
+      this.searchUsuarioselect(this.itemsEquipeUsuario);
+
+    }
+  }
+  public onChangeQuickSearchUsuar(event: string) {
+    this.searchUsuario();
+    this.searchUsuarioselect(this.itemsEquipeUsuario);
+    this.inputUsuario.focus();
+  }
+
+  public onKeyQuickSearchUsuarioSelect(key: number) {
+    if (key === 13) { // enter
+      this.searchEquipeUsuario();
+    }
+  }
+
+  public onChangeQuickSearchUsuarioSelect(event: string) {
+    this.searchEquipeUsuario();
+    this.inputUsuarioSelectUsuarioSelect.focus();
+  }
+
+  private disableSelectablePoItemsOri() {
+    if (this.quickSearchUsuarioSelect !== '') {
+      this.poItemsOri.selectable = false;
+    } else {
+      this.poItemsOri.selectable = true;
+    }
+  }
 
   changeOptions(event, type): void {
     this.equipeUsuar = {
@@ -201,11 +250,11 @@ export class RelacEquipeEditComponent implements OnInit {
       this.itemsSelected = [...this.itemsSelected];
       this.create();
     } else {
-      
-        const index = this.itemsSelected.findIndex(el => el.idUsuario === event.idUsuario);
-        this.poItemsSelected.removeItem(index);
-        this.itemsSelected = [...this.poItemsSelected.items];
-        this.delete();
+
+      const index = this.itemsSelected.findIndex(el => el.idUsuario === event.idUsuario);
+      this.poItemsSelected.removeItem(index);
+      this.itemsSelected = [...this.poItemsSelected.items];
+      this.delete();
 
     }
 
@@ -215,6 +264,7 @@ export class RelacEquipeEditComponent implements OnInit {
     this.items = items;
     this.itemsSelected = [];
   }
+
 
   setupComponents() {
     this.breadcrumb = this.getBreadcrumb();
@@ -226,9 +276,10 @@ export class RelacEquipeEditComponent implements OnInit {
     }
 
     this.columns = [
-      { property: 'idUsuario', label: 'idUsuario', type: 'number', visible: false },
+
       { property: 'nomeUsuario', label: this.literals.usuario, type: 'string' },
       { property: 'email', label: this.literals.email, type: 'string' },
+      { property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: this.usuarioTipo },
     ];
   }
 
@@ -283,6 +334,7 @@ export class RelacEquipeEditComponent implements OnInit {
         this.equipe = response;
 
         this.equipeTitle = this.equipe.descEquipe.toLowerCase();
+
         this.searchEquipeUsuario();
       });
   }
@@ -296,6 +348,9 @@ export class RelacEquipeEditComponent implements OnInit {
     }
     if (this.servEquipeUsuarioSubscription$) {
       this.servEquipeUsuarioSubscription$.unsubscribe();
+    }
+    if(this.servTipoPerfilUsuarioSubscription$){
+      this.servTipoPerfilUsuarioSubscription$.unsubscribe();
     }
   }
 }

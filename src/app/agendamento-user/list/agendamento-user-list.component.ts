@@ -47,7 +47,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
   confirmAdvSearchAction: PoModalAction;
   cancelAdvSearchAction: PoModalAction;
-  userLogado: string;
+  userLogado: number;
 
   hasNext = false;
   pageSize = 20;
@@ -69,7 +69,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.userLogado = localStorage.getItem('userLogado');
+    
 
 
     forkJoin(
@@ -79,6 +79,8 @@ export class AgendamentoUserListComponent implements OnInit {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
+      this.userLogado =  parseInt(localStorage.getItem('usuarioLogado'));
+      console.log('this.userLogado',this.userLogado)
       this.searchTipoEvento();
       this.setupComponents();
       this.search();
@@ -86,6 +88,7 @@ export class AgendamentoUserListComponent implements OnInit {
   }
 
   private setupComponents(): void {
+    this.disclaimers = [];
 
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (id !== null) {
@@ -208,8 +211,15 @@ export class AgendamentoUserListComponent implements OnInit {
 
 
   search(loadMore = false): void {
-
-    this.disclaimers = [...this.disclaimers, ...[{ property: 'idUsuario', value: '63380' }]];
+    const newDisclaimer = { property: 'idUsuario', value: localStorage.getItem('usuarioLogado')};
+    const isDuplicate = this.disclaimers.some(disclaimer => (
+      disclaimer.property === newDisclaimer.property && disclaimer.value === newDisclaimer.value
+    ));
+    
+    if (!isDuplicate) {
+      this.disclaimers = [...this.disclaimers, newDisclaimer];
+    }
+ 
 
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
@@ -231,7 +241,8 @@ export class AgendamentoUserListComponent implements OnInit {
   }
 
   delete(item: IEvento): void {
-    const id = Evento.getInternalId(item);
+    console.log('this.userLogado',this.userLogado)
+    const id = Evento.getInternalId(item) + ';' + this.userLogado ;
     this.poDialogService.confirm({
       title: this.literals.remove,
       message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.idEvento]),
