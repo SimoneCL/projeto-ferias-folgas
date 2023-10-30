@@ -1,9 +1,9 @@
- <po-page-list *ngIf="!isLoading"
+ <po-page-list 
     [p-title]="literals?.listUser"
     [p-actions]="pageActions"
     [p-disclaimer-group]="disclaimerGroup"
-    [p-filter]="filterSettings"
-    >
+    [p-filter]="filterSettings">
+    
   <po-table
     p-striped="true"
     [p-columns]="columns"

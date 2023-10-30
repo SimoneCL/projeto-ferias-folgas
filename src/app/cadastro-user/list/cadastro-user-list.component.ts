@@ -31,8 +31,9 @@ export class CadastroUserListComponent implements OnInit {
 
   public items: Array<IUsuario> = []; //= new Array<IUsuario>();
   columns: Array<PoTableColumn> = [];
+
+  disclaimerGroup: PoDisclaimerGroup;
   filterSettings: PoPageFilter;
-  disclaimerGroup: PoDisclaimerGroup ;
   userLogado: string;
 
 
@@ -64,14 +65,10 @@ export class CadastroUserListComponent implements OnInit {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-     
+      this.searchPerfil();
       this.search();
-     
-      
     });
   }
-
-
 
   private setupComponents(): void {
     this.tableActions = [
@@ -85,7 +82,7 @@ export class CadastroUserListComponent implements OnInit {
         action: () => this.router.navigate(['cadastroUser/new'])
       }
     ];
-  
+
     for (let i in this.itemsPerfil) {
       this.usuarioTipo.push(
         { value: this.itemsPerfil[i].idTipoPerfil, label: this.itemsPerfil[i].descricaoPerfil },
@@ -93,14 +90,24 @@ export class CadastroUserListComponent implements OnInit {
     }
     this.columns = [
       {
-        property: 'nomeUsuario', label: this.literals.usuario, type: 'link', action: (value, row) => {
+        property: 'nomeUsuario', label: this.literals.usuario, type: 'link',tooltip: this.literals.edit, action: (value, row) => {
           this.edit(row);
         }
       },
       { property: 'email', label: this.literals.email, type: 'string' },
       {
-        property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: this.usuarioTipo  },
+        property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: this.usuarioTipo
+      },
+      {
+        property: 'detail', type: 'detail', detail: {
+          columns: [
+            { property: 'equipe', label: 'Equipe' }
+          ],
+          typeHeader: 'top'
+        }
+      }
     ];
+
 
 
     this.disclaimerGroup = {
@@ -119,10 +126,13 @@ export class CadastroUserListComponent implements OnInit {
 
     this.disclaimers = [...[{ property: 'nomeUsuario', value: quickSearchValue }]];
     this.disclaimerGroup.disclaimers = [...this.disclaimers];
+
   }
+  
 
   search(loadMore = false): void {
-
+    
+    const disclaimer = this.disclaimers || [];
     if (loadMore === true) {
       this.currentPage = this.currentPage + 1;
     } else {
@@ -132,11 +142,9 @@ export class CadastroUserListComponent implements OnInit {
 
     this.isLoading = true;
     this.usuarioSubscription$ = this.serviceUsuario
-      .query(this.disclaimers, this.currentPage, this.pageSize)
+      .query(disclaimer, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<IUsuario>) => {
         this.items = response.items;
-        this.searchPerfil();
-
         this.hasNext = response.hasNext;
         this.isLoading = false;
       });
@@ -149,12 +157,12 @@ export class CadastroUserListComponent implements OnInit {
       message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.nomeUsuario]),
       confirm: () => {
         this.usuarioSubscription$ = this.serviceUsuario
+
           .delete(id)
           .subscribe(response => {
             this.router.navigate(['/cadastroUser']);
-            this.poNotification.success(this.literals.excludedMessage);
-            this.search();
-          }, (err: any) => {
+            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, item.nomeUsuario));
+
             this.search();
           });
       }
@@ -179,7 +187,9 @@ export class CadastroUserListComponent implements OnInit {
   public onChangeDisclaimer(disclaimers): void {
     this.disclaimers = disclaimers;
     this.search();
+
   }
+  
 
   searchPerfil(): void {
     this.currentPage = 1;

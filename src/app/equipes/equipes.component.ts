@@ -101,8 +101,16 @@ export class EquipesComponent implements OnInit{
     };
        
     this.columnsEquipes = [
-      { property: 'codEquipe', label: 'Código',  width: '5%', type: 'link', action: (value, row) => this.edit(row) },
-      { property: 'descEquipe', label: 'Descrição', type: 'link', action: (value, row) => this.edit(row)  }
+      { property: 'codEquipe', label: 'Código',  width: '5%', type: 'number' },
+      { property: 'descEquipe', label: 'Descrição', type: 'link',tooltip: this.literals.relacEquipe, action: (value, row) => this.relacEquipe(row)  },
+      {
+        property: 'detail', type: 'detail', detail: {
+          columns: [
+            { property: 'usuario', label: 'Usuário da Equipe' }
+          ],
+          typeHeader: 'top'
+        }
+      }
     ];
     
     this.filterSettings = {
@@ -164,7 +172,8 @@ export class EquipesComponent implements OnInit{
         this.servEquipesSubscription$ = this.servEquipes
           .delete(id)
           .subscribe(response => {
-            this.poNotification.success(this.literals.excludedMessage);
+            this.poNotification.success(this.PoI18nPipe.transform(this.literals.excludedMessage, item.descEquipe));
+
             this.search();
           });
       }

@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { PoDatepickerRange, PoDisclaimer, PoI18nService, PoMultiselectFilter, PoMultiselectOption, PoRadioGroupOption, PoTableColumnLabel } from '@po-ui/ng-components';
+import { PoDatepickerRange, PoDisclaimer, PoI18nService, PoMultiselectFilter, PoMultiselectOption, PoRadioGroupOption, PoTableColumnLabel, PoTableComponent } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { ConfiguracaoFeriasFolga } from '../shared/model/config-ferias-folga.model';
@@ -20,6 +20,7 @@ import { UsuarioService } from '../shared/services/usuario.service';
   templateUrl: './ferias-folga.component.html'
 })
 export class FeriasFolgaComponent implements OnInit, OnDestroy {
+  @ViewChild('tableEvent', { static: true }) tableEvent: PoTableComponent;
 
   datepickerRange: PoDatepickerRange;
   quantityOfDays: number = undefined;
@@ -82,8 +83,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
 
-    this.userLogado = localStorage.getItem('userLogado');
-    console.log('this.userLogado ====>>>>', this.userLogado)
+    
     forkJoin(
       [
         this.poI18nService.getLiterals(),
@@ -92,6 +92,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
       this.idUsuario = parseInt(localStorage.getItem('usuarioLogado'));
+      console.log('this.userLogado ====>>>>', this.idUsuario)
       this.searchEquipesUsuario();
       this.searchTipoEvento();
 
@@ -181,11 +182,14 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
     this.dataCalc = new Date();
 
-    this.columns = [{
-      property: 'nomeUsuario', label: 'Nome', type: 'link', action: (value, row) => {
+    this.columns = [
+
+      { property: 'idUsuario', label: 'idUsuario', type: 'number', visible: false },
+      {
+        property: 'nomeUsuario', label: 'Nome', type: 'string' /*, action: (value, row) => {
         this.redirect(value, row);
-      }
-    }];
+      }*/
+      }];
     for (let y = 0; y <= this.quantityOfDays; y++) {
       this.dataCalc = new Date(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate() + y);
       this.targetProperty = this.formatoProperty(this.dataCalc);
@@ -267,6 +271,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       .subscribe((response: TotvsResponse<any>) => {
 
         this.itemsEventosAux = [...response.items];
+        //this.items = response.items;
         this.hasNext = response.hasNext;
 
         if (this.itemsEventosAux.length === 0) { this.currentPage = 1; }
@@ -276,7 +281,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       });
 
   }
-  
+
   private changeObjectProperty(eventsUsers: Array<any>): void {
     this.eventos = [];
     this.itemsAux = [];
@@ -309,8 +314,8 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
         this.eventos.push(this.newEvent);
 
-      }
 
+      }
 
       this.agrupByUser();
     }
@@ -319,29 +324,27 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
   private agrupByUser(): void {
 
-    let objTitle = '';
-    // Declare an empty object
-    let uniqueObject = {};
 
-    // Loop for the array elements
-    for (let i in this.eventos) {
+    this.items = []
 
-      // Extract the title
-      objTitle = this.eventos[i]['idUsuario'];
+    let resultado = [];
+    for (const objeto of this.eventos) {
+      const chaveDuplicada = resultado.find(
+        (item) =>
+          item.idUsuario === objeto.idUsuario &&
+          item.nomeUsuario === objeto.nomeUsuario
+      );
 
-      // Use the title as the index
-      if (objTitle === this.eventos[i].idUsuario) {
-        uniqueObject[objTitle] = { ...uniqueObject[objTitle], ...this.eventos[i] };
+      if (chaveDuplicada) {
+        // Se já existe um objeto com a mesma chave, mesclar as propriedades
+        Object.assign(chaveDuplicada, objeto);
       } else {
-        uniqueObject[objTitle] = [this.eventos[i]];
+        // Caso contrário, adicionar o objeto ao resultado
+        resultado.push(objeto);
       }
     }
+    this.items = resultado;
 
-    // Loop to push unique object into array
-    for (let i in uniqueObject) {
-      this.items.push(uniqueObject[i]);
-
-    }
   }
 
 
