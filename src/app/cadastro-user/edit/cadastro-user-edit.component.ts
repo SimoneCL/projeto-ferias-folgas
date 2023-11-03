@@ -8,6 +8,7 @@ import { TipoPerfilUsuarioService } from 'src/app/shared/services/tipo-perfil-us
 import { EquipeUsuario, IEquipeUsuario } from '../../shared/model/equipe-usuario.model';
 import { IUsuario, Usuario } from '../../shared/model/usuario.model';
 import { UsuarioService } from '../../shared/services/usuario.service';
+import { UsuarioLogadoService } from '../../usuario-logado.service';
 
 @Component({
   selector: 'app-cadastro-user-edit',
@@ -16,8 +17,7 @@ import { UsuarioService } from '../../shared/services/usuario.service';
 })
 export class CadastroUserEditComponent implements OnInit {
   @ViewChild('modalEquipe', { static: false }) modalEquipe: PoModalComponent;
-  @ViewChild('modalSenha', { static: false }) modalSenha: PoModalComponent;
-
+  
   private usuarioSubscription$: Subscription;
   private servEquipesSubscription$: Subscription;
   private servTipoPerfilUsuarioSubscription$: Subscription;
@@ -52,7 +52,9 @@ export class CadastroUserEditComponent implements OnInit {
   confirmPassword: PoModalAction;
   closePassowrd: PoModalAction;
   noShadow: true;
-  userLogado: string;
+  userLogado: number;
+
+  public usuarioLogado = new UsuarioLogadoService();
 
   optionsEquipe: Array<PoMultiselectOption> = [];
   equipeSelected: Array<string> = [];
@@ -74,7 +76,7 @@ export class CadastroUserEditComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.userLogado = localStorage.getItem('userLogado');
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
 
     forkJoin(
       [
@@ -136,17 +138,7 @@ export class CadastroUserEditComponent implements OnInit {
 
     if (this.eventPage === 'edit') {
       this.propertiesPassword = "true";
-    }
-
-    this.confirmPassword = {
-      action: () => this.confirmePassWordModal(),
-      label: this.literals.save
-    };
-
-    this.closePassowrd = {
-      action: () => this.closePassWordModal(),
-      label: this.literals.cancel
-    };
+    }    
   }
 
   private beforeRedirect(itemBreadcrumbLabel) {
@@ -177,25 +169,9 @@ export class CadastroUserEditComponent implements OnInit {
     });
   }
 
-  updateSenha() {
-    this.save();
-    this.usuarioSubscription$ = this.serviceUsuario.updatePassword(this.usuario).subscribe(() => {
-      this.modalSenha.close();
-      this.poNotification.success(this.literals.updatedPasswordMessage);
-    });
-  }
-
-
   public closeModal() {
     this.equipeSelected = [];
     this.modalEquipe.close();
-  }
-
-  public confirmePassWordModal() {
-    this.updateSenha();
-  }
-  public closePassWordModal() {
-    this.modalSenha.close();
   }
 
   getTitle(): string {
@@ -282,11 +258,10 @@ export class CadastroUserEditComponent implements OnInit {
     ];
   }
 
-  abrirSenha() {
-    this.modalSenha.open();
+  alterarSenha() {
+    this.route.navigate([`/alteraSenha/${this.idUsuario}`]);    
   }
-
-
+  
   get(id: number): void {
     this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])

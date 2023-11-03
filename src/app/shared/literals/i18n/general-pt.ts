@@ -1,3 +1,5 @@
+import { PoToolbarComponent } from "@po-ui/ng-components";
+
 export const generalPt = {
     action: 'Ação',
     actions: 'Outras ações',
@@ -79,5 +81,4 @@ export const generalPt = {
     titleTipoPerfil: 'Perfil Usuário',
     txtUsuario: 'Selecione os usuários para vincular à equipe',
     txtUsuarioRelac: 'Usuários relacionados à equipe',
-    
 };

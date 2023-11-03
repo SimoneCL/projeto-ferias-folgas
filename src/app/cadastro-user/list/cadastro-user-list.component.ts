@@ -8,6 +8,7 @@ import { IUsuario, Usuario } from '../../shared/model/usuario.model';
 import { UsuarioService } from '../../shared/services/usuario.service';
 import { ITipoPerfilUsuario, TipoPerfilUsuario } from 'src/app/shared/model/tipo-perfil-usuario.model';
 import { TipoPerfilUsuarioService } from 'src/app/shared/services/tipo-perfil-usuario.service';
+import { UsuarioLogadoService } from '../../usuario-logado.service';
 
 @Component({
   selector: 'app-cadastro-user-list',
@@ -33,10 +34,10 @@ export class CadastroUserListComponent implements OnInit {
   columns: Array<PoTableColumn> = [];
 
   disclaimerGroup: PoDisclaimerGroup;
+  userLogado: number;
+  public usuarioLogado = new UsuarioLogadoService();
   filterSettings: PoPageFilter;
-  userLogado: string;
-
-
+  
   hasNext = false;
   pageSize = 20;
   currentPage = 0;
@@ -56,7 +57,7 @@ export class CadastroUserListComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.userLogado = localStorage.getItem('userLogado');
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
 
     forkJoin(
       [

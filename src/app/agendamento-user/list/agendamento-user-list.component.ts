@@ -7,6 +7,7 @@ import { Evento, IEvento } from '../../shared/model/evento.model';
 import { ITipoEvento } from '../../shared/model/tipo-evento.model';
 import { EventoService } from '../../shared/services/evento.service';
 import { TipoEventoService } from '../../shared/services/tipo-evento.service';
+import { UsuarioLogadoService } from '../../usuario-logado.service';
 
 @Component({
   selector: 'app-agendamento-user-list',
@@ -56,6 +57,8 @@ export class AgendamentoUserListComponent implements OnInit {
 
   literals: any = {};
 
+  public usuarioLogado = new UsuarioLogadoService();
+
   constructor(
     private serviceEvento: EventoService,
     private serviceTipoEvento: TipoEventoService,
@@ -69,7 +72,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
   ngOnInit(): void {
 
-    
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
 
 
     forkJoin(
@@ -79,8 +82,6 @@ export class AgendamentoUserListComponent implements OnInit {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-      this.userLogado =  parseInt(localStorage.getItem('usuarioLogado'));
-      console.log('this.userLogado',this.userLogado)
       this.searchTipoEvento();
       this.setupComponents();
       this.search();
@@ -241,7 +242,6 @@ export class AgendamentoUserListComponent implements OnInit {
   }
 
   delete(item: IEvento): void {
-    console.log('this.userLogado',this.userLogado)
     const id = Evento.getInternalId(item) + ';' + this.userLogado ;
     this.poDialogService.confirm({
       title: this.literals.remove,

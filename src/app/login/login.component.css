@@ -7,6 +7,16 @@
     align-items: center;
 }
 
-.brEnter {
+.divTitle {
+    font-size: 35px;
+    width: 250px;
+    height: 20px;
+    color: rgb(26, 170, 199);
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btEnter {
     color: blue;
 }

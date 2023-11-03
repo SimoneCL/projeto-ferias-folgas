@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { PoI18nService, PoMenuItem } from '@po-ui/ng-components';
+import { PoI18nService, PoMenuItem, PoToolbarProfile } from '@po-ui/ng-components';
 import { TotvsResponse, TranslateService } from 'dts-backoffice-util';
 import { forkJoin } from 'rxjs';
 import { dependencies, git, name, version } from '../../package.json';
+import { UsuarioLogadoService } from './usuario-logado.service';
 
 @Component({
     selector: 'app-root',
@@ -14,6 +15,11 @@ export class AppComponent implements OnInit {
     menus: Array<PoMenuItem>;
     literals: any = {};
     ishidden: boolean = true;
+
+    public usuarioLogado = new UsuarioLogadoService();
+
+    public profile: PoToolbarProfile;
+    
     constructor(
         public poI18nService: PoI18nService,
         private router: Router
@@ -26,11 +32,17 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
 
-        localStorage.setItem('usuarioLogado', null);
+        this.usuarioLogado.clearUsuarioLogado();
+
+        /*this.profile = {
+            title: "",
+            subtitle: ""
+        }*/
 
         forkJoin(
             [this.poI18nService.getLiterals()]
         ).subscribe(literals => {
+            
             literals.map(item => Object.assign(this.literals, item));
             this.menus = [
                 { label: 'Cadastro', icon: "po-icon-user-add", shortLabel: "Cadastro", link: '/cadastroUser' },
@@ -47,10 +59,9 @@ export class AppComponent implements OnInit {
                     this.ishidden = (url.url === '/login');
                 }
             });
-
         });
     }
-
+    
     displayVersions(): void {
         /*console.log('App:', name);
         console.log('Git Info:', git);

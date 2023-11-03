@@ -40,45 +40,7 @@
     <po-button *ngIf="propertiesButton" class="po-pl-0 po-md-4"
       [p-label]="literals?.editarSenha"
       p-kind = "tertiary" 
-      (p-click)="modalSenha.open()"> 
+      (p-click)="alterarSenha()"> 
     </po-button>
   </div>
 </po-page-default>
-
-
-<po-modal #modalSenha 
-  [p-title]="literals?.editarSenha"
-  [p-primary-action]="confirmPassword" 
-  [p-secondary-action]="closePassowrd">
-  
-  <po-password
-    class="po-sm-6"
-    name="newPassword"
-    [(ngModel)]="newPassword"
-    p-clean
-    p-error-pattern="invalid password"
-    p-label="New password"
-    p-mask="999999"
-    p-minlength="6"
-    p-required>
-  </po-password>
-
-
-  <po-password
-    class="po-sm-6"
-    name="confirmNewPassword"
-    [(ngModel)]="confirmNewPassword"
-    p-clean
-    p-error-pattern="invalid password"
-    p-label="Confirm New Password"
-    p-mask="999999"
-    p-minlength="6"
-    p-required>
-  </po-password>
-
-</po-modal>
-
-
-
-
-

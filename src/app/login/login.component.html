@@ -1,9 +1,15 @@
 <po-page-default>  
   <form #formLogin="ngForm">
+    <div class="divTitle">
+      Boas Vindas
+    </div>
     <div class="divLogin">
-      <po-widget 
-        class="po-lg-4"
-        p-height="210"
+      <po-widget         
+        p-primary="true"
+        (p-primary-action)="recoverPassword()"
+        p-primary-label="Recuperar Senha"
+        class="po-lg-6"
+        p-height="250"
         p-no-shadow="true">
       <po-input    
         class="po-md-6 po-lg-12"
@@ -21,7 +27,7 @@
       </po-password>
       <po-button
         class="btEnter po-md-6 po-lg-12 po-mt-1"        
-        p-label="Entrar"
+        p-label="Entrar"        
         p-kind="primary"
         (p-click)="onClick()"> 
       </po-button>

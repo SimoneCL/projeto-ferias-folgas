@@ -35,8 +35,8 @@ export class LoginService {
         return this.http.get<ILogin>(`${this.apiBaseUrl}/${id}`, this.headers);
     }
 
-    getByUser(userEmail: string): Observable<ILogin> {
-        return this.http.get<ILogin>(`${this.apiBaseUrl}/${userEmail}`, this.headers);
+    getByUser(userEmail: string, senha: string): Observable<ILogin> {
+        return this.http.get<ILogin>(`${this.apiBaseUrl}/${userEmail}/${senha}`, this.headers);
     }
 
     getMetadata(type = '', id = ''): Observable<any> {
