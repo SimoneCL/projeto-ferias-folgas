@@ -10,7 +10,7 @@ import { IUsuario, Usuario } from '../model/usuario.model';
 export class UsuarioService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
-    private apiBaseUrl = 'http://localhost:3000/usuario';
+    private apiBaseUrl = 'http://10.80.129.239:3000/usuario';
 
     private expandables = [''];
 

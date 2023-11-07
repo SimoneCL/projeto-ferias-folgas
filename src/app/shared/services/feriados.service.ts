@@ -11,7 +11,7 @@ export class FeriadosService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
     // private apiBaseUrl = '/dts/datasul-rest/resources/prg/fin/v1/evento';
-    private apiBaseUrl = 'http://localhost:3000/feriados';
+    private apiBaseUrl = 'http://10.80.129.239:3000/feriados';
     private apiUploadUrl = `${this.apiBaseUrl}/addFile`;
 
     private expandables = [''];
@@ -59,7 +59,7 @@ export class FeriadosService {
     }
 
     createFeriadosNacionais(model: Array<IFeriados>): Observable<IFeriados> {
-        const url = 'http://localhost:3000/feriadosNacionais';
+        const url = 'http://10.80.129.239:3000/feriadosNacionais';
         return this.http.post<IFeriados>(url, model, this.headers);
     }
 

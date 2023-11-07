@@ -10,7 +10,7 @@ import { EquipeUsuario, IEquipeUsuario } from '../model/equipe-usuario.model';
 export class EquipeUsuarioService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
-    private apiBaseUrl = 'http://localhost:3000/equipeUsuario';
+    private apiBaseUrl = 'http://10.80.129.239:3000/equipeUsuario';
     
     private expandables = [''];
 
