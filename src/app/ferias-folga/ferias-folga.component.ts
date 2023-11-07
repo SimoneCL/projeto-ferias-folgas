@@ -14,6 +14,7 @@ import { EquipesService } from '../shared/services/equipes.service';
 import { EventoService } from '../shared/services/evento.service';
 import { TipoEventoService } from '../shared/services/tipo-evento.service';
 import { UsuarioService } from '../shared/services/usuario.service';
+import { UsuarioLogadoService } from '../usuario-logado.service';
 
 @Component({
   selector: 'app-ferias-folga',
@@ -51,7 +52,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   disclaimers: Array<PoDisclaimer> = [];
   disclaimersEquipeUser: Array<PoDisclaimer> = [];
   map1 = new Map();
-  userLogado: string;
+  userLogado: number;
   idUsuario: number;
 
 
@@ -69,6 +70,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
   public equipeUsuario: Array<IEquipeUsuario> = new Array<IEquipeUsuario>();
 
+  public usuarioLogado = new UsuarioLogadoService();
 
   public config: ConfiguracaoFeriasFolga = new ConfiguracaoFeriasFolga();
   constructor(
@@ -83,6 +85,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
 
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
     
     forkJoin(
       [
@@ -91,8 +94,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-      this.idUsuario = parseInt(localStorage.getItem('usuarioLogado'));
-      console.log('this.userLogado ====>>>>', this.idUsuario)
+      
       this.searchEquipesUsuario();
       this.searchTipoEvento();
 

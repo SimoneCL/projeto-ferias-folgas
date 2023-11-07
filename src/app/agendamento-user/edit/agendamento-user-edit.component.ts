@@ -8,6 +8,7 @@ import { Evento, IEvento } from 'src/app/shared/model/evento.model';
 import { EventoService } from 'src/app/shared/services/evento.service';
 import { ITipoEvento } from '../../shared/model/tipo-evento.model';
 import { TipoEventoService } from '../../shared/services/tipo-evento.service';
+import { UsuarioLogadoService } from '../../usuario-logado.service';
 
 @Component({
   selector: 'app-agendamento-user-edit',
@@ -29,7 +30,7 @@ export class AgendamentoUserEditComponent implements OnInit {
   quantityOfDays: number;
   eventType: number;
   eventPage: string;
-  userLogado: string;
+  userLogado: number;
   id: string = '';
   isEdit: boolean = false;
 
@@ -37,6 +38,8 @@ export class AgendamentoUserEditComponent implements OnInit {
 
   public eventOptions: Array<PoSelectOption> = []; 
   public isHidden: boolean;
+
+  public usuarioLogado = new UsuarioLogadoService();
 
   get validateForm() {
     return !(
@@ -57,7 +60,7 @@ export class AgendamentoUserEditComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.userLogado = localStorage.getItem('userLogado');
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
 
     forkJoin(
       [
@@ -106,7 +109,7 @@ export class AgendamentoUserEditComponent implements OnInit {
     this.route.navigate(['/agendaUser']);;
   }
   save() {
-    this.eventUser.idUsuario = parseInt(localStorage.getItem('usuarioLogado'));
+    this.eventUser.idUsuario = this.userLogado;
     this.eventUser.codTipo = this.formVacationSuggestion.get('eventType').value;
     if (this.eventUser.codTipo === 1) {
       this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;

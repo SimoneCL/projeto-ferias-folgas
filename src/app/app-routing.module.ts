@@ -34,6 +34,10 @@ const routes: Routes = [
         path: 'perfilUsuario',
         loadChildren: () => import('./tipo-perfil-usuario/tipo-perfil-usuario.module').then(m => m.TipoPerfilUsuarioModule)
     },
+    {
+        path: 'alteraSenha',
+        loadChildren: () => import('./altera-senha/altera-senha.module').then(m => m.AlteraSenhaModule)
+    },
     
 ];
 @NgModule({

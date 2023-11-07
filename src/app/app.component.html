@@ -1,11 +1,12 @@
-<div class="po-wrapper">
+<div class="po-wrapper-menu-panel">
     <po-menu *ngIf='!ishidden'
         [p-menus]="menus"
         [p-filter]="true"
         [p-collapsed]="true">
     </po-menu>
-    <po-toolbar
-        [p-title]="literals?.module">
-    </po-toolbar>
+    <po-toolbar #toolbarProfile
+        [p-title]="literals?.module"
+        [p-profile]="profile">
+    </po-toolbar>    
     <router-outlet></router-outlet>
 </div>

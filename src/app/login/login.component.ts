@@ -1,13 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PoDialogService, PoDisclaimer, PoI18nService } from '@po-ui/ng-components';
+import { PoDialogService, PoDisclaimer, PoI18nService, PoToolbarComponent, PoToolbarProfile } from '@po-ui/ng-components';
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Subscription } from 'rxjs';
 import { ILogin, Login } from '../shared/model/login.model';
 import { IUsuario } from '../shared/model/usuario.model';
 import { LoginService } from '../shared/services/login.service';
+import { UsuarioLogadoService } from '../usuario-logado.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ import { LoginService } from '../shared/services/login.service';
 })
 export class LoginComponent {
   @ViewChild('formLogin', { static: true }) formLogin: NgForm;
-
+  
   items: Array<any> = new Array<any>();
   private itemsLogin: Array<ILogin>;
   //public login: Array<any> = new Array<any>();
@@ -28,6 +29,7 @@ export class LoginComponent {
   pageSize = 20;
   expandables = [''];
   disclaimers: Array<PoDisclaimer> = [];
+  literals: any = {};
 
   servLoginSubscription$: Subscription;
   private i18nSubscription: Subscription;
@@ -36,11 +38,13 @@ export class LoginComponent {
   user: string = '';
   password: string = '';
 
+  public usuarioLogado = new UsuarioLogadoService();
+
   constructor(
     private poI18nService: PoI18nService,
     private poDialog: PoDialogService,
     private servLogin: LoginService,
-    private router: Router
+    private router: Router    
   ) { }
 
   ngOnDestroy() {
@@ -50,8 +54,9 @@ export class LoginComponent {
   ngOnInit() {
     this.i18nSubscription = this.poI18nService.getLiterals().subscribe(literals => {
       this.literalsI18n = literals;
+      this.usuarioLogado.clearUsuarioLogado();
+      //this.search();           
 
-      //this.search();
     })
   }
 
@@ -80,28 +85,28 @@ export class LoginComponent {
       });
   }
 
+  recoverPassword() {
+
+  }
+
   onClick() {
     
     if (this.login.usuario != "") {    
       
+      let senhaHash = window.btoa(this.login.senha);
+      
       this.servLoginSubscription$ = this.servLogin
-        .getByUser(this.login.usuario).subscribe((response: ILogin) => {
+        .getByUser(this.login.usuario, senhaHash).subscribe((response: ILogin) => {
           
           if (response.email != undefined) {            
             this.userLogin = response;
-            if ( this.login.senha != undefined && this.login.senha === this.userLogin.senha ) {  
-              localStorage.setItem('usuarioLogado', this.userLogin.idUsuario.toString());
-              console.log('usuarioLogado',localStorage.getItem('usuarioLogado'))  
-              setTimeout(() => {
-                this.router.navigate(['/feriasFolga']);
-              }, 500);
-            } else {
-              this.poDialog.alert({
-                ok: () => (this.loading = false),
-                title: 'Login Invalido',
-                message: 'usuario ou senha incorretos.'
-              });
-            }
+                       
+            this.usuarioLogado.setUsuarioLogado(this.userLogin.idUsuario, this.userLogin.usuario);
+            
+            console.log(this.literals.profile);
+            setTimeout(() => {
+              this.router.navigate(['/feriasFolga']);
+            }, 500);            
           } else {
             this.poDialog.alert({
               ok: () => (this.loading = false),

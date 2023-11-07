@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PoDisclaimer, PoLookupFilteredItemsParams } from '@po-ui/ng-components';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { TotvsResponse } from 'dts-backoffice-util';
-import { TipoPerfilUsuario, ITipoPerfilUsuario } from '../model/tipo-perfil-usuario.model';
+import { Login, ILogin } from '../model/login.model';
 
 @Injectable()
-export class TipoPerfilUsuarioService {
+export class AlteraSenhaService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
-    private apiBaseUrl = 'http://localhost:3000/tipoPerfilUsuario';
+    private apiBaseUrl = 'http://localhost:3000/alteraSenha';
     private apiUploadUrl = `${this.apiBaseUrl}/addFile`;
 
     private expandables = [''];
@@ -25,64 +25,80 @@ export class TipoPerfilUsuarioService {
         return this.apiUploadUrl;
     }
 
-    query(filters: PoDisclaimer[], expandables: string[], page = 1, pageSize = 20): Observable<TotvsResponse<ITipoPerfilUsuario>> {
+    query(filters: PoDisclaimer[], expandables: string[], page = 1, pageSize = 20): Observable<TotvsResponse<ILogin>> {
         const url = this.getUrl(this.apiBaseUrl, filters, expandables, page, pageSize);
 
-        return this.http.get<TotvsResponse<ITipoPerfilUsuario>>(url, this.headers);
+        return this.http.get<TotvsResponse<ILogin>>(url, this.headers);
     }
 
-    getById(id: string): Observable<ITipoPerfilUsuario> {
-        return this.http.get<ITipoPerfilUsuario>(`${this.apiBaseUrl}/edit/${id}`, this.headers);
+    getById(id: string): Observable<ILogin> {
+        return this.http.get<ILogin>(`${this.apiBaseUrl}/${id}`, this.headers);
     }
 
-    getByDescription(description: string): Observable<ITipoPerfilUsuario> {
-        return this.http.get<ITipoPerfilUsuario>(`${this.apiBaseUrl}/edit/${description}`, this.headers);
-    }
-
-    getByUser(user: string): Observable<ITipoPerfilUsuario> {
-        return this.http.get<ITipoPerfilUsuario>(`${this.apiBaseUrl}/${user}`, this.headers);
+    getByUser(userEmail: string, senha: string): Observable<ILogin> {
+        return this.http.get<ILogin>(`${this.apiBaseUrl}/${userEmail}/${senha}`, this.headers);
     }
 
     getMetadata(type = '', id = ''): Observable<any> {
         let url = `${this.apiBaseUrl}/metadata`;
         if (id) { url = `${url}/${id}`; }
         if (type) { url = `${url}/${type}`; }
-        return this.http.get<TotvsResponse<ITipoPerfilUsuario>>(url, this.headers);
+        return this.http.get<TotvsResponse<ILogin>>(url, this.headers);
     }
 
-    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<ITipoPerfilUsuario> {
+    getFilteredItems(params: PoLookupFilteredItemsParams): Observable<ILogin> {
         const header = { params: { page: params.page.toString(), pageSize: params.pageSize.toString() } };
 
         if (params.filter && params.filter.length > 0) {
             header.params['code'] = params.filter;
         }
 
-        return this.http.get<ITipoPerfilUsuario>(`${this.apiBaseUrl}`, header);
+        return this.http.get<ILogin>(`${this.apiBaseUrl}`, header);
     }
 
-    getObjectByValue(id: any, filterParams: any): Observable<any> {
-        if (filterParams && filterParams.multiple) {
-            let paramId = Array.isArray(id) ? id : [id];
-
-            const filters = new Array<PoDisclaimer>();
-            filters.push({ property: 'descricaoPerfil', value: paramId.join(',') });
-
-            return this.query(filters, null, 1, 999).pipe(map((resp: TotvsResponse<ITipoPerfilUsuario>) => resp.items));
-        } else {
-            return this.getById(id);
-        }
+    getObjectByValue(id: string): Observable<ILogin> {
+        return this.http.get<ILogin>(`${this.apiBaseUrl}/${id}`);
     }
 
-    create(model: ITipoPerfilUsuario): Observable<ITipoPerfilUsuario> {
-        return this.http.post<ITipoPerfilUsuario>(this.apiBaseUrl, model, this.headers);
+    create(model: ILogin): Observable<ILogin> {
+        return this.http.post<ILogin>(this.apiBaseUrl, model, this.headers);
     }
 
-    update(model: ITipoPerfilUsuario): Observable<ITipoPerfilUsuario> {
-        return this.http.put<ITipoPerfilUsuario>(`${this.apiBaseUrl}/edit/${TipoPerfilUsuario.getInternalId(model)}`, model, this.headers);
+    update(model: ILogin): Observable<ILogin> {
+        return this.http.put<ILogin>(`${this.apiBaseUrl}/${Login.getInternalId(model)}`, model, this.headers);
     }
 
-    delete(tipoPerfil: string): Observable<Object> {
-        return this.http.delete(`${this.apiBaseUrl}/${tipoPerfil}`, this.headers);
+    delete(model: ILogin): Observable<Object> {
+        return this.http.delete(`${this.apiBaseUrl}/${model}`, this.headers);
+    }
+
+    block(id: string): Observable<Object> {
+        return this.http.post(`${this.apiBaseUrl}/${id}/block`, null, this.headers);
+    }
+
+    duplic(model: ILogin): Observable<Object> {
+        return this.http.post(`${this.apiBaseUrl}/${Login.getInternalId(model)}/duplic`, model, this.headers);
+    }
+
+    getFile(id: string): Observable<Object> {
+        const url = `/evento/${id}/file`;
+        return this.http.get(url, this.headers);
+    }
+
+    getQrCode(text: string): Observable<Blob> {
+        const url = `/qrcode/download?text=${text}`;
+        return this.http.get(url, { responseType: 'blob' });
+    }
+
+    changeStatus(id: string, status: number): Observable<Object> {
+        const model = {};
+        model['status'] = status;
+
+        return this.http.post(`${this.apiBaseUrl}/${id}/changeStatus`, model, this.headers);
+    }
+
+    getTotalByStatus(): Observable<Object> {
+        return this.http.get('/evento/totBySatus', this.headers);
     }
 
     getUrl(urlBase: string, filters: PoDisclaimer[], expandables: string[], page: number, pageSize: number): string {
@@ -120,3 +136,4 @@ export class TipoPerfilUsuarioService {
         return lstExpandables;
     }
 }
+

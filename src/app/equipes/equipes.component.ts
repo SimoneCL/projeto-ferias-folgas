@@ -8,6 +8,7 @@ import { NgForm } from '@angular/forms';
 import { PoModalAction, PoModalComponent } from '@po-ui/ng-components';
 import { PoPageAction } from '@po-ui/ng-components';
 import { PoTableColumn } from '@po-ui/ng-components';
+import { UsuarioLogadoService } from '../usuario-logado.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -27,7 +28,7 @@ export class EquipesComponent implements OnInit{
   literals: any = {};
   codEquipe: number;
   descEquipe: string; 
-  userLogado: string;
+  userLogado: number;
   
   filterSettings: PoPageFilter;
   breadcrumb: PoBreadcrumb;
@@ -39,6 +40,8 @@ export class EquipesComponent implements OnInit{
   createItems: IEquipes = new Equipes();
 
   public itemsEquipes: Array<IEquipes>;
+
+  public usuarioLogado = new UsuarioLogadoService();
 
   hasNext = false;
   currentPage = 1;
@@ -61,7 +64,7 @@ export class EquipesComponent implements OnInit{
 
   ngOnInit(): void {
 
-    this.userLogado = localStorage.getItem('userLogado');
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
 
     forkJoin(
       [

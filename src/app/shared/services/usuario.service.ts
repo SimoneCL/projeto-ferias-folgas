@@ -37,6 +37,12 @@ export class UsuarioService {
         return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
     }    
 
+    getComparePass(id: number, senha: string, expandables: string[]): Observable<IUsuario> {
+        let lstExpandables = this.getExpandables(expandables);
+        if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }        
+        return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}/${senha}${lstExpandables}`, this.headers);
+    }
+
     getlookup(id: number, expandables: string[]): Observable<TotvsResponse<IUsuario>> {
         let lstExpandables = this.getExpandables(expandables);
         if (lstExpandables !== '') { lstExpandables = `?${lstExpandables}`; }
@@ -72,8 +78,8 @@ export class UsuarioService {
         return this.http.put<IUsuario>(`${this.apiBaseUrl}/${Usuario.getInternalId(model)}`, model, this.headers);
     }
 
-    updatePassword(model: IUsuario): Observable<IUsuario> {
-        return this.http.put<IUsuario>(`${this.apiBaseUrl}/alterarSenha/${Usuario.getInternalId(model)}`, model, this.headers);
+    updatePass(id: number, senha: string): Observable<IUsuario> {
+        return this.http.put<IUsuario>(`${this.apiBaseUrl}/alteraSenha/${id}/${senha}`, this.headers);
     }
 
     delete(id: string): Observable<any> {

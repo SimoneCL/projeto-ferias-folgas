@@ -4,6 +4,7 @@ import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { ITipoEvento, TipoEvento } from '../../shared/model/tipo-evento.model';
 import { TipoEventoService } from '../../shared/services/tipo-evento.service';
+import { UsuarioLogadoService } from '../../usuario-logado.service';
 
 @Component({
   selector: 'app-tipo-evento',
@@ -33,12 +34,14 @@ export class TipoEventoComponent implements OnInit {
 
   literals: any = {};
   close: PoModalAction;
-  userLogado: string;
+  userLogado: number;
 
   confirm: PoModalAction;
   tipoEvento: ITipoEvento = new TipoEvento();
   isEdit: boolean = false;
 
+  public usuarioLogado = new UsuarioLogadoService();
+  
   constructor(
     private serviceTipoEvento: TipoEventoService,
     private poI18nPipe: PoI18nPipe,
@@ -49,8 +52,8 @@ export class TipoEventoComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.userLogado = localStorage.getItem('userLogado');
-
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
+    
     forkJoin(
       [
         this.poI18nService.getLiterals(),

@@ -13,6 +13,7 @@ import { IFeriadosNacionais } from '../shared/model/feriados-nacionais.model';
 import { IUsuario } from '../shared/model/usuario.model';
 import { UsuarioService } from '../shared/services/usuario.service';
 import { Evento, IEvento } from '../shared/model/evento.model';
+import { UsuarioLogadoService } from '../usuario-logado.service';
 
 @Component({
   selector: 'app-feriados',
@@ -41,7 +42,7 @@ export class FeriadosComponent implements OnInit {
   tipoFeriado: string;
   pontoFacultativo: boolean;
   
-  userLogado: string;
+  userLogado: number;
 
   datePickerRangeFilter: PoDatepickerRange;
   filterSettings: PoPageFilter;
@@ -76,6 +77,8 @@ export class FeriadosComponent implements OnInit {
   public eventUser: Array<IEvento> = new Array<IEvento>();
   public eventUserAux: Array<IEvento> = new Array<IEvento>();
 
+  public usuarioLogado = new UsuarioLogadoService();
+
   isLoading = true;
 
   eventoMap = new Map();
@@ -92,8 +95,8 @@ export class FeriadosComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.userLogado = localStorage.getItem('userLogado');
-
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
+    
     forkJoin(
       [
         this.poI18nService.getLiterals(),

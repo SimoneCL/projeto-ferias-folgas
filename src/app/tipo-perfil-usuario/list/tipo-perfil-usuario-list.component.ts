@@ -10,6 +10,7 @@ import { DisclaimerUtil, TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { ITipoPerfilUsuario, TipoPerfilUsuario } from '../../shared/model/tipo-perfil-usuario.model';
 import { TipoPerfilUsuarioService } from '../../shared/services/tipo-perfil-usuario.service';
+import { UsuarioLogadoService } from '../../usuario-logado.service';
 
 @Component({
   selector: 'app-tipo-perfil-usuario',
@@ -34,7 +35,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
   pageActions: Array<PoPageAction>;
   tableActions: Array<PoTableAction>;
   columnsPerfil: Array<PoTableColumn>;
-  userLogado: string;
+  userLogado: number;
 
   breadcrumb: PoBreadcrumb;
   filterSettings: PoPageFilter;
@@ -60,6 +61,8 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
   closeTipoPerfil: PoModalAction;
 
   servTipoPerfilUsuarioSubscription$: Subscription;
+
+  public usuarioLogado = new UsuarioLogadoService();
   
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -73,7 +76,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
 
   ngOnInit(): void {
     
-    this.userLogado = localStorage.getItem('userLogado');
+    this.userLogado = this.usuarioLogado.getUsuarioLogado();
 
     forkJoin(
       [
@@ -137,8 +140,8 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
     ];
 
     this.columnsPerfil = [
-      { property: 'idTipoPerfil', label: this.literals.code, type: 'number',  width: '5%' },
-      { property: 'descricaoPerfil', label: this.literals.perfilUsuario, type: 'link',tooltip: this.literals.edit, action: (value, row) => this.edit(row) },
+      { property: 'idTipoPerfil', label: this.literals.perfilUsuario, type: 'link', action: (value, row) => this.edit(row) , width: '200px' },
+      { property: 'descricaoPerfil', label: this.literals.descricaoPerfil, type: 'link', action: (value, row) => this.edit(row) },
     ];    
 
     this.zoomColumnsTipoPerfil = [
@@ -218,12 +221,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
       
       // Atualizar os Campos de Filtro conforme o Disclaimer
       this.disclaimers.map(disclaimer => {
-                
         
-        // ERRO Acontecia devido ao lookup verificar...
-
-
-        //this.tipoPerfilFilter = disclaimer.value;
       });      
   }  
 
