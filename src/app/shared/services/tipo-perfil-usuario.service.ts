@@ -10,7 +10,7 @@ import { TipoPerfilUsuario, ITipoPerfilUsuario } from '../model/tipo-perfil-usua
 export class TipoPerfilUsuarioService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
-    private apiBaseUrl = 'http://localhost:3000/tipoPerfilUsuario';
+    private apiBaseUrl = 'http://10.80.129.239:3000/tipoPerfilUsuario';
     private apiUploadUrl = `${this.apiBaseUrl}/addFile`;
 
     private expandables = [''];
