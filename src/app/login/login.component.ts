@@ -1,14 +1,15 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PoDialogService, PoDisclaimer, PoI18nService, PoModalComponent, PoModalAction } from '@po-ui/ng-components';
+import { PoDialogService, PoDisclaimer, PoI18nService, PoModalComponent, PoModalAction, PoNotificationService } from '@po-ui/ng-components';
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Subscription } from 'rxjs';
 import { ILogin, Login } from '../shared/model/login.model';
-import { IUsuario } from '../shared/model/usuario.model';
+import { IUsuario, Usuario } from '../shared/model/usuario.model';
 import { LoginService } from '../shared/services/login.service';
 import { PoModalPasswordRecoveryComponent, PoModalPasswordRecoveryType } from '@po-ui/ng-templates';
+import { UsuarioService } from '../shared/services/usuario.service';
 
 @Component({
   selector: 'app-login',
@@ -26,6 +27,8 @@ export class LoginComponent {
 
   items: Array<any> = new Array<any>();
   private itemsLogin: Array<ILogin>;
+  private usuario: IUsuario = new Usuario();
+  
   //public login: Array<any> = new Array<any>();
   public login: ILogin = Login.empty();
   literalsI18n: PoPageLoginLiterals;
@@ -37,6 +40,8 @@ export class LoginComponent {
   disclaimers: Array<PoDisclaimer> = [];
 
   servLoginSubscription$: Subscription;
+  usuarioSubscription$: Subscription;
+
   private i18nSubscription: Subscription;
   userLogin: ILogin;
 
@@ -47,7 +52,9 @@ export class LoginComponent {
     private poI18nService: PoI18nService,
     private poDialog: PoDialogService,
     private servLogin: LoginService,
-    private router: Router
+    private router: Router,
+    private usuarioService: UsuarioService,
+    private poNotification: PoNotificationService
   ) { }
 
   
@@ -66,10 +73,62 @@ export class LoginComponent {
     })
   }
 
+  buscarEmail(email: string): void {
+    this.usuarioSubscription$ = this.usuarioService
+      .getByEmail(email)
+      .subscribe((response: IUsuario) => {
+        this.usuario = response;
+        console.log(this.usuario)
+        //this.usuario.senha = this.senhaGerada;
+        this.update();
+
+      });
+  }
+
+  // senhaGerada: string = '';
+
+  // gerarSenhaAleatoria() {
+  //   const tamanhoSenha = 6;
+  //   const caracteres = '0123456789';
+  //   let senha = '';
+    
+  //   for (let i = 0; i < tamanhoSenha; i++) {
+  //     const indiceAleatorio = Math.floor(Math.random() * caracteres.length);
+  //     senha += caracteres.charAt(indiceAleatorio);
+  //   }
+    
+  //   this.senhaGerada = senha;
+  // }
+
+  update() {
+    this.usuarioSubscription$ = this.usuarioService.update(this.usuario).subscribe(() => {
+      this.poNotification.success('Enviado com sucesso');
+      //this.poNotification.success(this.literals.updatedMessage); 
+    });
+  }
+
   setupComponents() {
     this.confirm = {
       action: () => {
        /* this.relacEquipe();*/
+       // this.gerarSenhaAleatoria();
+        this.buscarEmail(this.login.email)
+
+      /* let nodemailer = require ('nodemailer');
+       let transporter = nodemailer.createTransport({ 
+        service: 'gmail', 
+        auth: { 
+           user: 'youremail@address.com', 
+           pass: 'yourPass' 
+         } 
+        }); */
+
+        const mailOptions = {
+          from: 'sender@email.com', // sender address
+          to: 'to@email.com', // receiver (use array of string for a list)
+          subject: 'Subject of your email', // Subject line
+          html: '<p>Your html here</p>'// plain text body
+        };
       },
       label: this.literalsI18n?.enviar
     };

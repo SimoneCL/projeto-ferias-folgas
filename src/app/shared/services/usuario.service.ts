@@ -38,6 +38,11 @@ export class UsuarioService {
         return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}${lstExpandables}`, this.headers);
     }    
 
+    getByEmail(email: string): Observable<IUsuario> {
+        
+        return this.http.get<IUsuario>(`${this.apiBaseUrl}/buscarEmail/${email}`, this.headers);
+    }    
+
     getMetadata(type = '', id = ''): Observable<any> {
         let url = `${this.apiBaseUrl}/metadata`;
         if (id) { url = `${url}/${id}`; }
