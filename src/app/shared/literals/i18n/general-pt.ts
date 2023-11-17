@@ -81,4 +81,8 @@ export const generalPt = {
     titleTipoPerfil: 'Perfil Usuário',
     txtUsuario: 'Selecione os usuários para vincular à equipe',
     txtUsuarioRelac: 'Usuários relacionados à equipe',
+    recuperar: 'Recuperar Senha',
+    enviar: 'Enviar',
+    labelRecupera: 'Digite um e-mail válido para receber uma senha de recuperção',
+    sendMail: 'Enviado com sucesso'
 };
