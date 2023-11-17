@@ -1,8 +1,10 @@
 <div class="po-wrapper-menu-panel">
-    <po-menu *ngIf='!ishidden'
+    <!-- <po-menu #userMenu *ngIf='!ishidden' -->
+    <po-menu #userMenu
         [p-menus]="menus"
         [p-filter]="true"
-        [p-collapsed]="true">
+        [p-collapsed]="true"
+        [hidden]="ishidden">
     </po-menu>
     <po-toolbar #toolbarProfile
         [p-title]="literals?.module"

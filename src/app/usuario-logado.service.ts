@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,9 @@ export class UsuarioLogadoService {
 
   public static idUserLogado: number;
   public static nameUserLogado: string;
+
+  public static profile: any;
+  public static menu: any;
 
   constructor() { }  
 
@@ -22,6 +26,22 @@ export class UsuarioLogadoService {
       title: UsuarioLogadoService.nameUserLogado
     };*/
 
+  }
+
+  setMenu(menu: any) {
+    UsuarioLogadoService.menu = menu;
+  }
+
+  getMenu() {
+    return UsuarioLogadoService.menu;
+  }
+  
+  setProfile(profileInput: any) {
+    UsuarioLogadoService.profile = profileInput;    
+  }
+
+  getProfile() {
+    return UsuarioLogadoService.profile;    
   }
 
   clearUsuarioLogado() {

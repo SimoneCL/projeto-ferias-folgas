@@ -1,6 +1,6 @@
 export interface ILogin {
     idUsuario: number;
-    usuario: string;
+    nomeUsuario: string;
     email: string;
     tipoPerfil: number;
     senha: string;
@@ -9,7 +9,7 @@ export interface ILogin {
 
 export class Login implements ILogin {
     idUsuario: number;
-    usuario: string;
+    nomeUsuario: string;
     email: string;
     tipoPerfil: number;
     senha: string;
