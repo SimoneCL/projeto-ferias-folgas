@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavigationEnd, NavigationSkipped, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { PoI18nService, PoMenuComponent, PoMenuItem, PoToolbarComponent, PoToolbarProfile } from '@po-ui/ng-components';
-import { TotvsResponse, TranslateService } from 'dts-backoffice-util';
-import { Subscription, forkJoin } from 'rxjs';
-import { dependencies, git, name, version } from '../../package.json';
+import { TranslateService } from 'dts-backoffice-util';
+import { forkJoin } from 'rxjs';
 import { UsuarioLogadoService } from './usuario-logado.service';
 
 @Component({
