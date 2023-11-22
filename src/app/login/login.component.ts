@@ -153,12 +153,13 @@ export class LoginComponent {
           
           if (response.email != undefined) {            
             this.userLogin = response;
-            this.usuarioLogado.setUsuarioLogado(this.userLogin.idUsuario, this.userLogin.nomeUsuario);
+            this.usuarioLogado.setUsuarioLogado(this.userLogin.idUsuario, this.userLogin.nomeUsuario, this.userLogin.tipoPerfil);
 
             if (this.userLogin.idUsuario != undefined) {
               
-              if (this.userLogin.tipoPerfil < 2) {
+              if (this.userLogin.tipoPerfil === 1) { //Dev team
                 this.menusPerfil = [
+                  { label: 'Edição usuário', icon: "po-icon-user", shortLabel: "Edição", link: `/cadastroUser/edit/${this.userLogin.idUsuario}` },
                   { label: 'Férias e Folgas', icon: "po-icon-calendar-ok", shortLabel: "Folgas", link: '/feriasFolga' },
                   { label: 'Agenda', icon: "po-icon-calendar", shortLabel: "Agenda", link: '/agendaUser' },
                   { label: 'Sair', icon: "po-icon-close", shortLabel: "Sair", link: '/login' },

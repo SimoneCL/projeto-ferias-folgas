@@ -30,7 +30,8 @@ export class CadastroUserEditComponent implements OnInit {
   literals: any = {};
 
   public properties: string;
-  public propertiesButton: boolean = true ;
+  public propertiesName: string;
+  public propertiesButton: boolean = true;
   public propertiesPassword: string;
   actionsDisable: boolean;
 
@@ -53,6 +54,7 @@ export class CadastroUserEditComponent implements OnInit {
   closePassowrd: PoModalAction;
   noShadow: true;
   userLogado: number;
+  perfilUsuario: number = 0;
 
   public usuarioLogado = new UsuarioLogadoService();
 
@@ -77,6 +79,7 @@ export class CadastroUserEditComponent implements OnInit {
   ngOnInit(): void {
 
     this.userLogado = this.usuarioLogado.getUsuarioLogado();
+    this.perfilUsuario = this.usuarioLogado.getTipoPerfilUsuario();
 
     forkJoin(
       [
@@ -138,7 +141,13 @@ export class CadastroUserEditComponent implements OnInit {
 
     if (this.eventPage === 'edit') {
       this.propertiesPassword = "true";
-    }    
+      if (this.perfilUsuario === 1) { // dev team
+        this.properties = "true";
+        this.propertiesName = "false";
+
+      }
+    }
+
   }
 
   private beforeRedirect(itemBreadcrumbLabel) {
@@ -185,12 +194,21 @@ export class CadastroUserEditComponent implements OnInit {
   }
   getBreadcrumb() {
     if (this.eventPage === 'edit') {
-      return {
-        items: [
-          { label: this.literals.listUser, action: this.beforeRedirect.bind(this), link: '/cadastroUser' },
-          { label: this.literals.editUser }
-        ]
-      };
+      if (this.perfilUsuario < 2) {
+
+        return {
+          items: [
+            { label: this.literals.editUser }
+          ]
+        };
+      } else {
+        return {
+          items: [
+            { label: this.literals.listUser, action: this.beforeRedirect.bind(this), link: '/cadastroUser' },
+            { label: this.literals.editUser }
+          ]
+        };
+      }
     } else if (this.eventPage === 'detail') {
       return {
         items: [
@@ -198,6 +216,8 @@ export class CadastroUserEditComponent implements OnInit {
           { label: this.literals.detailUser }
         ]
       };
+
+
     } else {
       return {
         items: [
@@ -259,9 +279,9 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   alterarSenha() {
-    this.route.navigate([`/alteraSenha/${this.idUsuario}`]);    
+    this.route.navigate([`/alteraSenha/${this.idUsuario}`]);
   }
-  
+
   get(id: number): void {
     this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])

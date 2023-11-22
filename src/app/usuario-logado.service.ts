@@ -8,6 +8,7 @@ export class UsuarioLogadoService {
 
   public static idUserLogado: number;
   public static nameUserLogado: string;
+  public static tipoPerfilUserLogado: number;
 
   public static profile: any;
   public static menu: any;
@@ -18,9 +19,14 @@ export class UsuarioLogadoService {
     return UsuarioLogadoService.idUserLogado;
   }
 
-  setUsuarioLogado(idUser: number, nameUser: string) {
+  getTipoPerfilUsuario() {
+    return UsuarioLogadoService.tipoPerfilUserLogado;
+  }
+
+  setUsuarioLogado(idUser: number, nameUser: string, tipoPerfil: number) {
     UsuarioLogadoService.idUserLogado = idUser;
     UsuarioLogadoService.nameUserLogado = nameUser;
+    UsuarioLogadoService.tipoPerfilUserLogado = tipoPerfil;
 
     /*AppComponent.profile = {
       title: UsuarioLogadoService.nameUserLogado
