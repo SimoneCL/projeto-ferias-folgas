@@ -81,8 +81,6 @@ export class LoginComponent {
       .getByEmail(email)
       .subscribe((response: IUsuario) => {
         this.usuario = response;
-        console.log(this.usuario)
-        //this.usuario.senha = this.senhaGerada;
         this.update();
 
         this.closeModal();
@@ -155,7 +153,6 @@ export class LoginComponent {
           
           if (response.email != undefined) {            
             this.userLogin = response;
-            console.log('0');
             this.usuarioLogado.setUsuarioLogado(this.userLogin.idUsuario, this.userLogin.nomeUsuario);
 
             if (this.userLogin.idUsuario != undefined) {
@@ -180,7 +177,6 @@ export class LoginComponent {
               }
 
               this.profileTitle = this.usuarioLogado.getProfile();
-              console.log('1');
               this.profileTitle.profile = {
                 avatar: 'https://via.placeholder.com/54x54?text=' + this.userLogin.nomeUsuario.substring(0,1).toUpperCase(),
                 title: this.userLogin.nomeUsuario,
@@ -188,18 +184,15 @@ export class LoginComponent {
               };
               
               this.menu = this.usuarioLogado.getMenu();          
-              console.log('2');
               while(this.menu.menus.length) {
                 this.menu.menus.pop();
               }
-              console.log('3');
               this.menusPerfil.forEach(item => {
                 this.menu.menus.push(item);
               });
             }
             
             setTimeout(() => {
-              console.log('4');
               this.router.navigate(['/feriasFolga']);
             }, 500);            
           } else {

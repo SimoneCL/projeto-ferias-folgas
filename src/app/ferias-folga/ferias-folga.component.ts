@@ -85,7 +85,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
 
-    this.userLogado = this.usuarioLogado.getUsuarioLogado();
+    this.idUsuario = this.usuarioLogado.getUsuarioLogado();
     
     forkJoin(
       [
@@ -118,7 +118,10 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
         for (let i in this.equipeUsuario) {
           this.disclaimersEquipeUser.push({ property: 'codEquipe', value: this.equipeUsuario[i].codEquipe });
         }
-        this.searchEquipe(); //alimenta o multiselect de equipe do usuário
+        if(this.equipeUsuario.length > 0) {
+          this.searchEquipe(); //alimenta o multiselect de equipe do usuário
+        }
+        
       })
   }
 

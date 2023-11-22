@@ -212,7 +212,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
 
   search(loadMore = false): void {
-    const newDisclaimer = { property: 'idUsuario', value: localStorage.getItem('usuarioLogado')};
+    const newDisclaimer = { property: 'idUsuario', value: this.userLogado};
     const isDuplicate = this.disclaimers.some(disclaimer => (
       disclaimer.property === newDisclaimer.property && disclaimer.value === newDisclaimer.value
     ));
