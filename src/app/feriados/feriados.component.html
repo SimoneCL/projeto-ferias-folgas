@@ -27,6 +27,7 @@
     </po-datepicker-range>
 </po-modal>
 <po-modal #modalFeriado 
+p-size = 'auto'
     [p-title]="literals?.scheduleEvent"
     [p-primary-action]="confirm"
     [p-secondary-action]="close" >
@@ -34,7 +35,7 @@
     <form #formFeriados="ngForm">
       <div class="po-row">
         <po-datepicker 
-          class="po-md-3" 
+          class="po-md-5" 
           name="data" 
           [(ngModel)]="feriados.dataFormat"             
           [p-disabled]="isEdit"
@@ -42,20 +43,22 @@
           p-clean 
           p-label="Data"> 
         </po-datepicker>
-        <po-select 
-          class="po-md-3" 
-          name="tipoFeriado"       
-          [(ngModel)]="feriados.tipoFeriado"
-          p-label="Tipo" 
-          [p-options]="typeOptions">
-        </po-select>
-        <po-input 
-          class="po-md-6" 
-          name="descricao"      
-          [(ngModel)]="feriados.descricao" 
-          p-label="Descrição" 
-          p-required> 
-        </po-input>    
+        <div class="po-row">
+          <po-select 
+            class="po-md-4" 
+            name="tipoFeriado"       
+            [(ngModel)]="feriados.tipoFeriado"
+            p-label="Tipo" 
+            [p-options]="typeOptions">
+          </po-select>
+          <po-input 
+            class="po-md-8" 
+            name="descricao"      
+            [(ngModel)]="feriados.descricao" 
+            p-label="Descrição" 
+            p-required> 
+          </po-input>   
+        </div> 
       </div>
     
       <div class="po-row">    
