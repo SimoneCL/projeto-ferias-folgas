@@ -71,7 +71,13 @@ export class LoginComponent {
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
                   
-      this.usuarioLogado.clearUsuarioLogado();      
+      this.usuarioLogado.clearUsuarioLogado();  
+      this.profileTitle = this.usuarioLogado.getProfile();
+              this.profileTitle.profile = {
+                avatar: 'https://via.placeholder.com/54x54?text=Login' ,
+                title: '',
+                subtitle: ''
+              };    
       this.setupComponents();
     });    
   }

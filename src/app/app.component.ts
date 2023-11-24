@@ -39,6 +39,7 @@ export class AppComponent implements OnInit {
         forkJoin(
             [this.poI18nService.getLiterals()]
         ).subscribe(literals => {
+            this.router.navigate(['/login']);
             
             literals.map(item => Object.assign(this.literals, item));
             this.menus = [
