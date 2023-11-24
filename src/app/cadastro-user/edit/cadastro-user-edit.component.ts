@@ -131,6 +131,7 @@ export class CadastroUserEditComponent implements OnInit {
 
     if (this.eventPage === 'detail') {
       this.properties = "true";
+      this.propertiesName = "true";
       this.actionsDisable = false;
       
     }
@@ -229,15 +230,23 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   getActions(): Array<PoPageAction> {
-    switch (this.eventPage) {
-      case 'edit': {
-        return this.editActions();
+    
+    if(this.perfilUsuario === 1 ) {
+      
+      return [];
+  
+    } else {
+      switch (this.eventPage) {
+        case 'edit': {
+          return this.editActions();
+        }
+        case 'detail': {
+          return this.detailActions();
+        }
       }
-      case 'detail': {
-        return this.detailActions();
-      }
+      return this.newActions();
     }
-    return this.newActions();
+    
   }
 
   editActions(): Array<PoPageAction> {
