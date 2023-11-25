@@ -101,7 +101,6 @@ export class LoginComponent {
   }
 
   setupComponents() {
-    console.log(this.literals?.enviar);
     this.confirmRecSenha = {
       action: () => {
         

@@ -244,14 +244,15 @@ export class AgendamentoUserListComponent implements OnInit {
   delete(item: IEvento): void {
     const id = Evento.getInternalId(item) + ';' + this.userLogado ;
     this.poDialogService.confirm({
-      title: this.literals.remove,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.idEvento]),
+      title: this.literals.delete,
+      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.descricao]),
       confirm: () => {
         this.eventoUserSubscription$ = this.serviceEvento
           .delete(id)
           .subscribe(response => {
             this.router.navigate(['/agendaUser']);
-            this.poNotification.success(this.literals.excludedMessage);
+            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, item.descricao));
+
             this.search();
           }, (err: any) => {
             this.search();

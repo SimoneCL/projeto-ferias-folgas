@@ -25,7 +25,6 @@ export const generalPt = {
     modalDeleteMessage: 'Tem certeza de que deseja excluir o(s) registro(s) {0} ?',
     modalDeleteTitle: 'Deseja excluir este cadastro?',
     no: 'Não',
-    remove: 'Remover',
     return: 'Voltar',
     save: 'Salvar',
     saveAndNext: 'Salvar e próximo',

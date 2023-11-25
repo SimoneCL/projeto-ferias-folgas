@@ -17,7 +17,6 @@ export const generalEs = {
     modalDeleteMessage: '¿Está seguro de que desea descartar los cambios?',
     modalDeleteTitle: '¿Desea eliminar este registro?',
     no: 'No',
-    remove: 'Eliminar',
     return: 'Regreso',
     save: 'Guardar',
     saveAndNext: 'Guardar y siguiente',
