@@ -3,7 +3,7 @@
   <div class="po-row">
       <po-datepicker-range
           class="po-lg-3 po-md-3"
-          p-label="Período"
+          [p-label]="literals?.period"
           [(ngModel)]="config.datePickerRange"
           (p-change)="calculateQuantityOfVacationDays()"
           >
@@ -12,7 +12,7 @@
       
       <po-multiselect  class="po-md-3"
        name="multiselect" 
-       p-label="Equipes do usuário"
+       [p-label]="literals?.equipeUsuario"
        [(ngModel)]="multiSelectEquipe"
         [p-options]="optionsMultiSeletc"
         (p-change)="changeOptions($event)"> 

@@ -1,5 +1,5 @@
 <po-page-list 
-  p-title="Feriados" 
+  [p-title]="literals?.feriados" 
   [p-title]="literals?.titleferiados"
   [p-actions]="actions"
   [p-disclaimer-group]="disclaimerGroup"
@@ -22,7 +22,7 @@
     [p-secondary-action]="cancelAdvSearchAction">
     <po-datepicker-range
         class="po-lg-12 po-md-12"
-        p-label="Período"
+        [p-label]="literals?.period"
         [(ngModel)]="datePickerRangeFilter" >
     </po-datepicker-range>
 </po-modal>
@@ -41,21 +41,21 @@ p-size = 'auto'
           [p-disabled]="isEdit"
           p-required="true"
           p-clean 
-          p-label="Data"> 
+          [p-label]="literals?.data"> 
         </po-datepicker>
         <div class="po-row">
           <po-select 
             class="po-md-4" 
             name="tipoFeriado"       
             [(ngModel)]="feriados.tipoFeriado"
-            p-label="Tipo" 
+            [p-label]="literals?.type" 
             [p-options]="typeOptions">
           </po-select>
           <po-input 
             class="po-md-8" 
             name="descricao"      
             [(ngModel)]="feriados.descricao" 
-            p-label="Descrição" 
+            [p-label]="literals?.description" 
             p-required> 
           </po-input>   
         </div> 
@@ -65,7 +65,7 @@ p-size = 'auto'
         <po-checkbox
           class="po-md-6"
           name="pontoFacultativo"                  
-          p-label="Ponto Facultativo"
+          [p-label]="literals?.pontoFacultativo"
           [(ngModel)]="feriados.pontoFacultativo"
           (p-change)="changeEvent('p-change')"
         >
@@ -75,7 +75,7 @@ p-size = 'auto'
 </po-modal>
 <po-modal #modalFeriadosNacionais
     p-size="sm"
-    p-title="feriados nacionais"
+    [p-title]="literals?.feriadosNacional"
     [p-primary-action]="confirmNacionais"
     [p-secondary-action]="closeNacionais" >
   
@@ -83,7 +83,7 @@ p-size = 'auto'
       class="po-md-12" 
       name="anoFeriado"       
       [(ngModel)]="anoFeriado"
-      p-label="Ano" 
+      [p-label]="literals?.ano" 
       [p-options]="anoOptions"
       (p-change)="onChangeYear()">
 

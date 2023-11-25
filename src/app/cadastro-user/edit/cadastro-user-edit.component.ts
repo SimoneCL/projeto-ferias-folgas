@@ -166,9 +166,18 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   create() {
-    this.usuarioSubscription$ = this.serviceUsuario.create(this.usuario).subscribe(() => {
-      this.return();
-      this.poNotification.success(this.literals.createdMessage);
+    this.usuarioSubscription$ = this.serviceUsuario.create(this.usuario).subscribe((response: any) => {
+      console.log(response);
+      if (response.error !== '') {
+        this.poNotification.error(response.error);
+      } else if (response.mailError !== '') {
+        this.return();
+        this.poNotification.warning(response.mailError);
+        this.poNotification.success(this.literals.createdMessage);
+      } else {
+        this.return();
+        this.poNotification.success(this.literals.createdMessage);
+      }      
     });
   }
   update() {

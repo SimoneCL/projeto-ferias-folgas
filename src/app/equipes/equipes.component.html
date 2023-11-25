@@ -26,14 +26,14 @@
           name="codEquipe"      
           [(ngModel)]="codEquipe" 
           [p-disabled]="isEdit"
-          p-label="Código" 
+          [p-label]="literals?.codigo" 
           p-required> 
         </po-input>
         <po-input 
           class="po-md-6" 
           name="descEquipe"      
           [(ngModel)]="descEquipe" 
-          p-label="Descrição" 
+          [p-label]="literals?.description" 
           p-required> 
         </po-input>
        
