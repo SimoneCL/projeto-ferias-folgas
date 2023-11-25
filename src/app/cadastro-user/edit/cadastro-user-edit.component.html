@@ -29,7 +29,7 @@
     <po-select
       class="po-lg-6" 
       name="select"
-      p-label="Perfil"
+      [p-label]="literals?.perfil"
       [(ngModel)]="usuario.tipoPerfil"
       [p-disabled]="properties" 
       [p-options]="perfilOptions">

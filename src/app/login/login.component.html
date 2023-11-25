@@ -16,7 +16,7 @@
         name="nomeUsuario"
         [(ngModel)]="login.nomeUsuario"
         p-icon="po-icon-user"
-        p-placeholder="email@totvs.com.br"      
+        [p-placeholder]="literals?.emailPlaceholder"
         p-clean> 
       </po-input>
       <po-password
@@ -27,7 +27,7 @@
       </po-password>
       <po-button
         class="btEnter po-md-6 po-lg-12 po-mt-1"        
-        p-label="Entrar"        
+        [p-label]="literals?.entrar"
         p-kind="primary"
         (p-click)="onClick()"> 
       </po-button>
@@ -46,7 +46,7 @@
       [(ngModel)]="login.email"
       [p-label]="literals?.labelRecupera"
       p-icon="po-icon-user"
-      p-placeholder="email@totvs.com.br"      
+      [p-placeholder]="literals?.emailPlaceholder"
       p-clean> 
   </po-input>
 </po-modal>

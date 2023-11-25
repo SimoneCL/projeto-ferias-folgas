@@ -26,14 +26,14 @@
           name="codTipoPerfil"      
           [(ngModel)]="tipoPerfilUsuario.idTipoPerfil" 
           [p-disabled]="isEdit"
-          p-label="Código" 
+          [p-label]="literals?.codigo"
           p-required> 
         </po-input>
         <po-input 
           class="po-md-6" 
           name="descTipoPerfil"      
           [(ngModel)]="tipoPerfilUsuario.descricaoPerfil" 
-          p-label="Descrição" 
+          [p-label]="literals?.description"
           p-required> 
         </po-input>
        
