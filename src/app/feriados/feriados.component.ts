@@ -245,7 +245,11 @@ export class FeriadosComponent implements OnInit {
           this.itemsFeriados = [...response.items];
           for (const i in response.items) {
             this.itemsFeriados[i].data = Feriados.formatoDataList(response.items[i].data);
-
+            if (response.items[i].pontoFacultativo == 0){  //esse tratamento foi feito devido o tipo lógico no mysql estar como tinyint 0 -falso e 1-verdadeiro
+              this.itemsFeriados[i].pontoFacultativo = false;
+            } else {
+              this.itemsFeriados[i].pontoFacultativo = true;
+            }
           }
           this.hasNext = response.hasNext;
         }
@@ -261,12 +265,12 @@ export class FeriadosComponent implements OnInit {
 
     this.poDialogService.confirm({
       title: this.literals.delete,
-      message: this.PoI18nPipe.transform(this.literals.modalDeleteMessage, [item.data]),
+      message: this.PoI18nPipe.transform(this.literals.modalDeleteMessage, [item.data + ' (' + item.descricao+ ')'] ),
       confirm: () => {
         this.servFeriadosSubscription$ = this.servFeriados
           .delete(item.idFeriado)
           .subscribe(response => {
-            this.poNotification.success(this.PoI18nPipe.transform(this.literals.excludedMessage, item.descricao));
+            this.poNotification.success(this.PoI18nPipe.transform(this.literals.excludedMessage, item.data + ' (' + item.descricao+ ')'));
             this.search();
           });
       }
@@ -312,35 +316,7 @@ export class FeriadosComponent implements OnInit {
         });
     });
   }
-  searchUsuarios(loadMore = false) {
-
-    this.isLoading = true;
-    this.usuarioSubscription$ = this.serviceUsuario
-      .query([], 1, 99999)
-      .subscribe((response: TotvsResponse<IUsuario>) => {
-        this.items = response.items;
-        let evento = [];
-        this.eventUser = [];
-        this.items.forEach((user, index) => {
-
-          this.itemFeriadosNacionais.forEach(feriados => {
-            evento = [{
-              "idUsuario": user.idUsuario,
-              "dataEventoIni": feriados.date,
-              "dataEventoFim": feriados.date,
-              "codTipo": 6
-            }];
-            this.eventUser = [...this.eventUser, ...evento];
-
-          });
-
-        });
-        this.hasNext = response.hasNext;
-        this.isLoading = false;
-      });
-  }
-
-
+  
   public saveFeriadosNacionais() {
     this.feriadosNacionais = [];
     this.itemFeriadosNacionais.forEach(element => {
@@ -353,6 +329,7 @@ export class FeriadosComponent implements OnInit {
         "dataFormat": Feriados.formataData(element.date)
       }];
     });
+   
     this.servFeriadosSubscription$ = this.servFeriados
       .createFeriadosNacionais(this.feriadosNacionais)
       .subscribe(() => {
@@ -364,6 +341,9 @@ export class FeriadosComponent implements OnInit {
   }
   public saveFeriados() {
     this.feriados.data = this.feriados.dataFormat;
+    if (this.feriados.pontoFacultativo == null) {
+      this.feriados.pontoFacultativo = false;
+    }
     if (this.isEdit) {
       this.servFeriadosSubscription$ = this.servFeriados
         .update(this.feriados)

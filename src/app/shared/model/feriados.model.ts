@@ -3,7 +3,7 @@ export interface IFeriados {
     data: string;
     tipoFeriado: string;
     descricao: string;
-    pontoFacultativo: boolean;
+    pontoFacultativo: number | boolean;
     dataFormat: string;
 }
 
@@ -12,7 +12,7 @@ export class Feriados implements IFeriados {
     data: string;
     tipoFeriado: string;
     descricao: string; 
-    pontoFacultativo: boolean;
+    pontoFacultativo: number | boolean;
     dataFormat: string;
 
     constructor(values: Object = {}) {

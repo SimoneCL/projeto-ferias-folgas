@@ -169,8 +169,8 @@ export class TipoEventoComponent implements OnInit {
   delete(item: ITipoEvento): void {
     const id = TipoEvento.getInternalId(item);
     this.poDialogService.confirm({
-      title: this.literals.remove,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.codTipo]),
+      title: this.literals.delete,
+      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.descTipoEvento]),
       confirm: () => {
         this.tipoEventoSubscription$ = this.serviceTipoEvento
           .delete(id)

@@ -40,22 +40,3 @@
       </div>      
     </form>
 </po-modal>
-
-<po-modal 
-  #modalAdvSearchTipoPerfil
-  [p-title]="literals?.modalAdvanceSearcPerfil"
-  [p-primary-action]="confirmAdvancedSearch"
-  [p-secondary-action]="cancelAdvancedSearch">  
-  <po-lookup
-    class="po-md-12"
-    name="fiterTipoPerfil"    
-    [(ngModel)]="tipoPerfilFilter"
-    p-label="Tipo Perfil"
-    p-multiple="false"
-    [p-columns]="zoomColumnsTipoPerfil"
-    [p-field-format]="fieldFormatTipoPerfil"
-    [p-filter-service]="servTipoPerfilUsuario"
-    p-field-label="descricaoPerfil"
-    p-field-value="descricaoPerfil">
-  </po-lookup>
-</po-modal>

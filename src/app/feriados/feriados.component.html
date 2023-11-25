@@ -16,12 +16,12 @@
 </po-page-list>
 
 <po-modal #modalAdvanceSearch
-    p-size="sm"
+    p-size="auto"
     [p-title]="literals?.modalAdvanceSearcPer"
     [p-primary-action]="confirmAdvSearchAction"
     [p-secondary-action]="cancelAdvSearchAction">
     <po-datepicker-range
-        class="po-lg-6 po-md-6"
+        class="po-lg-12 po-md-12"
         p-label="Período"
         [(ngModel)]="datePickerRangeFilter" >
     </po-datepicker-range>
@@ -74,11 +74,13 @@ p-size = 'auto'
     </form>
 </po-modal>
 <po-modal #modalFeriadosNacionais
+    p-size="sm"
     p-title="feriados nacionais"
     [p-primary-action]="confirmNacionais"
     [p-secondary-action]="closeNacionais" >
   
     <po-multiselect
+      class="po-md-12" 
       name="anoFeriado"       
       [(ngModel)]="anoFeriado"
       p-label="Ano" 

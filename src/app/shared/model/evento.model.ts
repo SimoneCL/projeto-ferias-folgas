@@ -4,6 +4,7 @@ export interface IEvento {
     dataEventoIni: string;
     dataEventoFim: string;
     codTipo: number | string;
+    descricao: string;
 }
 
 export class Evento implements IEvento {
@@ -12,6 +13,7 @@ export class Evento implements IEvento {
     dataEventoIni: string;
     dataEventoFim: string;
     codTipo: number | string;
+    descricao: string;
 
     constructor(values: Object = {}) {
         Object.assign(this, values);

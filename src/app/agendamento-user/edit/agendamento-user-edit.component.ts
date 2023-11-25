@@ -111,7 +111,8 @@ export class AgendamentoUserEditComponent implements OnInit {
   save() {
     this.eventUser.idUsuario = this.userLogado;
     this.eventUser.codTipo = this.formVacationSuggestion.get('eventType').value;
-    if (this.eventUser.codTipo === 1) {
+    
+    if (this.eventUser.codTipo !== 1) {
       this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;
       this.eventUser.dataEventoFim = this.formVacationSuggestion.get('datepickerRange').value.end;
 

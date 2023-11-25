@@ -1,13 +1,11 @@
-//Angular
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-//PO-UI
-import { PoDialogService, PoDisclaimer, PoPageListComponent, PoI18nService, PoBreadcrumb, PoNotificationService, PoPageAction, PoTableAction, PoTableColumn, PoPageFilter, PoI18nPipe, PoModalAction, PoModalComponent, PoBreadcrumbItem, PoDisclaimerGroup, PoLookupColumn } from '@po-ui/ng-components';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoLookupColumn, PoModalAction, PoModalComponent, PoNotificationService, PoPageAction, PoPageFilter, PoPageListComponent, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { DisclaimerUtil, TotvsResponse } from 'dts-backoffice-util';
-//Services
-import { forkJoin, Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 import { ITipoPerfilUsuario, TipoPerfilUsuario } from '../../shared/model/tipo-perfil-usuario.model';
 import { TipoPerfilUsuarioService } from '../../shared/services/tipo-perfil-usuario.service';
 import { UsuarioLogadoService } from '../../usuario-logado.service';
@@ -20,7 +18,6 @@ import { UsuarioLogadoService } from '../../usuario-logado.service';
 export class TipoPerfilUsuarioListComponent implements OnInit {
   @ViewChild('poPageList', { static: true }) poPageList: PoPageListComponent;
   @ViewChild('modalTipoPerfil', { static: true }) modalTipoPerfil: PoModalComponent;
-  @ViewChild('modalAdvSearchTipoPerfil', { static: true }) modalAdvSearchTipoPerfil: PoModalComponent;
   @ViewChild('formTipoPerfilUsuario', { static: true }) formTipoPerfilUsuario: NgForm;
 
   private i18nSubscription: Subscription;
@@ -112,20 +109,10 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
       }
     ];
 
-    this.confirmAdvancedSearch = {
-      action: () => this.onConfirmAdvancedSearch(),
-      label: 'Confirma'
-    };
-
-    this.cancelAdvancedSearch = {
-      action: () => this.modalAdvSearchTipoPerfil.close(),
-      label: 'Cancel'
-    };
 
     this.filterSettings = {
       action: this.searchAdvById.bind(this),
-      advancedAction: this.advancedSearch.bind(this),
-      placeholder: 'Busca perfil'
+      placeholder: this.literals.description
     };
 
     this.disclaimerGroup = {
@@ -140,7 +127,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
     ];
 
     this.columnsPerfil = [
-      { property: 'idTipoPerfil', label: this.literals.perfilUsuario, type: 'link', action: (value, row) => this.edit(row) , width: '200px' },
+      { property: 'idTipoPerfil', label: this.literals.perfilUsuario, type: 'number', width: '10%' },
       { property: 'descricaoPerfil', label: this.literals.descricaoPerfil, type: 'link', action: (value, row) => this.edit(row) },
     ];    
 
@@ -154,14 +141,6 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
     return `${value.idTipoPerfil} - ${value.descricaoPerfil}`;
   }
   
-  advancedSearch(): void {
-    this.modalAdvSearchTipoPerfil.open();
-  }  
-
-  onConfirmAdvancedSearch(): void {
-    this.refreshDisclaimer();
-    this.modalAdvSearchTipoPerfil.close();
-  }
 
   search(): void {
     this.currentPage = 1;
@@ -281,7 +260,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
 
   delete(tipoPerfil: ITipoPerfilUsuario) {
     this.poDialog.confirm({
-      title: this.literals.remove,
+      title: this.literals.delete,
       message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [tipoPerfil.descricaoPerfil]),
       confirm: () => {
         this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario

@@ -17,7 +17,6 @@ export const generalEn = {
     modalDeleteMessage: 'Are you sure you want to delete item(s)?',
     modalDeleteTitle: 'Do you want to delete this registration?',
     no: 'No',
-    remove: 'Remove',
     return: 'Back',
     save: 'Save',
     saveAndNext: 'Save and next',
