@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoDatepickerRange, PoI18nService, PoNotificationService, PoPageAction, PoSelectOption } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDatepickerComponent, PoDatepickerRange, PoI18nService, PoNotificationService, PoNumberComponent, PoPageAction, PoSelectOption } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Subscription, forkJoin } from 'rxjs';
 import { Evento, IEvento } from 'src/app/shared/model/evento.model';
@@ -25,8 +25,7 @@ export class AgendamentoUserEditComponent implements OnInit {
   literals: any = {};
 
   datepickerRange: PoDatepickerRange;
-  datepickerRangeAux: PoDatepickerRange;
-  formVacationSuggestion: UntypedFormGroup;
+  datepicker: Date;
   quantityOfDays: number;
   eventType: number;
   eventPage: string;
@@ -36,21 +35,14 @@ export class AgendamentoUserEditComponent implements OnInit {
 
   items: Array<ITipoEvento> = new Array<ITipoEvento>();
 
-  public eventOptions: Array<PoSelectOption> = []; 
+  public eventOptions: Array<PoSelectOption> = [];
   public isHidden: boolean;
 
   public usuarioLogado = new UsuarioLogadoService();
 
-  get validateForm() {
-    return !(
-      this.formVacationSuggestion.valid &&
-      this.formVacationSuggestion.get('datepickerRange').value.start &&
-      this.formVacationSuggestion.get('datepickerRange').value.end
-    );
-  }
+
   constructor(
     private route: Router,
-    private formBuilder: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
     private poI18nService: PoI18nService,
     private poNotification: PoNotificationService,
@@ -69,14 +61,13 @@ export class AgendamentoUserEditComponent implements OnInit {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-      this.formVacationSuggestion = this.formBuilder.group({
-        datepickerRange: [undefined, Validators.required],
-        quantityOfDays: [undefined],
-        eventType: [undefined]
-      });
+
 
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
       this.isEdit = this.eventPage === 'edit';
+
+      this.isHidden = this.eventPage === 'new';
+
       const id = this.activatedRoute.snapshot.paramMap.get('id');
       this.search();
 
@@ -91,50 +82,67 @@ export class AgendamentoUserEditComponent implements OnInit {
   }
 
   setupComponents() {
-    this.isHidden = this.eventPage === 'new';
+
     this.breadcrumb = this.getBreadcrumb();
   }
   private beforeRedirect(itemBreadcrumbLabel) {
-    if (this.formVacationSuggestion.valid) {
-      this.return();
-    }
+    this.return();
   }
   changeEvent(event) {
-    this.hiddenQtdDay();
+
+
+    this.isHiddenField(event)
+    this.quantityOfDays = 0;
+    this.datepickerRange = undefined;
+    this.datepicker = undefined;
+
   }
-  hiddenQtdDay() {
-    this.isHidden = this.formVacationSuggestion.get('eventType').value === 1;
+  isHiddenField(codTipo) {
+    if (codTipo == 2 || codTipo == 3 || codTipo == 4) { //férias, licenca maternidade, licenca paternidade
+      this.isHidden = false;
+    } else {
+      this.isHidden = true;
+    }
+
   }
+
   return() {
     this.route.navigate(['/agendaUser']);;
   }
   save() {
     this.eventUser.idUsuario = this.userLogado;
-    this.eventUser.codTipo = this.formVacationSuggestion.get('eventType').value;
-    
-    if (this.eventUser.codTipo !== 1) {
-      this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;
-      this.eventUser.dataEventoFim = this.formVacationSuggestion.get('datepickerRange').value.end;
-
+    this.calculateQuantityOfVacationDays();
+    if ( this.quantityOfDays !== 0 && this.eventUser.codTipo) {
+      if (this.datepickerRange) {
+        this.eventUser.dataEventoIni = this.datepickerRange.start.toString();
+        this.eventUser.dataEventoFim = this.datepickerRange.end.toString();
+      } else {
+        this.eventUser.dataEventoIni = this.datepicker.toString();
+        this.eventUser.dataEventoFim = this.datepicker.toString();
+      }
     } else {
-      this.eventUser.dataEventoIni = this.formVacationSuggestion.get('datepickerRange').value.start;
-      this.eventUser.dataEventoFim = this.eventUser.dataEventoIni;
+      this.poNotification.error(this.literals.erroEditAgendaEvent);
+    
     }
 
   }
   create() {
-    this.save();
-    this.eventoUserSubscription$ = this.serviceEvento.create(this.eventUser).subscribe(() => {
-      this.return();
-      this.poNotification.success(this.literals.createdMessage);
-    });
+   this.save();
+    if (this.quantityOfDays !== 0 && this.eventUser.codTipo) {
+      this.eventoUserSubscription$ = this.serviceEvento.create(this.eventUser).subscribe(() => {
+        this.return();
+        this.poNotification.success(this.literals.createdMessage);
+      });
+    }
   }
   update() {
     this.save();
-    this.eventoUserSubscription$ = this.serviceEvento.update(this.eventUser).subscribe(() => {
-      this.return();
-      this.poNotification.success(this.literals.createdMessage);
-    });
+    if ( this.quantityOfDays !== 0 && this.eventUser.codTipo) {
+      this.eventoUserSubscription$ = this.serviceEvento.update(this.eventUser).subscribe(() => {
+        this.return();
+        this.poNotification.success(this.literals.createdMessage);
+      });
+    }
   }
   getTitle(): string {
     if (this.eventPage === 'edit') {
@@ -216,49 +224,58 @@ export class AgendamentoUserEditComponent implements OnInit {
       .getById(id, [''])
       .subscribe((response: IEvento) => {
         this.eventUser = response;
-        this.datepickerRangeAux = {
-          start: new Date(this.eventUser.dataEventoIni),
-          end: new Date(this.eventUser.dataEventoFim)
-        }
+        this.isHiddenField(this.eventUser.codTipo)
+        if (this.eventUser.codTipo === 2 || this.eventUser.codTipo === 3 || this.eventUser.codTipo === 4) {
+          this.datepickerRange = {
+            start: new Date(this.eventUser.dataEventoIni),
+            end: new Date(this.eventUser.dataEventoFim)
+          }
+        } else {
+          this.datepicker = new Date(this.eventUser.dataEventoIni);
 
-        this.formVacationSuggestion.get("eventType").patchValue(this.eventUser.codTipo);
-        this.hiddenQtdDay();
-        this.formVacationSuggestion.get("datepickerRange").patchValue(this.datepickerRangeAux);
+        }
+        this.calculateQuantityOfVacationDays();
+
       });
   }
 
   search(): void {
     this.eventOptions = [];
     this.tipoEventoSubscription$ = this.serviceTipoEvento
-      .query([], 1, 999)
+      .query([], 1, 9999)
       .subscribe((response: TotvsResponse<ITipoEvento>) => {
         this.items = [...this.items, ...response.items];
         for (let i in this.items) {
-          this.eventOptions = [...this.eventOptions, { label: this.items[i].descTipoEvento, value: this.items[i].codTipo.toString() }];
+          this.eventOptions = [...this.eventOptions, { label: this.items[i].descTipoEvento.toLocaleUpperCase(), value: this.items[i].codTipo.toString() }];
         }
+
       });
   }
 
   calculateQuantityOfVacationDays() {
-    const start = new Date(this.formVacationSuggestion.get('datepickerRange').value.start);
-    const end = new Date(this.formVacationSuggestion.get('datepickerRange').value.end);
 
-    if (this.eventUser.codTipo === 1) {
-      this.eventUser.dataEventoIni = start.getFullYear() + "-" + ((start.getMonth() + 1)) + "-" + ((start.getDate() + 1));
-      this.eventUser.dataEventoFim = end.getFullYear() + "-" + ((end.getMonth() + 1)) + "-" + ((end.getDate() + 1));
+    if (this.datepickerRange) {
+      this.eventUser.dataEventoIni = this.datepickerRange.start.toString();
+      this.eventUser.dataEventoFim = this.datepickerRange.end.toString();
     } else {
-      this.eventUser.dataEventoIni = start.getFullYear() + "-" + ((start.getMonth() + 1)) + "-" + ((start.getDate() + 1));
-      this.eventUser.dataEventoFim = this.eventUser.dataEventoIni;
+      this.eventUser.dataEventoIni = this.datepicker.toString();
+      this.eventUser.dataEventoFim = this.datepicker.toString();
     }
+    let start = new Date(this.eventUser.dataEventoIni);
+    let end = new Date(this.eventUser.dataEventoFim);
 
+    if (Number.isNaN(start.getDay()) === false && Number.isNaN(end.getDay()) === false) {
+      this.quantityOfDays
+        = Math.floor(
+          (Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()) -
+            Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) /
+          (1000 * 60 * 60 * 24)
+        ) + 1;
+    } else {
 
-    this.quantityOfDays
-      = Math.floor(
-        (Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()) -
-          Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) /
-        (1000 * 60 * 60 * 24)
-      );
-    this.formVacationSuggestion.get('quantityOfDays').setValue(this.quantityOfDays);
+      this.quantityOfDays = 0;
+
+    }
   }
   ngOnDestroy(): void {
     if (this.eventoUserSubscription$) {

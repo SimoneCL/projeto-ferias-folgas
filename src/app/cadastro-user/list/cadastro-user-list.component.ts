@@ -155,7 +155,7 @@ export class CadastroUserListComponent implements OnInit {
     const id = Usuario.getInternalId(item);
     this.poDialogService.confirm({
       title: this.literals.delete,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.nomeUsuario]),
+      message: this.poI18nPipe.transform(this.literals.modalDeleteSingleMessage, [item.nomeUsuario]),
       confirm: () => {
         this.usuarioSubscription$ = this.serviceUsuario
 

@@ -170,7 +170,7 @@ export class EquipesComponent implements OnInit{
     const id = Equipes.getInternalId(item);
     this.poDialogService.confirm({
       title: this.literals.delete,
-      message: this.PoI18nPipe.transform(this.literals.modalDeleteMessage, [item.descEquipe]),
+      message: this.PoI18nPipe.transform(this.literals.modalDeleteSingleMessage, [item.descEquipe]),
       confirm: () => {
         this.servEquipesSubscription$ = this.servEquipes
           .delete(id)

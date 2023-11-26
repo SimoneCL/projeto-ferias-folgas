@@ -2,38 +2,40 @@
     [p-actions]="getActions()" 
     [p-breadcrumb]="breadcrumb" 
     [p-title]="getTitle()">
-  <form [formGroup]="formVacationSuggestion">
-  
-  <po-select class="po-lg-4"
-      name="eventType" 
-      formControlName="eventType"
+    <po-select class="po-lg-4"
+      name="eventType"
+      [(ngModel)]="eventUser.codTipo" 
       [p-disabled]="isEdit"
       [p-label]="literals?.eventType" 
       [p-options]="eventOptions"    
       (p-change)="changeEvent($event)" >
   </po-select>
   <po-divider class="po-md-9" [p-label]="literals?.rangeSchedule"> </po-divider>
-
   <div class="po-row">
-    <po-datepicker-range
-    class="po-md-6"
-    formControlName="datepickerRange"
-    p-clean
-    [p-label]="literals?.period"
-    p-required
-    (p-change)="calculateQuantityOfVacationDays()">
-    </po-datepicker-range>
-
-    <po-number *ngIf="isHidden"
-      class="po-md-3"
-      name="number"
-      formControlName="quantityOfDays"
-      p-disabled
-      [p-label]="literals?.qtdDays"
-      p-required
-    >
-    </po-number>
+  <po-datepicker  *ngIf="isHidden"
+      class="po-md-6"
+      [(ngModel)]="datepicker"
+      p-clean
+      [p-label]="literals?.period"
+      p-required = 'true'
+      (p-change)="calculateQuantityOfVacationDays()"
+        >
+    </po-datepicker>
+  <po-datepicker-range  *ngIf="!isHidden"
+      class="po-md-6"
+      [(ngModel)]="datepickerRange"
+      p-clean
+      [p-label]="literals?.period"
+      p-required = 'true'
+      (p-change)="calculateQuantityOfVacationDays()">
+      </po-datepicker-range>
+      <po-info  
+        [p-label]="literals?.qtdDays"
+        p-label-size="7"
+        p-orientation="vertical"
+        [p-value]="quantityOfDays">
+      </po-info>
   </div>
-</form>
+  
 </po-page-default>
 

@@ -154,7 +154,7 @@ export class AgendamentoUserListComponent implements OnInit {
     this.filterSettings = {
       action: this.searchById.bind(this),
       advancedAction: this.advancedSearch.bind(this),
-      placeholder: this.literals.search
+      placeholder: this.literals.description
     };
   }
 
@@ -245,7 +245,7 @@ export class AgendamentoUserListComponent implements OnInit {
     const id = Evento.getInternalId(item) + ';' + this.userLogado ;
     this.poDialogService.confirm({
       title: this.literals.delete,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.descricao]),
+      message: this.poI18nPipe.transform(this.literals.modalDeleteSingleMessage, [item.descricao]),
       confirm: () => {
         this.eventoUserSubscription$ = this.serviceEvento
           .delete(id)

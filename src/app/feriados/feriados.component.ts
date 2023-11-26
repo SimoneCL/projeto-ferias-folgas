@@ -265,7 +265,7 @@ export class FeriadosComponent implements OnInit {
 
     this.poDialogService.confirm({
       title: this.literals.delete,
-      message: this.PoI18nPipe.transform(this.literals.modalDeleteMessage, [item.data + ' (' + item.descricao+ ')'] ),
+      message: this.PoI18nPipe.transform(this.literals.modalDeleteSingleMessage, [item.data + ' (' + item.descricao+ ')'] ),
       confirm: () => {
         this.servFeriadosSubscription$ = this.servFeriados
           .delete(item.idFeriado)
