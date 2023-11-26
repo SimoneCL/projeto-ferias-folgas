@@ -6,7 +6,7 @@ import { Subscription, forkJoin } from 'rxjs';
 import { EquipeUsuario, IEquipeUsuario } from '../../shared/model/equipe-usuario.model';
 import { Equipes, IEquipes } from '../../shared/model/equipes.model';
 import { ITipoPerfilUsuario } from '../../shared/model/tipo-perfil-usuario.model';
-import { IUsuario } from '../../shared/model/usuario.model';
+import { IUsuario, Usuario } from '../../shared/model/usuario.model';
 import { EquipeUsuarioService } from '../../shared/services/equipe-usuario.service';
 import { EquipesService } from '../../shared/services/equipes.service';
 import { TipoPerfilUsuarioService } from '../../shared/services/tipo-perfil-usuario.service';
@@ -45,7 +45,7 @@ export class RelacEquipeEditComponent implements OnInit {
 
   hasNext = false;
   currentPage = 1;
-  pageSize = 20;
+  pageSize = 999999;
   expandables = [''];
   isLoading = true;
   columns: Array<PoTableColumn> = [];
@@ -54,6 +54,7 @@ export class RelacEquipeEditComponent implements OnInit {
   public itemsEquipeUsuario: Array<IEquipeUsuario> = new Array<IEquipeUsuario>();
   public items: Array<IUsuario> = new Array<IUsuario>();
   public itemsSelected: Array<IUsuario> = new Array<IUsuario>();
+  public itemsDeleted: IUsuario = new Usuario();
   usuarioTipo: Array<PoTableColumnLabel> = [];
 
   disclaimersUsuario: Array<PoDisclaimer> = [];
@@ -167,7 +168,7 @@ export class RelacEquipeEditComponent implements OnInit {
     for (let i in equipeUsuario) {
 
       this.disclaimersUsuarSelect.push({ property: 'idUsuario', value: equipeUsuario[i].idUsuario },
-                                       {property: 'codEquipe', value: equipeUsuario[i].codEquipe}  );
+        { property: 'codEquipe', value: equipeUsuario[i].codEquipe });
     }
 
     this.isLoading = true;
@@ -238,7 +239,6 @@ export class RelacEquipeEditComponent implements OnInit {
       idUsuario: event.idUsuario,
       codEquipe: this.idEquipe
     };
-
     if (type === 'new') {
       this.itemsSelected.push({
         idUsuario: event.idUsuario,
@@ -250,8 +250,11 @@ export class RelacEquipeEditComponent implements OnInit {
       this.itemsSelected = [...this.itemsSelected];
       this.create();
     } else {
-
-      const index = this.itemsSelected.findIndex(el => el.idUsuario === event.idUsuario);
+      
+      const index = this.itemsSelected.findIndex(el => {
+        this.itemsDeleted = {...this.itemsDeleted,...event};
+        el.idUsuario === event.idUsuario
+      });
       this.poItemsSelected.removeItem(index);
       this.itemsSelected = [...this.poItemsSelected.items];
       this.delete();
@@ -297,9 +300,9 @@ export class RelacEquipeEditComponent implements OnInit {
     });
   }
   delete() {
-
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario.delete(this.equipeUsuar).subscribe(() => {
-      this.poNotification.success(this.literals.excludedMessage);
+      this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedEquipMessage, this.itemsDeleted.nomeUsuario));
+
     });
   }
 
@@ -349,7 +352,7 @@ export class RelacEquipeEditComponent implements OnInit {
     if (this.servEquipeUsuarioSubscription$) {
       this.servEquipeUsuarioSubscription$.unsubscribe();
     }
-    if(this.servTipoPerfilUsuarioSubscription$){
+    if (this.servTipoPerfilUsuarioSubscription$) {
       this.servTipoPerfilUsuarioSubscription$.unsubscribe();
     }
   }

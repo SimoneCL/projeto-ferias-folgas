@@ -231,8 +231,13 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
 
   edit(valueRow) {
     this.isEdit = true;
-    this.searchById(valueRow.idTipoPerfil);
-    this.modalTipoPerfil.open();
+    if (valueRow.idTipoPerfil == 1) { // dev te\m
+      this.poNotification.error(this.literals.errorEditTipoPerfil);
+    } else {
+      this.searchById(valueRow.idTipoPerfil);
+      this.modalTipoPerfil.open();
+    }
+   
   }
 
   saveTipoPerfilUsuario() {
@@ -259,18 +264,22 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
   }
 
   delete(tipoPerfil: ITipoPerfilUsuario) {
-    this.poDialog.confirm({
-      title: this.literals.delete,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [tipoPerfil.descricaoPerfil]),
-      confirm: () => {
-        this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
-          .delete(tipoPerfil.idTipoPerfil.toString())
-          .subscribe((response: ITipoPerfilUsuario) => {
-            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, tipoPerfil.descricaoPerfil));
-            this.search();
-          });
-      }
-    })    
+    if (tipoPerfil.idTipoPerfil == 1) { // dev te\m
+      this.poNotification.error(this.literals.errorDeleteTipoPerfil);
+    } else {
+      this.poDialog.confirm({
+        title: this.literals.delete,
+        message: this.poI18nPipe.transform(this.literals.modalDeleteSingleMessage, [tipoPerfil.descricaoPerfil]),
+        confirm: () => {
+          this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
+            .delete(tipoPerfil.idTipoPerfil.toString())
+            .subscribe((response: ITipoPerfilUsuario) => {
+              this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, tipoPerfil.descricaoPerfil));
+              this.search();
+            });
+        }
+      })
+    }    
   }
 
   ngOnDestroy(): void {

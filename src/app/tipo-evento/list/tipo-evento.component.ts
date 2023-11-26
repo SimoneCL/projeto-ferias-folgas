@@ -41,7 +41,7 @@ export class TipoEventoComponent implements OnInit {
   isEdit: boolean = false;
 
   public usuarioLogado = new UsuarioLogadoService();
-  
+
   constructor(
     private serviceTipoEvento: TipoEventoService,
     private poI18nPipe: PoI18nPipe,
@@ -53,7 +53,7 @@ export class TipoEventoComponent implements OnInit {
   ngOnInit(): void {
 
     this.userLogado = this.usuarioLogado.getUsuarioLogado();
-    
+
     forkJoin(
       [
         this.poI18nService.getLiterals(),
@@ -67,7 +67,7 @@ export class TipoEventoComponent implements OnInit {
   }
 
   private setupComponents(): void {
-   
+
     this.close = {
       action: () => {
         this.closeModal();
@@ -94,8 +94,8 @@ export class TipoEventoComponent implements OnInit {
     ];
 
     this.columns = [
-      { property: 'codTipo', label: this.literals.code, width: '5%'},
-      { property: 'descTipoEvento', label: this.literals.description, width: '95%', type: 'link',tooltip: this.literals.edit, action: (value, row) => this.edit(row)  },
+      { property: 'codTipo', label: this.literals.code, width: '5%' },
+      { property: 'descTipoEvento', label: this.literals.description, width: '95%', type: 'link', tooltip: this.literals.edit, action: (value, row) => this.edit(row) },
     ];
 
     this.disclaimerGroup = {
@@ -167,26 +167,37 @@ export class TipoEventoComponent implements OnInit {
   }
 
   delete(item: ITipoEvento): void {
-    const id = TipoEvento.getInternalId(item);
-    this.poDialogService.confirm({
-      title: this.literals.delete,
-      message: this.poI18nPipe.transform(this.literals.modalDeleteMessage, [item.descTipoEvento]),
-      confirm: () => {
-        this.tipoEventoSubscription$ = this.serviceTipoEvento
-          .delete(id)
-          .subscribe(response => {
-            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, item.descTipoEvento));
+    if (item.codTipo == 1 || item.codTipo == 2 || item.codTipo == 3 || item.codTipo == 4) { //feriado ,férias, licenca maternidade, licenca paternidade
+      this.poNotification.error(this.literals.errorDeleteTipoEvento);
+    }
+    else {
+      const id = TipoEvento.getInternalId(item);
+      this.poDialogService.confirm({
+        title: this.literals.delete,
+        message: this.poI18nPipe.transform(this.literals.modalDeleteSingleMessage, [item.descTipoEvento]),
+        confirm: () => {
+          this.tipoEventoSubscription$ = this.serviceTipoEvento
+            .delete(id)
+            .subscribe(response => {
+              this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, item.descTipoEvento));
 
-            this.search();
-          });
-      }
-    });
+              this.search();
+            });
+        }
+      });
+    }
   }
 
   private edit(item: ITipoEvento): void {
     this.isEdit = true;
-    this.tipoEvento = item;
-    this.poModal.open();
+    if (item.codTipo == 1 || item.codTipo == 2 || item.codTipo == 3 || item.codTipo == 4) { //feriado ,férias, licenca maternidade, licenca paternidade
+      this.poNotification.error(this.literals.errorEditTipoEvento);
+
+    } else {
+      this.tipoEvento = item;
+      this.poModal.open();
+    }
+
   }
 
   public onChangeDisclaimer(disclaimers): void {
@@ -197,7 +208,7 @@ export class TipoEventoComponent implements OnInit {
   changeValue(code: number) {
     this.confirm.disabled = !code;;
   }
-  
+
   ngOnDestroy(): void {
     if (this.tipoEventoSubscription$) {
       this.tipoEventoSubscription$.unsubscribe();

@@ -38,6 +38,7 @@ export const generalPt = {
     excludeTitle: 'Eliminar',
     createdMessage: 'Registro criado',
     excludedMessage: 'Registro {0} eliminado',
+    excludedEquipMessage: 'Eliminado relacionamento do usuário {0} com a equipe',
     modalDeleteSingleMessage: 'Tem certeza de que deseja excluir o registro {0} ?',
     delete: 'Excluir',
     enabled: 'Ativado',
@@ -95,5 +96,11 @@ export const generalPt = {
     codigo: 'Código',
     equipeUsuario: 'Equipes do Usuário',
     entrar: 'Entrar',
-    emailPlaceholder: 'email@totvs.com.br'
+    emailPlaceholder: 'email@totvs.com.br',
+    errorEditTipoPerfil: 'Tipo perfil não pode ser editado',
+    errorDeleteTipoPerfil: 'Tipo perfil obrigatório, não pode ser eliminado',
+    errorEditTipoEvento: 'Tipo evento não pode ser editado',
+    errorDeleteTipoEvento: 'Tipo evento obrigatório, não pode ser eliminado',
+    erroEditAgendaEvent: 'Campo obrigatório não foi preenchido'
+
 };
