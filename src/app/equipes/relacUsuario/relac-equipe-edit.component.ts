@@ -239,26 +239,39 @@ export class RelacEquipeEditComponent implements OnInit {
       idUsuario: event.idUsuario,
       codEquipe: this.idEquipe
     };
-    if (type === 'new') {
-      this.itemsSelected.push({
-        idUsuario: event.idUsuario,
-        nomeUsuario: event.nomeUsuario,
-        email: event.email,
-        tipoPerfil: event.tipoPerfil,
-        senha: event.senha
-      });
-      this.itemsSelected = [...this.itemsSelected];
-      this.create();
-    } else {
-      
-      const index = this.itemsSelected.findIndex(el => {
-        this.itemsDeleted = {...this.itemsDeleted,...event};
-        el.idUsuario === event.idUsuario
-      });
-      this.poItemsSelected.removeItem(index);
-      this.itemsSelected = [...this.poItemsSelected.items];
-      this.delete();
+    this.change(event, type);
+   if(type === 'new'){
+    this.create();
+   } else {
+    this.delete();
+   }
+   
+  }
 
+  change(event, type){
+    switch (type) {
+      case 'new': {
+        this.itemsSelected.push({
+          idUsuario: event.idUsuario,
+          nomeUsuario: event.nomeUsuario,
+          email: event.email,
+          tipoPerfil: event.tipoPerfil,
+          senha: event.senha
+        });
+        this.itemsSelected = [...this.itemsSelected];
+    
+       return this.itemsSelected;
+      }
+      case 'delete': {
+        const index = this.itemsSelected.findIndex(el => {
+          this.itemsDeleted = {...this.itemsDeleted,...event};
+          el.idUsuario === event.idUsuario
+        });
+        this.poItemsSelected.removeItem(index);
+        this.itemsSelected = [...this.poItemsSelected.items];
+        
+        return this.itemsSelected;
+      }
     }
 
   }
@@ -295,12 +308,17 @@ export class RelacEquipeEditComponent implements OnInit {
   }
 
   create() {
+    
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario.create(this.equipeUsuar).subscribe(() => {
+     
+      this.searchEquipeUsuario();
       this.poNotification.success(this.literals.createdMessage);
     });
   }
   delete() {
+
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario.delete(this.equipeUsuar).subscribe(() => {
+      this.searchEquipeUsuario();
       this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedEquipMessage, this.itemsDeleted.nomeUsuario));
 
     });
