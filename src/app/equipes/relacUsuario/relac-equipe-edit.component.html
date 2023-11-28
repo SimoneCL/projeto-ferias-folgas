@@ -23,14 +23,16 @@
         [p-hide-select-all]="true"
         p-infinite-scroll-distance="80"
         (p-selected)="changeOptions($event, 'new')"
-        (p-unselected)="changeOptions($event, 'change')"
+        (p-unselected)="changeOptions($event, 'delete')"
         p-height="400"
         [p-items]="items"
         (p-delete-items)="deleteItems($event)">
         </po-table>
     </div>
-    <div class="po-md-6">
+    <div class="po-md-6 ">
         <div class="po-font-text-bold">{{literals?.txtUsuarioRelac}}</div>
+        <div></div>
+        <div></div>
         <po-input #inputUsuarioSelectUsuarioSelect
             class="po-offset-lg-6 po-offset-xl-6 po-md-6"
             name="quickSearchUsuarioSelect"
@@ -41,7 +43,7 @@
             (keypress)="onKeyQuickSearchUsuarioSelect($event.keyCode)"
             (p-change)="onChangeQuickSearchUsuarioSelect($event)">
         </po-input>
-        <po-table class="po-md-12"
+        <po-table class="po-md-12 po-mt-8"
         #POItemsSelected
         [p-columns]="columns"
         [p-striped]="true"
@@ -53,3 +55,4 @@
     </div>
     </div>
 </po-page-default>
+
