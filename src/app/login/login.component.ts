@@ -1,14 +1,13 @@
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { PoDialogService, PoDisclaimer, PoI18nService, PoToolbarComponent, PoToolbarProfile, PoModalComponent, PoModalAction, PoNotificationService } from '@po-ui/ng-components';
+import { PoDialogService, PoDisclaimer, PoI18nService, PoModalAction, PoModalComponent, PoNotificationService } from '@po-ui/ng-components';
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Subscription, forkJoin } from 'rxjs';
 import { ILogin, Login } from '../shared/model/login.model';
 import { IUsuario, Usuario } from '../shared/model/usuario.model';
 import { LoginService } from '../shared/services/login.service';
-import { PoModalPasswordRecoveryComponent, PoModalPasswordRecoveryType } from '@po-ui/ng-templates';
 import { UsuarioService } from '../shared/services/usuario.service';
 import { UsuarioLogadoService } from '../usuario-logado.service';
 
@@ -20,14 +19,14 @@ import { UsuarioLogadoService } from '../usuario-logado.service';
 export class LoginComponent {
   @ViewChild('formLogin', { static: true }) formLogin: NgForm;
   @ViewChild('modalRecSenha', { static: false }) modalRecSenha: PoModalComponent;
-  
+
   confirmRecSenha: PoModalAction;
   closeRecSenha: PoModalAction;
   eventPage: string;
   items: Array<any> = new Array<any>();
   private itemsLogin: Array<ILogin>;
   private usuario: IUsuario = new Usuario();
-  
+
   //public login: Array<any> = new Array<any>();
   public login: ILogin = Login.empty();
   literalsI18n: PoPageLoginLiterals;
@@ -70,16 +69,16 @@ export class LoginComponent {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-                  
-      this.usuarioLogado.clearUsuarioLogado();  
+
+      this.usuarioLogado.clearUsuarioLogado();
       this.profileTitle = this.usuarioLogado.getProfile();
-              this.profileTitle.profile = {
-                avatar: 'https://via.placeholder.com/54x54?text=Login' ,
-                title: '',
-                subtitle: ''
-              };    
+      this.profileTitle.profile = {
+        avatar: 'https://via.placeholder.com/54x54?text=Login',
+        title: '',
+        subtitle: ''
+      };
       this.setupComponents();
-    });    
+    });
   }
 
   buscarEmail(email: string): void {
@@ -93,17 +92,17 @@ export class LoginComponent {
 
       });
   }
-  
+
   update() {
     this.usuarioSubscription$ = this.usuarioService.update(this.usuario).subscribe(() => {
-      this.poNotification.success(this.literals.sendMail); 
+      this.poNotification.success(this.literals.sendMail);
     });
   }
 
   setupComponents() {
     this.confirmRecSenha = {
       action: () => {
-        
+
         this.buscarEmail(this.login.email);
 
         const mailOptions = {
@@ -113,7 +112,7 @@ export class LoginComponent {
           html: '<p>Your html here</p>'// plain text body
         };
       },
-      label: this.literals?.enviar      
+      label: this.literals?.enviar
     };
 
     this.closeRecSenha = {
@@ -145,24 +144,27 @@ export class LoginComponent {
         }
 
       });
-  }  
+  }
 
   onClick() {
-    
-    if (this.login.nomeUsuario != "") {    
-      
+
+    if (this.login.nomeUsuario != "") {
+
       let senhaHash = window.btoa(this.login.senha);
-      
+
       this.servLoginSubscription$ = this.servLogin
         .getByUser(this.login.nomeUsuario, senhaHash).subscribe((response: ILogin) => {
-          
-          if (response.email != undefined) {            
-            this.userLogin = response;
-            this.usuarioLogado.setUsuarioLogado(this.userLogin.idUsuario, this.userLogin.nomeUsuario, this.userLogin.tipoPerfil);
 
-            if (this.userLogin.idUsuario != undefined) {
-              
-              if (this.userLogin.tipoPerfil === 1) { //Dev team
+          if (response.email !== undefined) {
+
+            this.userLogin = response;
+            this.usuarioLogado.setUsuarioLogado(this.userLogin.idUsuario, this.userLogin.nomeUsuario, this.userLogin.gestorPessoas);
+
+
+            if (this.userLogin.idUsuario !== undefined) {
+
+
+              if (UsuarioLogadoService.tipoPerfilUserLogado === 0) { //mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor
                 this.menusPerfil = [
                   { label: 'Edição usuário', icon: "po-icon-user", shortLabel: "Edição", link: `/cadastroUser/edit/${this.userLogin.idUsuario}` },
                   { label: 'Férias e Folgas', icon: "po-icon-calendar-ok", shortLabel: "Folgas", link: '/feriasFolga' },
@@ -184,23 +186,23 @@ export class LoginComponent {
 
               this.profileTitle = this.usuarioLogado.getProfile();
               this.profileTitle.profile = {
-                avatar: 'https://via.placeholder.com/54x54?text=' + this.userLogin.nomeUsuario.substring(0,1).toUpperCase(),
+                avatar: 'https://via.placeholder.com/54x54?text=' + this.userLogin.nomeUsuario.substring(0, 1).toUpperCase(),
                 title: this.userLogin.nomeUsuario,
                 subtitle: this.userLogin.email
               };
-              
-              this.menu = this.usuarioLogado.getMenu();          
-              while(this.menu.menus.length) {
+
+              this.menu = this.usuarioLogado.getMenu();
+              while (this.menu.menus.length) {
                 this.menu.menus.pop();
               }
               this.menusPerfil.forEach(item => {
                 this.menu.menus.push(item);
               });
             }
-            
+
             setTimeout(() => {
               this.router.navigate(['/feriasFolga']);
-            }, 500);            
+            }, 500);
           } else {
             this.poDialog.alert({
               ok: () => (this.loading = false),

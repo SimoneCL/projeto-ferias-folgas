@@ -11,11 +11,24 @@ export class LoadingInterceptorService implements HttpInterceptor {
         });
 
         if (!request.headers.get('X-PO-Screen-Lock')) {
-            req = request.clone({headers});
-        } else {
-            req = request.clone();
-        }
+            req = request.clone({
+                headers,
+                setHeaders: {
+                    "Cache-Control": "no-cache",
+                    Pragma: "no-cache",
+                }
+            });
 
+
+        } else {
+            req = request.clone({
+                setHeaders: {
+                    "Cache-Control": "no-cache",
+                    Pragma: "no-cache",
+                }
+            });
+        }
+        
         return next.handle(req);
     }
 

@@ -67,6 +67,9 @@ export const generalPt = {
     resetDay: 'Reset day/day off',
     eventType: 'Tipo evento',
     newEventType: 'Novo tipo de evento',
+    editEventType: 'Editar tipo de evento',
+    newProfileType: 'Novo tipo de evento',
+    editProfileType: 'Editar tipo de evento',
     type: 'Tipo',
     dateIni: 'Data inicial',
     dateEnd: 'Data final',
@@ -102,6 +105,9 @@ export const generalPt = {
     errorDeleteTipoPerfil: 'Tipo perfil obrigatório, não pode ser eliminado',
     errorEditTipoEvento: 'Tipo evento não pode ser editado',
     errorDeleteTipoEvento: 'Tipo evento obrigatório, não pode ser eliminado',
-    erroEditAgendaEvent: 'Campo obrigatório não foi preenchido'
+    erroEditAgendaEvent: 'Campo obrigatório não foi preenchido',
+    erroNewEventOtherUser: 'Usuário sem permissão para incluir evento para outro usuário',
+    faixaData: 'Utiliza faixa data',
+    gestorPessoas: 'Gestão de pessoas?'
 
 };

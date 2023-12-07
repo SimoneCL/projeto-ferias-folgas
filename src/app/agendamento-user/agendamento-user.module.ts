@@ -10,6 +10,7 @@ import { TipoEventoService } from '../shared/services/tipo-evento.service';
 import { AgendamentoUserRoutingModule } from './agendamento-user-routing.module';
 import { AgendamentoUserEditComponent } from './edit/agendamento-user-edit.component';
 import { AgendamentoUserListComponent } from './list/agendamento-user-list.component';
+import { UsuarioService } from '../shared/services/usuario.service';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { AgendamentoUserListComponent } from './list/agendamento-user-list.compo
   ],
   providers:[
     EventoService,
-    TipoEventoService
+    TipoEventoService,
+    UsuarioService
   ]
 })
 export class AgendamentoUserModule { }

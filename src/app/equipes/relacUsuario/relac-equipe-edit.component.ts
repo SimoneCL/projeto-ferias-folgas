@@ -94,7 +94,7 @@ export class RelacEquipeEditComponent implements OnInit {
       this.searchPerfil();
       this.get(this.idEquipe);
       this.searchUsuario();
-      const interval = setInterval(() => { // aguarda ate que carregue metadata e nf-e
+      const interval = setInterval(() => { // aguarda ate que carregue
         if (this.itemsPerfil && this.equipe) {
           clearInterval(interval);
           this.setupComponents();
@@ -178,9 +178,9 @@ export class RelacEquipeEditComponent implements OnInit {
         .query(this.disclaimersUsuarSelect, 1, 99999)
         .subscribe((response: TotvsResponse<IUsuario>) => {
           this.itemsSelected = response.items;
-          if (this.quickSearchUsuarioSelect === '') {
-            this.selectRow();
-          }
+
+          this.selectRow();
+
 
           this.hasNext = response.hasNext;
           this.isLoading = false;

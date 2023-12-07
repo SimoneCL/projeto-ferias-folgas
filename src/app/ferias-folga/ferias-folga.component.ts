@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { PoDatepickerRange, PoDisclaimer, PoI18nService, PoMultiselectFilter, PoMultiselectOption, PoRadioGroupOption, PoTableColumnLabel, PoTableComponent } from '@po-ui/ng-components';
+import { PoDatepickerRange, PoDisclaimer, PoI18nService, PoMultiselectFilter, PoMultiselectOption, PoNotificationService, PoRadioGroupOption, PoTableColumn, PoTableColumnLabel, PoTableComponent } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { ConfiguracaoFeriasFolga } from '../shared/model/config-ferias-folga.model';
@@ -26,7 +26,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   datepickerRange: PoDatepickerRange;
   quantityOfDays: number = undefined;
   quantityOfDaysSchedule: number = undefined;
-  columns = [];
+  columns  : Array<PoTableColumn>; //[];
   primeiroDia = new Date();
   ultimoDia = new Date();
 
@@ -80,7 +80,8 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     private serviceTipoEvento: TipoEventoService,
     private serviceEquipe: EquipesService,
     private serviceEquipeUsuario: EquipeUsuarioService,
-    private router: Router
+    private router: Router,
+    private poNotification: PoNotificationService
   ) {
   }
   ngOnInit(): void {
@@ -143,8 +144,9 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       this.optionsMultiSeletc.push(
         { value: equipesItems[i].codEquipe.toString(), label: equipesItems[i].descEquipe },
       );
-      this.multiSelectEquipe = [...this.multiSelectEquipe, ...equipesItems[i].codEquipe.toString()];
+       this.multiSelectEquipe = [...this.multiSelectEquipe, equipesItems[i].codEquipe.toString()];
     }
+   
     if (this.disclaimersEquipeUser) {
       this.searchEventosEquipes();
     }
@@ -191,9 +193,9 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
       { property: 'idUsuario', label: 'idUsuario', type: 'number', visible: false },
       {
-        property: 'nomeUsuario', label: 'Nome', type: 'string' /*, action: (value, row) => {
+        property: 'nomeUsuario', label: 'Nome', width: '200px',type: 'link' , action: (value, row) => {
         this.redirect(value, row);
-      }*/
+      }
       }];
     for (let y = 0; y <= this.quantityOfDays; y++) {
       this.dataCalc = new Date(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate() + y);
@@ -212,16 +214,39 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       .query([], 1, 999)
       .subscribe((response: TotvsResponse<ITipoEvento>) => {
         this.tipoEventos = response.items;
-
+        let indexcolor = 0;
+        let colorEvento = '';
         for (let i in this.tipoEventos) {
-          this.dayOffType.push({ value: this.tipoEventos[i].descTipoEvento, color: `color-0${this.tipoEventos[i].codTipo}`, label: this.tipoEventos[i].descTipoEvento.substring(0, 1), tooltip: this.tipoEventos[i].descTipoEvento });
+          indexcolor += 1;
+
+          if (indexcolor == 13){ 
+            indexcolor = 1;
+          }
+          if (indexcolor <=9 ){ 
+            colorEvento = `color-0${indexcolor}`;
+          } else {
+            colorEvento = `color-${indexcolor}`;
+          }
+          if ( this.tipoEventos[i].descTipoEvento.toLocaleLowerCase() === 'férias'){
+            colorEvento = 'color-08';
+          }
+          this.dayOffType.push({ value: this.tipoEventos[i].descTipoEvento, color: colorEvento, label: this.tipoEventos[i].descTipoEvento.substring(0, 1), tooltip: this.tipoEventos[i].descTipoEvento });
         }
       });
   }
 
 
   redirect(value, row) {
-    this.router.navigate(['/agendaUser', 'list', value]);
+    if (this.usuarioLogado.getTipoPerfilUsuario() === 0) { 
+      if (row.idUsuario === this.idUsuario ) {
+        this.router.navigate(['/agendaUser', 'newOtherUser', row.idUsuario]);
+      } else {
+        this.poNotification.error(this.literals.erroNewEventOtherUser);
+      }
+    } else {
+      this.router.navigate(['/agendaUser', 'newOtherUser', row.idUsuario]);
+    }
+    
   }
   calculateQuantityOfVacationDays() {
     if (ConfiguracaoFeriasFolga.rangeDataValido(this.config)) {

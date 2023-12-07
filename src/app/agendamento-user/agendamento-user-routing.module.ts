@@ -17,6 +17,10 @@ const routes: Routes = [
     component: AgendamentoUserEditComponent
   },
   {
+    path: 'newOtherUser/:idUser',
+    component: AgendamentoUserEditComponent
+  },
+  {
     path: 'detail/:id',
     component: AgendamentoUserEditComponent
   },

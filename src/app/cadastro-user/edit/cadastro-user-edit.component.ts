@@ -17,7 +17,7 @@ import { UsuarioLogadoService } from '../../usuario-logado.service';
 })
 export class CadastroUserEditComponent implements OnInit {
   @ViewChild('modalEquipe', { static: false }) modalEquipe: PoModalComponent;
-  
+
   private usuarioSubscription$: Subscription;
   private servEquipesSubscription$: Subscription;
   private servTipoPerfilUsuarioSubscription$: Subscription;
@@ -133,7 +133,7 @@ export class CadastroUserEditComponent implements OnInit {
       this.properties = "true";
       this.propertiesName = "true";
       this.actionsDisable = false;
-      
+
     }
 
     if (this.eventPage !== 'edit') {
@@ -142,7 +142,7 @@ export class CadastroUserEditComponent implements OnInit {
 
     if (this.eventPage === 'edit') {
       this.propertiesPassword = "true";
-      if (this.perfilUsuario === 1) { // dev team
+      if (this.perfilUsuario === 0) { // mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor
         this.properties = "true";
         this.propertiesName = "false";
 
@@ -167,7 +167,6 @@ export class CadastroUserEditComponent implements OnInit {
 
   create() {
     this.usuarioSubscription$ = this.serviceUsuario.create(this.usuario).subscribe((response: any) => {
-      console.log(response);
       if (response.error !== '') {
         this.poNotification.error(response.error);
       } else if (response.mailError !== '') {
@@ -177,13 +176,15 @@ export class CadastroUserEditComponent implements OnInit {
       } else {
         this.return();
         this.poNotification.success(this.literals.createdMessage);
-      }      
+      }
     });
   }
   update() {
     this.save();
     this.usuarioSubscription$ = this.serviceUsuario.update(this.usuario).subscribe(() => {
-      this.return();
+      if (this.perfilUsuario === 1) { // mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor dev team
+        this.return();
+      }
       this.poNotification.success(this.literals.updatedMessage);
     });
   }
@@ -204,7 +205,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
   getBreadcrumb() {
     if (this.eventPage === 'edit') {
-      if (this.perfilUsuario < 2) {
+      if (this.perfilUsuario === 0) { // mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor dev team
 
         return {
           items: [
@@ -239,12 +240,15 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   getActions(): Array<PoPageAction> {
-    
-    if(this.perfilUsuario === 1 ) {
-      
-      return [];
-  
-    } else {
+    if (this.perfilUsuario === 0) { // mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor dev team
+      return [
+        {
+          label: this.literals.save,
+          action: this.update.bind(this, this.usuario),
+        }
+      ];
+    }
+    else {
       switch (this.eventPage) {
         case 'edit': {
           return this.editActions();
@@ -255,7 +259,7 @@ export class CadastroUserEditComponent implements OnInit {
       }
       return this.newActions();
     }
-    
+
   }
 
   editActions(): Array<PoPageAction> {
