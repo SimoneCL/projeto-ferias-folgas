@@ -9,6 +9,8 @@ import { EventoService } from 'src/app/shared/services/evento.service';
 import { ITipoEvento } from '../../shared/model/tipo-evento.model';
 import { TipoEventoService } from '../../shared/services/tipo-evento.service';
 import { UsuarioLogadoService } from '../../usuario-logado.service';
+import { UsuarioService } from 'src/app/shared/services/usuario.service';
+import { IUsuario, Usuario } from 'src/app/shared/model/usuario.model';
 
 @Component({
   selector: 'app-agendamento-user-edit',
@@ -19,6 +21,7 @@ export class AgendamentoUserEditComponent implements OnInit {
 
   private eventoUserSubscription$: Subscription;
   private tipoEventoSubscription$: Subscription;
+  private usuarioSubscription$:Subscription;
   public eventUser: IEvento = new Evento();
 
   breadcrumb: PoBreadcrumb;
@@ -30,16 +33,18 @@ export class AgendamentoUserEditComponent implements OnInit {
   eventType: number;
   eventPage: string;
   userLogado: number;
-  id: string = '';
+  idEvento: string = '' ;
+  idUser: number;
   isEdit: boolean = false;
 
-  items: Array<ITipoEvento> = new Array<ITipoEvento>();
+  itemsTipoEvento: Array<ITipoEvento> = new Array<ITipoEvento>();
+  public usuario: IUsuario = new Usuario();
 
   public eventOptions: Array<PoSelectOption> = [];
   public isHidden: boolean;
 
   public usuarioLogado = new UsuarioLogadoService();
-
+  
 
   constructor(
     private route: Router,
@@ -47,7 +52,8 @@ export class AgendamentoUserEditComponent implements OnInit {
     private poI18nService: PoI18nService,
     private poNotification: PoNotificationService,
     private serviceEvento: EventoService,
-    private serviceTipoEvento: TipoEventoService
+    private serviceTipoEvento: TipoEventoService,
+    private serviceUsuario: UsuarioService
   ) { }
 
   ngOnInit(): void {
@@ -67,17 +73,24 @@ export class AgendamentoUserEditComponent implements OnInit {
       this.isEdit = this.eventPage === 'edit';
 
       this.isHidden = this.eventPage === 'new';
-
-      const id = this.activatedRoute.snapshot.paramMap.get('id');
-      this.search();
-
-
-      if (id) {
-        this.get(id);
+      this.idUser = this.userLogado;
+      if (this.activatedRoute.snapshot.paramMap.get('idUser')) {
+        this.idUser = Number(this.activatedRoute.snapshot.paramMap.get('idUser')); 
       }
+      this.getUser(this.idUser);
+      this.idEvento = this.activatedRoute.snapshot.paramMap.get('id');
+
+      this.search();
+      if (this.eventPage !== 'newOtherUser'){
+       
+        if (this.idEvento) {
+          this.get(this.idEvento);
+        }
+      } 
+      
+      
+           
       this.setupComponents();
-
-
     });
   }
 
@@ -98,7 +111,8 @@ export class AgendamentoUserEditComponent implements OnInit {
 
   }
   isHiddenField(codTipo) {
-    if (codTipo == 2 || codTipo == 3 || codTipo == 4) { //férias, licenca maternidade, licenca paternidade
+    let isfaixa = this.encontrarFaixaDataPorCodTipo(codTipo) === 1;
+    if (isfaixa === true) { 
       this.isHidden = false;
     } else {
       this.isHidden = true;
@@ -106,11 +120,26 @@ export class AgendamentoUserEditComponent implements OnInit {
 
   }
 
+  encontrarFaixaDataPorCodTipo(codTipo) {
+    for (let i = 0; i < this.itemsTipoEvento.length; i++) {
+      if (this.itemsTipoEvento[i].codTipo == codTipo) {
+        return this.itemsTipoEvento[i].faixaData;
+      }
+    }
+    // Retorna zero não utiliza faixa
+    return 0;
+  }
+
   return() {
-    this.route.navigate(['/agendaUser']);;
+    if (this.eventPage === 'newOtherUser'){
+      this.route.navigate(['/feriasFolga']);;
+    } else {
+      this.route.navigate(['/agendaUser']);
+    }
+    
   }
   save() {
-    this.eventUser.idUsuario = this.userLogado;
+    this.eventUser.idUsuario = this.idUser;
     this.calculateQuantityOfVacationDays();
     if ( this.quantityOfDays !== 0 && this.eventUser.codTipo) {
       if (this.datepickerRange) {
@@ -122,12 +151,12 @@ export class AgendamentoUserEditComponent implements OnInit {
       }
     } else {
       this.poNotification.error(this.literals.erroEditAgendaEvent);
-    
+
     }
 
   }
   create() {
-   this.save();
+    this.save();
     if (this.quantityOfDays !== 0 && this.eventUser.codTipo) {
       this.eventoUserSubscription$ = this.serviceEvento.create(this.eventUser).subscribe(() => {
         this.return();
@@ -146,9 +175,9 @@ export class AgendamentoUserEditComponent implements OnInit {
   }
   getTitle(): string {
     if (this.eventPage === 'edit') {
-      return this.literals.editEventUser;
+      return (this.literals.editEventUser + `:  ${this.usuario.nomeUsuario} `);
     } else {
-      return this.literals.newEventUser;
+        return (this.literals.newEventUser + `:  ${this.usuario.nomeUsuario} `);
     }
   }
   getBreadcrumb() {
@@ -160,12 +189,22 @@ export class AgendamentoUserEditComponent implements OnInit {
         ]
       };
     } else {
-      return {
-        items: [
-          { label: this.literals.scheduleEventUser, action: this.beforeRedirect.bind(this), link: '/agendaUser' },
-          { label: this.literals.newEventUser }
-        ]
-      };
+      if (this.eventPage === 'newOtherUser'){
+        return {
+          items: [
+            { label: this.literals.titleVacation, action: this.beforeRedirect.bind(this), link: '/feriasFolga' },
+            { label: this.literals.newEventUser }
+          ]
+        };
+      } else {
+        return {
+          items: [
+            { label: this.literals.scheduleEventUser, action: this.beforeRedirect.bind(this), link: '/agendaUser' },
+            { label: this.literals.newEventUser }
+          ]
+        };
+      }
+      
     }
   }
 
@@ -225,7 +264,8 @@ export class AgendamentoUserEditComponent implements OnInit {
       .subscribe((response: IEvento) => {
         this.eventUser = response;
         this.isHiddenField(this.eventUser.codTipo)
-        if (this.eventUser.codTipo === 2 || this.eventUser.codTipo === 3 || this.eventUser.codTipo === 4) {
+        let isfaixa = this.encontrarFaixaDataPorCodTipo(this.eventUser.codTipo) === 1;
+        if (isfaixa === true) {  //é faixa
           this.datepickerRange = {
             start: new Date(this.eventUser.dataEventoIni),
             end: new Date(this.eventUser.dataEventoFim)
@@ -239,14 +279,22 @@ export class AgendamentoUserEditComponent implements OnInit {
       });
   }
 
+  getUser(id: number): void {
+    this.usuarioSubscription$ = this.serviceUsuario
+      .getById(id, [''])
+      .subscribe((response: IUsuario) => {
+        this.usuario = response[0];
+
+      });
+  }
   search(): void {
     this.eventOptions = [];
     this.tipoEventoSubscription$ = this.serviceTipoEvento
       .query([], 1, 9999)
       .subscribe((response: TotvsResponse<ITipoEvento>) => {
-        this.items = [...this.items, ...response.items];
-        for (let i in this.items) {
-          this.eventOptions = [...this.eventOptions, { label: this.items[i].descTipoEvento.toLocaleUpperCase(), value: this.items[i].codTipo.toString() }];
+        this.itemsTipoEvento = [...this.itemsTipoEvento, ...response.items];
+        for (let i in this.itemsTipoEvento) {
+          this.eventOptions = [...this.eventOptions, { label: this.itemsTipoEvento[i].descTipoEvento.toLocaleUpperCase(), value: this.itemsTipoEvento[i].codTipo.toString() }];
         }
 
       });
@@ -283,6 +331,9 @@ export class AgendamentoUserEditComponent implements OnInit {
     }
     if (this.tipoEventoSubscription$) {
       this.tipoEventoSubscription$.unsubscribe();
+    }
+    if (this.usuarioSubscription$){
+      this.usuarioSubscription$.unsubscribe();
     }
   }
 }

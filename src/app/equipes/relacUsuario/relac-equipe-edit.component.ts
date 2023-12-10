@@ -94,7 +94,7 @@ export class RelacEquipeEditComponent implements OnInit {
       this.searchPerfil();
       this.get(this.idEquipe);
       this.searchUsuario();
-      const interval = setInterval(() => { // aguarda ate que carregue metadata e nf-e
+      const interval = setInterval(() => { // aguarda ate que carregue
         if (this.itemsPerfil && this.equipe) {
           clearInterval(interval);
           this.setupComponents();
@@ -178,9 +178,9 @@ export class RelacEquipeEditComponent implements OnInit {
         .query(this.disclaimersUsuarSelect, 1, 99999)
         .subscribe((response: TotvsResponse<IUsuario>) => {
           this.itemsSelected = response.items;
-          if (this.quickSearchUsuarioSelect === '') {
-            this.selectRow();
-          }
+
+          this.selectRow();
+
 
           this.hasNext = response.hasNext;
           this.isLoading = false;
@@ -195,6 +195,7 @@ export class RelacEquipeEditComponent implements OnInit {
         if (row.idUsuario === this.itemsSelected[i].idUsuario) {
           this.poItemsOri.selectRowItem(row);
           this.poItemsOri.updateItem(row, this.itemsSelected[i]);
+         
 
         }
       });
@@ -240,8 +241,9 @@ export class RelacEquipeEditComponent implements OnInit {
       codEquipe: this.idEquipe
     };
     this.change(event, type);
+   
    if(type === 'new'){
-    this.create();
+    this.create(event.nomeUsuario);
    } else {
     this.delete();
    }
@@ -307,12 +309,12 @@ export class RelacEquipeEditComponent implements OnInit {
     this.route.navigate(['/equipes']);;
   }
 
-  create() {
+  create(nomeUsuario: string) {
     
     this.servEquipeUsuarioSubscription$ = this.serviceEquipeUsuario.create(this.equipeUsuar).subscribe(() => {
      
       this.searchEquipeUsuario();
-      this.poNotification.success(this.literals.createdMessage);
+      this.poNotification.success(this.poI18nPipe.transform(this.literals.createdEquipeMessage, nomeUsuario));
     });
   }
   delete() {

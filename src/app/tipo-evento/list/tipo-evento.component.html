@@ -12,7 +12,7 @@
     </po-table>
 </po-page-list> 
 <po-modal class="po-md-12" #modal 
-  [p-title]="literals?.newEventType"
+  [p-title]="titleModal"
   [p-primary-action]="confirm" 
   [p-secondary-action]="close"> 
   <po-number class="po-md-2" *ngIf="isEdit"
@@ -29,4 +29,12 @@
     [(ngModel)]="tipoEvento.descTipoEvento"
     p-required> 
   </po-input>
+  <po-switch
+      name="faixaData" 
+      [(ngModel)]="tipoEvento.faixaData"
+      [p-disabled]="desabilitaUtilizaFaixa"
+      [p-label]="literals?.faixaData"
+      [p-label-off]="literals?.no"
+      [p-label-on]="literals?.yes">
+  </po-switch>
 </po-modal>

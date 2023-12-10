@@ -37,6 +37,7 @@ export const generalPt = {
     yes: 'Sim',
     excludeTitle: 'Eliminar',
     createdMessage: 'Registro criado',
+    createdEquipeMessage: 'Usuário {0} relacionado com a equipe',
     excludedMessage: 'Registro {0} eliminado',
     excludedEquipMessage: 'Eliminado relacionamento do usuário {0} com a equipe',
     modalDeleteSingleMessage: 'Tem certeza de que deseja excluir o registro {0} ?',
@@ -67,6 +68,9 @@ export const generalPt = {
     resetDay: 'Reset day/day off',
     eventType: 'Tipo evento',
     newEventType: 'Novo tipo de evento',
+    editEventType: 'Editar tipo de evento',
+    newProfileType: 'Novo tipo de evento',
+    editProfileType: 'Editar tipo de perfil',
     type: 'Tipo',
     dateIni: 'Data inicial',
     dateEnd: 'Data final',
@@ -102,6 +106,9 @@ export const generalPt = {
     errorDeleteTipoPerfil: 'Tipo perfil obrigatório, não pode ser eliminado',
     errorEditTipoEvento: 'Tipo evento não pode ser editado',
     errorDeleteTipoEvento: 'Tipo evento obrigatório, não pode ser eliminado',
-    erroEditAgendaEvent: 'Campo obrigatório não foi preenchido'
+    erroEditAgendaEvent: 'Campo obrigatório não foi preenchido',
+    erroNewEventOtherUser: 'Usuário sem permissão para incluir evento para outro usuário',
+    faixaData: 'Utiliza faixa data',
+    gestorPessoas: 'Gestão de pessoas?'
 
 };

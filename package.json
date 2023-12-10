@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.js --serve-path /geren-ferias-folgas",
-    "build": "ng build --configuration=production",
+    "build": "ng build --configuration=production --output-hashing=all",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

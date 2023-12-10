@@ -2,7 +2,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoLookupColumn, PoModalAction, PoModalComponent, PoNotificationService, PoPageAction, PoPageFilter, PoPageListComponent, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoDisclaimerGroup, PoI18nPipe, PoI18nService, PoLookupColumn, PoModalAction, PoModalComponent, PoNotificationService, PoPageAction, PoPageFilter, PoPageListComponent, PoTableAction, PoTableColumn, PoTableColumnLabel } from '@po-ui/ng-components';
 import { PoPageLoginLiterals } from '@po-ui/ng-templates';
 import { DisclaimerUtil, TotvsResponse } from 'dts-backoffice-util';
 import { Subscription, forkJoin } from 'rxjs';
@@ -26,7 +26,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
 
   literalsI18n: PoPageLoginLiterals;
   literals: any = {};
-  eventPage: string;  
+  eventPage: string;
   expandables = [''];
   disclaimers: Array<PoDisclaimer> = [];
   pageActions: Array<PoPageAction>;
@@ -41,7 +41,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
 
   confirmAdvancedSearch: PoModalAction;
   cancelAdvancedSearch: PoModalAction;
-  
+
   hasNext = false;
   pageSize = 20;
   currentPage = 0;
@@ -53,14 +53,16 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
 
   zoomColumnsTipoPerfil: Array<PoLookupColumn>;
   tipoPerfilFilter: string;
-    
+
   confirmTipoPerfil: PoModalAction;
   closeTipoPerfil: PoModalAction;
+  tipoPerfil: Array<PoTableColumnLabel>;
+  titleModal: string;
 
   servTipoPerfilUsuarioSubscription$: Subscription;
 
   public usuarioLogado = new UsuarioLogadoService();
-  
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private poI18nPipe: PoI18nPipe,
@@ -72,7 +74,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    
+
     this.userLogado = this.usuarioLogado.getUsuarioLogado();
 
     forkJoin(
@@ -82,11 +84,11 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
       ]
     ).subscribe(literals => {
       literals.map(item => Object.assign(this.literals, item));
-                  
+
       this.search();
       this.setupComponents();
     });
-  } 
+  }
 
   setupComponents() {
 
@@ -129,46 +131,50 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
     this.columnsPerfil = [
       { property: 'idTipoPerfil', label: this.literals.perfilUsuario, type: 'number', width: '10%' },
       { property: 'descricaoPerfil', label: this.literals.descricaoPerfil, type: 'link', action: (value, row) => this.edit(row) },
-    ];    
+      {
+        property: 'gestorPessoas', label: this.literals.gestorPessoas, type: 'label', labels: [{ value: 0, color: 'color-07', label: this.literals.no, tooltip: this.literals.no },
+        { value: 1, color: 'color-03', label: this.literals.yes, tooltip: this.literals.yes }]
+      }
+    ];
 
     this.zoomColumnsTipoPerfil = [
       { property: 'idTipoPerfil', label: this.literals.perfilUsuario, width: '30%' },
       { property: 'descricaoPerfil', label: this.literals.descricaoPerfil, width: '70%' }
-    ];    
+    ];
   }
 
   fieldFormatTipoPerfil(value) {
     return `${value.idTipoPerfil} - ${value.descricaoPerfil}`;
   }
-  
+
 
   search(): void {
     this.currentPage = 1;
     this.itemsPerfil = [];
-    
+
     this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
       .query(this.disclaimers || [], this.expandables, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
         if (response && response.items) {
           this.itemsPerfil = [...response.items];
-          this.hasNext = response.hasNext;             
+          this.hasNext = response.hasNext;
         }
-      })      
+      })
   }
 
   refreshDisclaimer(): void {
     this.disclaimers = [];
-    
+
     // Inclui campo do filtro no Disclaimer
     this.addDisclaimer([
       { property: 'descricaoPerfil', value: this.tipoPerfilFilter }
-    ]);    
+    ]);
   }
 
   addDisclaimer(disclaimerListItems: Array<PoDisclaimer>): void {
     if (!disclaimerListItems) { return; }
-    
-    disclaimerListItems.map(disclaimerItem => {      
+
+    disclaimerListItems.map(disclaimerItem => {
       if (disclaimerItem.property !== '') {
         this.disclaimers.push(disclaimerItem);
       }
@@ -183,26 +189,26 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
   }
 
   resetFilters(): void {
-      // Inicia os Campos de Filtros
-      this.tipoPerfilFilter = '';
+    // Inicia os Campos de Filtros
+    this.tipoPerfilFilter = '';
   }
 
   refreshFilters(): void {
-      if (!this.disclaimers || this.disclaimers.length === 0) {
-          this.poPageList.clearInputSearch();
-          this.resetFilters();
-          return;
-      }
+    if (!this.disclaimers || this.disclaimers.length === 0) {
+      this.poPageList.clearInputSearch();
+      this.resetFilters();
+      return;
+    }
 
-      if (this.disclaimers.findIndex(disclaimer => disclaimer.property === 'descricaoPerfil') === -1) {
-          this.poPageList.clearInputSearch();
-      }
-      
-      // Atualizar os Campos de Filtro conforme o Disclaimer
-      this.disclaimers.map(disclaimer => {
-        
-      });      
-  }  
+    if (this.disclaimers.findIndex(disclaimer => disclaimer.property === 'descricaoPerfil') === -1) {
+      this.poPageList.clearInputSearch();
+    }
+
+    // Atualizar os Campos de Filtro conforme o Disclaimer
+    this.disclaimers.map(disclaimer => {
+
+    });
+  }
 
   searchAdvById(quickSearchValue = null): void {
     this.disclaimers = [];
@@ -215,71 +221,74 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
     this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
       .getById(idTipoPerfil)
       .subscribe((response: ITipoPerfilUsuario) => {
-        this.tipoPerfilUsuario = response;           
+        this.tipoPerfilUsuario = response;
       })
-  } 
+  }
 
   addPerfil(tipoPerfil) {
+    this.isEdit = false;
+    this.titleModal = this.literals.newProfileType;
+    this.tipoPerfilUsuario = TipoPerfilUsuario.empty();
     this.tipoPerfilUsuario.descricaoPerfil = '';
-    this.modalTipoPerfil.open();    
+    this.modalTipoPerfil.open();
   }
 
   closeModal() {
     this.isEdit = false;
-    this.modalTipoPerfil.close();    
+    this.modalTipoPerfil.close();
   }
 
   edit(valueRow) {
     this.isEdit = true;
-    if (valueRow.idTipoPerfil == 1) { // dev te\m
-      this.poNotification.error(this.literals.errorEditTipoPerfil);
-    } else {
-      this.searchById(valueRow.idTipoPerfil);
-      this.modalTipoPerfil.open();
-    }
-   
+    this.titleModal = this.literals.editProfileType;
+    this.searchById(valueRow.idTipoPerfil);
+    this.modalTipoPerfil.open();
+
+
   }
 
+
   saveTipoPerfilUsuario() {
-    if(this.isEdit) {
+    if (this.tipoPerfilUsuario.gestorPessoas == null || this.tipoPerfilUsuario.gestorPessoas == undefined) {
+      this.tipoPerfilUsuario.gestorPessoas = 0;
+    }
+    if (this.isEdit) {
       this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
         .update(this.tipoPerfilUsuario)
         .subscribe((response: ITipoPerfilUsuario) => {
-          if(response) {
+          if (response) {
             this.poNotification.success(this.literals.updatedMessage);
             this.search();
-          }          
+          }
         })
     } else {
       this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
         .create(this.tipoPerfilUsuario)
         .subscribe((response: ITipoPerfilUsuario) => {
-          if(response) {            
+          if (response) {
             this.poNotification.success(this.literals.createdMessage);
             this.search();
-           }          
+          }
         })
-    }    
+    }
     this.modalTipoPerfil.close();
   }
 
   delete(tipoPerfil: ITipoPerfilUsuario) {
-    if (tipoPerfil.idTipoPerfil == 1) { // dev te\m
-      this.poNotification.error(this.literals.errorDeleteTipoPerfil);
-    } else {
-      this.poDialog.confirm({
-        title: this.literals.delete,
-        message: this.poI18nPipe.transform(this.literals.modalDeleteSingleMessage, [tipoPerfil.descricaoPerfil]),
-        confirm: () => {
-          this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
-            .delete(tipoPerfil.idTipoPerfil.toString())
-            .subscribe((response: ITipoPerfilUsuario) => {
-              this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, tipoPerfil.descricaoPerfil));
-              this.search();
-            });
-        }
-      })
-    }    
+
+    this.poDialog.confirm({
+      title: this.literals.delete,
+      message: this.poI18nPipe.transform(this.literals.modalDeleteSingleMessage, [tipoPerfil.descricaoPerfil]),
+      confirm: () => {
+        this.servTipoPerfilUsuarioSubscription$ = this.servTipoPerfilUsuario
+          .delete(tipoPerfil.idTipoPerfil.toString())
+          .subscribe((response: ITipoPerfilUsuario) => {
+            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, tipoPerfil.descricaoPerfil));
+            this.search();
+          });
+      }
+    })
+
   }
 
   ngOnDestroy(): void {

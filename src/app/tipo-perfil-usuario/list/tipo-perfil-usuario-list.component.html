@@ -15,7 +15,7 @@
 </po-page-list>
 
 <po-modal #modalTipoPerfil 
-    [p-title]="literals?.scheduleEvent"
+    [p-title]="titleModal"
     [p-primary-action]="confirmTipoPerfil"
     [p-secondary-action]="closeTipoPerfil" >
 
@@ -36,6 +36,14 @@
           [p-label]="literals?.description"
           p-required> 
         </po-input>
+
+        <po-switch
+          name="gestorPessoas" 
+          [(ngModel)]="tipoPerfilUsuario.gestorPessoas"
+          [p-label]="literals?.gestorPessoas"
+          [p-label-off]="literals?.no"
+          [p-label-on]="literals?.yes">
+      </po-switch>
        
       </div>      
     </form>

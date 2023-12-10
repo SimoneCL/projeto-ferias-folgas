@@ -35,7 +35,9 @@ export const generalEn = {
     yes: 'Yes',
     excludeTitle: 'Delete',
     createdMessage: 'Record created',
+    createdEquipeMessage: 'User {0} related to the team',
     excludedMessage: 'Record {0} deleted',
+    excludedEquipMessage: 'Removed relationship of user {0} with the team',
     modalDeleteSingleMessage: 'Are you sure you want to delete the {0} record?',
     delete: 'Delete',
     enabled: 'Activated',
@@ -43,6 +45,7 @@ export const generalEn = {
     general: 'General',
     masterUserCode: 'Master User',
     name: 'Name',
+    nameUser: 'User name',
     code: 'Code',
     description: 'Description',
     /* menu */
@@ -63,6 +66,9 @@ export const generalEn = {
     resetDay: 'Reset Day/Day Off',
     eventType: 'Event Type',
     newEventType: 'New Event Type',
+    editEventType: 'Upddate event type',
+    newProfileType: 'New event type',
+    editProfileType: 'Upddate profile type',
     type: 'Type',
     dateIni: 'Initial Date',
     dateEnd: 'Final Date',
@@ -93,6 +99,14 @@ export const generalEn = {
     codigo: 'Code',
     equipeUsuario: 'User Teams',
     entrar: 'Enter',
-    emailPlaceholder: 'email@totvs.com.br'
+    emailPlaceholder: 'email@totvs.com.br',
+    errorEditTipoPerfil: 'Profile type cannot be edited',
+    errorDeleteTipoPerfil: 'Profile type is mandatory and cannot be deleted',
+    errorEditTipoEvento: 'Event type cannot be edited',
+    errorDeleteTipoEvento: 'Event type is mandatory and cannot be deleted',
+    erroEditAgendaEvent: 'Required field was not filled in',
+    erroNewEventOtherUser: 'User not authorized to add an event for another user',
+    faixaData: 'Uses date range',
+    gestorPessoas: 'Human resources management?'
 
 };

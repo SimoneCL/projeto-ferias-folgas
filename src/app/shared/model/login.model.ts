@@ -4,6 +4,7 @@ export interface ILogin {
     email: string;
     tipoPerfil: number;
     senha: string;
+    gestorPessoas: number;
 
 }
 
@@ -13,6 +14,8 @@ export class Login implements ILogin {
     email: string;
     tipoPerfil: number;
     senha: string;
+    gestorPessoas: number;
+
 
     constructor(values: Object = {}) {
         Object.assign(this, values);

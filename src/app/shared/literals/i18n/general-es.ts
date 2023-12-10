@@ -35,7 +35,9 @@ export const generalEs = {
     yes: 'Sí',
     excludeTitle: 'Eliminar',
     createdMessage: 'Grabación creada',
+    createdEquipeMessage: 'Usuario {0} relacionado con el equipo.',
     excludedMessage: 'Registro {0} eliminado',
+    excludedEquipMessage: 'Eliminado el vínculo del usuario {0} con el equipo',
     modalDeleteSingleMessage: '¿Está seguro de que desea eliminar el registro {0}?',
     delete: 'Borrar',
     enabled: 'Activado',
@@ -43,6 +45,7 @@ export const generalEs = {
     general: 'General',
     masterUserCode: 'Usuario Maestro',
     name: 'Nombre',
+    nameUser: 'Nomber Usuario',
     code: 'Código',
     description: 'Descripción',
     /* menu */
@@ -63,6 +66,9 @@ export const generalEs = {
     resetDay: 'Reset Day/Day Off',
     eventType: 'Tipo de Evento',
     newEventType: 'Nuevo Tipo de Evento',
+    editEventType: 'Editar tipo de evento',
+    newProfileType: 'Novo tipo de evento',
+    editProfileType: 'Editar tipo de perfil',
     type: 'Tipo',
     dateIni: 'La fecha de inicio',
     dateEnd: 'Fecha final',
@@ -93,6 +99,14 @@ export const generalEs = {
     codigo: 'Código',
     equipeUsuario: 'Equipos de usuarios',
     entrar: 'Entrar',
-    emailPlaceholder: 'email@totvs.com.br'
+    emailPlaceholder: 'email@totvs.com.br',
+    errorEditTipoPerfil: 'Tipo perfil não pode ser editado',
+    errorDeleteTipoPerfil: 'Tipo perfil obrigatório, não pode ser eliminado',
+    errorEditTipoEvento: 'Tipo evento não pode ser editado',
+    errorDeleteTipoEvento: 'Tipo evento obrigatório, não pode ser eliminado',
+    erroEditAgendaEvent: 'Campo obrigatório não foi preenchido',
+    erroNewEventOtherUser: 'Usuário sem permissão para incluir evento para outro usuário',
+    faixaData: 'Utiliza faixa data',
+    gestorPessoas: 'Gestão de pessoas?'
 
 };

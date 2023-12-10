@@ -1,11 +1,17 @@
 export interface ITipoEvento {
     codTipo: number;
     descTipoEvento: string;
+    faixaData: number | boolean;
+    possuiEvento: number;
 }
 
 export class TipoEvento implements ITipoEvento {
     codTipo: number;
     descTipoEvento: string;
+    faixaData: number | boolean;
+    possuiEvento: number;
+
+  
 
     constructor(values: Object = {}) {
         Object.assign(this, values);

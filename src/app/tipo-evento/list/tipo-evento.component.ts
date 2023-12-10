@@ -39,6 +39,8 @@ export class TipoEventoComponent implements OnInit {
   confirm: PoModalAction;
   tipoEvento: ITipoEvento = new TipoEvento();
   isEdit: boolean = false;
+  titleModal: string;
+  desabilitaUtilizaFaixa: boolean;
 
   public usuarioLogado = new UsuarioLogadoService();
 
@@ -95,7 +97,11 @@ export class TipoEventoComponent implements OnInit {
 
     this.columns = [
       { property: 'codTipo', label: this.literals.code, width: '5%' },
-      { property: 'descTipoEvento', label: this.literals.description, width: '95%', type: 'link', tooltip: this.literals.edit, action: (value, row) => this.edit(row) },
+      { property: 'descTipoEvento', label: this.literals.description, width: '30%', type: 'link', tooltip: this.literals.edit, action: (value, row) => this.edit(row) },
+      {
+        property: 'faixaData', label: this.literals.faixaData, type: 'label', labels: [{ value: 0, color: 'color-07', label: this.literals.no, tooltip: this.literals.no },
+        { value: 1, color: 'color-03', label: this.literals.yes, tooltip: this.literals.yes }]
+      }
     ];
 
     this.disclaimerGroup = {
@@ -118,13 +124,19 @@ export class TipoEventoComponent implements OnInit {
 
   onClick() {
     this.isEdit = false;
+    this.titleModal = this.literals.newEventType;
     this.tipoEvento = new TipoEvento();
     this.poModal.open();
   }
   closeModal() {
     this.poModal.close();
   }
+ 
+
   salvarTipoEvento() {
+    if (this.tipoEvento.faixaData == null || this.tipoEvento.faixaData == undefined) {
+      this.tipoEvento.faixaData = 0;
+    }
     if (this.isEdit) {
       this.tipoEventoSubscription$ = this.serviceTipoEvento
         .update(this.tipoEvento)
@@ -146,6 +158,19 @@ export class TipoEventoComponent implements OnInit {
 
 
   }
+  searchById(codTipo: string): void {
+    this.tipoEventoSubscription$ = this.serviceTipoEvento
+      .getById(codTipo,[])
+      .subscribe((response: ITipoEvento) => {
+        this.tipoEvento = response;
+        if (this.tipoEvento.possuiEvento == 1 ) {
+          this.desabilitaUtilizaFaixa = true;
+        } else {
+          this.desabilitaUtilizaFaixa = false;
+        }
+      })
+  }
+
   search(loadMore = false): void {
 
     const disclaimer = this.disclaimers || [];
@@ -167,37 +192,30 @@ export class TipoEventoComponent implements OnInit {
   }
 
   delete(item: ITipoEvento): void {
-    if (item.codTipo == 1 || item.codTipo == 2 || item.codTipo == 3 || item.codTipo == 4) { //feriado ,férias, licenca maternidade, licenca paternidade
-      this.poNotification.error(this.literals.errorDeleteTipoEvento);
-    }
-    else {
-      const id = TipoEvento.getInternalId(item);
-      this.poDialogService.confirm({
-        title: this.literals.delete,
-        message: this.poI18nPipe.transform(this.literals.modalDeleteSingleMessage, [item.descTipoEvento]),
-        confirm: () => {
-          this.tipoEventoSubscription$ = this.serviceTipoEvento
-            .delete(id)
-            .subscribe(response => {
-              this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, item.descTipoEvento));
+    
+    const id = TipoEvento.getInternalId(item);
+    this.poDialogService.confirm({
+      title: this.literals.delete,
+      message: this.poI18nPipe.transform(this.literals.modalDeleteSingleMessage, [item.descTipoEvento]),
+      confirm: () => {
+        this.tipoEventoSubscription$ = this.serviceTipoEvento
+          .delete(id)
+          .subscribe(response => {
+            this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, item.descTipoEvento));
 
-              this.search();
-            });
-        }
-      });
-    }
+            this.search();
+          });
+      }
+    });
+    
   }
 
   private edit(item: ITipoEvento): void {
-    this.isEdit = true;
-    if (item.codTipo == 1 || item.codTipo == 2 || item.codTipo == 3 || item.codTipo == 4) { //feriado ,férias, licenca maternidade, licenca paternidade
-      this.poNotification.error(this.literals.errorEditTipoEvento);
-
-    } else {
+      this.isEdit = true;
+      this.titleModal = this.literals.editEventType;
       this.tipoEvento = item;
+      this.searchById(this.tipoEvento.codTipo.toString());
       this.poModal.open();
-    }
-
   }
 
   public onChangeDisclaimer(disclaimers): void {

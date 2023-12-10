@@ -1,11 +1,13 @@
 export interface ITipoPerfilUsuario {
     idTipoPerfil: number;
-    descricaoPerfil: string;    
+    descricaoPerfil: string; 
+    gestorPessoas: number | boolean;   
 }
 
 export class TipoPerfilUsuario implements ITipoPerfilUsuario {
     idTipoPerfil: number;
     descricaoPerfil: string;
+    gestorPessoas: number | boolean;
 
     constructor(values: Object = {}) {
         Object.assign(this, values);
