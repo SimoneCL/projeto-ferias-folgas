@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { PoDatepickerRange, PoDisclaimer, PoI18nService, PoMultiselectFilter, PoMultiselectOption, PoNotificationService, PoRadioGroupOption, PoTableColumn, PoTableColumnLabel, PoTableComponent } from '@po-ui/ng-components';
+import { PoDatepickerRange, PoDisclaimer, PoI18nService, PoMultiselectFilter, PoMultiselectOption, PoNotificationService, PoRadioGroupOption, PoTableColumn, PoTableColumnLabel, PoTableComponent, PoTableDetail } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { forkJoin, Subscription } from 'rxjs';
 import { ConfiguracaoFeriasFolga } from '../shared/model/config-ferias-folga.model';
@@ -54,7 +54,6 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   map1 = new Map();
   userLogado: number;
   idUsuario: number;
-
 
   servEventSubscription$: Subscription;
   tipoEventoSubscription$: Subscription;
@@ -193,10 +192,19 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
       { property: 'idUsuario', label: 'idUsuario', type: 'number', visible: false },
       {
-        property: 'nomeUsuario', label: 'Nome', width: '200px',type: 'link' , tooltip: this.literals.newEventUser, action: (value, row) => {
-        this.redirect(value, row);
+        property: 'nomeUsuario', label: 'Nome', width: '200px',type: 'link', tooltip: this.literals.newEventUser, action: (value, row) => {
+          this.redirect(value, row);
+        }
+      },
+      {
+        property: 'detail', type: 'detail', detail: {
+          columns: [
+            { property: 'usuarioSubstituto', label: 'Usuário Substituto' }
+          ],
+          typeHeader: 'top'
+        }
       }
-      }];
+    ];
     for (let y = 0; y <= this.quantityOfDays; y++) {
       this.dataCalc = new Date(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate() + y);
       this.targetProperty = this.formatoProperty(this.dataCalc);
@@ -263,7 +271,6 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     }
   }
 
-
   getUsuario(id: number): void {
     this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])
@@ -299,7 +306,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     this.servEventSubscription$ = this.serviceEvento
       .queryEvento(disclaimer, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<any>) => {
-
+        
         this.itemsEventosAux = [...response.items];
         //this.items = response.items;
         this.hasNext = response.hasNext;
@@ -340,6 +347,10 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
           this.newEvent[this.itemsAux[0][0]] = this.itemsAux[0][1];
           this.newEvent[this.itemsAux[y][0]] = this.itemsAux[y][1];
           this.newEvent['nomeUsuario'] = eventsUsers[i].nomeUsuario;
+          
+          if ( eventsUsers[i].usuarioSubstituto != null || eventsUsers[i].usuarioSubstituto != undefined ) {
+            this.newEvent['detail'] = [{ usuarioSubstituto: eventsUsers[i].usuarioSubstituto }];
+          }          
         }
 
         this.eventos.push(this.newEvent);
@@ -371,10 +382,9 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       } else {
         // Caso contrário, adicionar o objeto ao resultado
         resultado.push(objeto);
-      }
+      }      
     }
-    this.items = resultado;
-
+    this.items = resultado;    
   }
 
 

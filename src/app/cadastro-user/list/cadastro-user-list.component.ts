@@ -100,6 +100,9 @@ export class CadastroUserListComponent implements OnInit {
         property: 'tipoPerfil', label: this.literals.perfil, type: 'label', labels: this.usuarioTipo
       },
       {
+        property: 'usuarioSubstituto', label: this.literals.substituto, type: 'string'
+      },
+      {
         property: 'detail', type: 'detail', detail: {
           columns: [
             { property: 'equipe', label: 'Equipe' }

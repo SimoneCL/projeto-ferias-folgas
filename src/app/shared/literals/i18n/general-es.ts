@@ -107,6 +107,7 @@ export const generalEs = {
     erroEditAgendaEvent: 'Campo obrigatório não foi preenchido',
     erroNewEventOtherUser: 'Usuário sem permissão para incluir evento para outro usuário',
     faixaData: 'Utiliza faixa data',
-    gestorPessoas: 'Gestão de pessoas?'
+    gestorPessoas: 'Gestão de pessoas?',
+    substituto: 'Sustituto'
 
 };

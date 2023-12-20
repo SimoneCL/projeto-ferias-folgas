@@ -107,6 +107,7 @@ export const generalEn = {
     erroEditAgendaEvent: 'Required field was not filled in',
     erroNewEventOtherUser: 'User not authorized to add an event for another user',
     faixaData: 'Uses date range',
-    gestorPessoas: 'Human resources management?'
+    gestorPessoas: 'Human resources management?',
+    substituto: 'Substitute'
 
 };

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoSelectOption } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoLookupColumn, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoSelectOption } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Subscription, forkJoin } from 'rxjs';
 import { ITipoPerfilUsuario } from 'src/app/shared/model/tipo-perfil-usuario.model';
@@ -29,6 +29,7 @@ export class CadastroUserEditComponent implements OnInit {
   breadcrumb: PoBreadcrumb;
   literals: any = {};
 
+  public lookupColumns: Array<PoLookupColumn>;
   public properties: string;
   public propertiesName: string;
   public propertiesButton: boolean = true;
@@ -55,6 +56,7 @@ export class CadastroUserEditComponent implements OnInit {
   noShadow: true;
   userLogado: number;
   perfilUsuario: number = 0;
+  nomeUsuarioSubstituto: string;
 
   public usuarioLogado = new UsuarioLogadoService();
 
@@ -72,7 +74,7 @@ export class CadastroUserEditComponent implements OnInit {
     private poNotification: PoNotificationService,
     private poDialogService: PoDialogService,
     private poI18nPipe: PoI18nPipe,
-    private serviceUsuario: UsuarioService,
+    public serviceUsuario: UsuarioService,
     private servTipoPerfilUsuario: TipoPerfilUsuarioService
   ) { }
 
@@ -106,8 +108,8 @@ export class CadastroUserEditComponent implements OnInit {
       .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
         if (response && response.items) {
           this.itemsPerfil = [...response.items];
-          this.hasNext = response.hasNext;
-        }
+          this.hasNext = response.hasNext;          
+        }        
         this.atualizaPerfilUsuario(this.itemsPerfil);
 
       })
@@ -136,6 +138,10 @@ export class CadastroUserEditComponent implements OnInit {
 
     }
 
+    this.lookupColumns = [
+      { property: 'nomeUsuario', label: 'Nome'},      
+    ];    
+    
     if (this.eventPage !== 'edit') {
       this.propertiesButton = false;
     }
@@ -166,6 +172,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   create() {
+    this.usuario.usuarioSubstituto = this.nomeUsuarioSubstituto;
     this.usuarioSubscription$ = this.serviceUsuario.create(this.usuario).subscribe((response: any) => {
       if (response.error !== '') {
         this.poNotification.error(response.error);
@@ -180,6 +187,7 @@ export class CadastroUserEditComponent implements OnInit {
     });
   }
   update() {
+    this.usuario.usuarioSubstituto = this.nomeUsuarioSubstituto;
     this.save();
     this.usuarioSubscription$ = this.serviceUsuario.update(this.usuario).subscribe(() => {
       if (this.perfilUsuario === 1) { // mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor dev team
@@ -308,8 +316,8 @@ export class CadastroUserEditComponent implements OnInit {
     this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])
       .subscribe((response: IUsuario) => {
-        this.usuario = response[0];
-
+        this.usuario = response[0];     
+        this.nomeUsuarioSubstituto = this.usuario.usuarioSubstituto;        
       });
   }
 
