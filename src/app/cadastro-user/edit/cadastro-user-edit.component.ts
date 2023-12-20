@@ -57,6 +57,7 @@ export class CadastroUserEditComponent implements OnInit {
   userLogado: number;
   perfilUsuario: number = 0;
   nomeUsuarioSubstituto: string;
+  habilitaUsuarSub: boolean;
 
   public usuarioLogado = new UsuarioLogadoService();
 
@@ -108,7 +109,7 @@ export class CadastroUserEditComponent implements OnInit {
       .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
         if (response && response.items) {
           this.itemsPerfil = [...response.items];
-          this.hasNext = response.hasNext;          
+          this.hasNext = response.hasNext;               
         }        
         this.atualizaPerfilUsuario(this.itemsPerfil);
 
@@ -150,8 +151,7 @@ export class CadastroUserEditComponent implements OnInit {
       this.propertiesPassword = "true";
       if (this.perfilUsuario === 0) { // mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor
         this.properties = "true";
-        this.propertiesName = "false";
-
+        this.propertiesName = "false";        
       }
     }
 
@@ -317,8 +317,24 @@ export class CadastroUserEditComponent implements OnInit {
       .getById(id, [''])
       .subscribe((response: IUsuario) => {
         this.usuario = response[0];     
-        this.nomeUsuarioSubstituto = this.usuario.usuarioSubstituto;        
+        this.nomeUsuarioSubstituto = this.usuario.usuarioSubstituto;    
+        
+        this.validateGestor();
       });
+  }
+
+  validateGestor() {
+    this.itemsPerfil.forEach(el => {
+      if (this.usuario.tipoPerfil === el.idTipoPerfil) {
+        if (el.gestorPessoas === 0) {
+          this.habilitaUsuarSub = false;
+          this.return;
+        } else {
+          this.habilitaUsuarSub = true;
+          this.return;
+        }
+      }
+    });
   }
 
   ngOnDestroy(): void {
