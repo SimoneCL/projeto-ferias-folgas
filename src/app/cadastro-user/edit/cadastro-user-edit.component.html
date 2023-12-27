@@ -13,11 +13,12 @@
       [p-label]="literals?.name"
       [p-disabled]="propertiesName">
     </po-input>
-    <po-lookup *ngIf="habilitaUsuarSub"
-      class="po-md-4"
+    <po-lookup 
+      class="po-md-5"
       [(ngModel)]="nomeUsuarioSubstituto"
       p-field-label="nomeUsuario"
-      p-field-value="nomeUsuario"      
+      p-field-value="nomeUsuario" 
+      [p-placeholder]="literals?.userSubstituto"
       [p-columns]="lookupColumns"
       [p-filter-service]="serviceUsuario"
       [p-label]="literals?.substituto"

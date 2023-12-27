@@ -110,6 +110,7 @@ export const generalPt = {
     erroNewEventOtherUser: 'Usuário sem permissão para incluir evento para outro usuário',
     faixaData: 'Utiliza faixa data',
     gestorPessoas: 'Gestão de pessoas?',
-    substituto: 'Substituto'
+    substituto: 'Substituto',
+    userSubstituto:"Usuário substituto em caso folga ou férias"
 
 };

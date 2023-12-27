@@ -57,7 +57,6 @@ export class CadastroUserEditComponent implements OnInit {
   userLogado: number;
   perfilUsuario: number = 0;
   nomeUsuarioSubstituto: string;
-  habilitaUsuarSub: boolean;
 
   public usuarioLogado = new UsuarioLogadoService();
 
@@ -319,23 +318,10 @@ export class CadastroUserEditComponent implements OnInit {
         this.usuario = response[0];     
         this.nomeUsuarioSubstituto = this.usuario.usuarioSubstituto;    
         
-        this.validateGestor();
       });
   }
 
-  validateGestor() {
-    this.itemsPerfil.forEach(el => {
-      if (this.usuario.tipoPerfil === el.idTipoPerfil) {
-        if (el.gestorPessoas === 0) {
-          this.habilitaUsuarSub = false;
-          this.return;
-        } else {
-          this.habilitaUsuarSub = true;
-          this.return;
-        }
-      }
-    });
-  }
+ 
 
   ngOnDestroy(): void {
     if (this.usuarioSubscription$) {

@@ -108,6 +108,7 @@ export const generalEn = {
     erroNewEventOtherUser: 'User not authorized to add an event for another user',
     faixaData: 'Uses date range',
     gestorPessoas: 'Human resources management?',
-    substituto: 'Substitute'
+    substituto: 'Substitute',
+    userSubstituto:"Substitute user in case of time off or vacation"
 
 };
