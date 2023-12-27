@@ -157,7 +157,7 @@ export class TipoPerfilUsuarioListComponent implements OnInit {
       .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
         if (response && response.items) {
           this.itemsPerfil = [...response.items];
-          this.hasNext = response.hasNext;
+          this.hasNext = response.hasNext;          
         }
       })
   }

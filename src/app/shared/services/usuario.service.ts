@@ -70,8 +70,8 @@ export class UsuarioService {
         return this.http.get<IUsuario>(`${this.apiBaseUrl}`, header);
     }
 
-    getObjectByValue(id: string): Observable<IUsuario> {
-        return this.http.get<IUsuario>(`${this.apiBaseUrl}/${id}`);
+    getObjectByValue(id: string): Observable<IUsuario> {        
+        return this.http.get<IUsuario>(`${this.apiBaseUrl}/nome/${id}`);
     }
 
     create(model: IUsuario): Observable<IUsuario> {

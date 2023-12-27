@@ -13,8 +13,18 @@
       [p-label]="literals?.name"
       [p-disabled]="propertiesName">
     </po-input>
-     
-  
+    <po-lookup 
+      class="po-md-5"
+      [(ngModel)]="nomeUsuarioSubstituto"
+      p-field-label="nomeUsuario"
+      p-field-value="nomeUsuario" 
+      [p-placeholder]="literals?.userSubstituto"
+      [p-columns]="lookupColumns"
+      [p-filter-service]="serviceUsuario"
+      [p-label]="literals?.substituto"
+      p-hide-columns-manager="true"
+      p-infinite-scroll="true">
+    </po-lookup>    
   </div>
   <div class="po-row">
   <po-email 

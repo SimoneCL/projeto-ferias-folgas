@@ -258,7 +258,8 @@ export class RelacEquipeEditComponent implements OnInit {
           nomeUsuario: event.nomeUsuario,
           email: event.email,
           tipoPerfil: event.tipoPerfil,
-          senha: event.senha
+          senha: event.senha,
+          usuarioSubstituto: event.usuarioSubstituto
         });
         this.itemsSelected = [...this.itemsSelected];
     
