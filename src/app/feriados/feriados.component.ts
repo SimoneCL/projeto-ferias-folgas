@@ -150,7 +150,7 @@ export class FeriadosComponent implements OnInit {
    
 
     const data = new Date(Date.now());
-    for (let y = 0; y <= 3; y++) {
+    for (let y = 0; y <= 10; y++) {
       let yearCalc = this.getYear(data, y);
       this.anoOptions = [...this.anoOptions, { label: `${yearCalc}`, value: yearCalc }]
     }

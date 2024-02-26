@@ -12,7 +12,7 @@ export class EventoService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
     // private apiBaseUrl = '/dts/datasul-rest/resources/prg/fin/v1/evento';
-    private apiBaseUrl = 'http://10.80.129.239:3000/evento';
+    private apiBaseUrl = 'http://10.171.119.19:3000/evento';
     
     private expandables = [''];
 
