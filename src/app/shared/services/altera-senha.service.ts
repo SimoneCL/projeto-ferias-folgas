@@ -10,7 +10,7 @@ import { Login, ILogin } from '../model/login.model';
 export class AlteraSenhaService {
     private headers = { headers: { 'X-PO-Screen-Lock': 'true' } };
 
-    private apiBaseUrl = 'http://10.80.129.239:3000/alteraSenha';
+    private apiBaseUrl = 'http://10.171.119.19:3000/alteraSenha';
     private apiUploadUrl = `${this.apiBaseUrl}/addFile`;
 
     private expandables = [''];
