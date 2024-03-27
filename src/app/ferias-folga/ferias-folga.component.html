@@ -2,12 +2,10 @@
   [p-title]="literals?.titleVacation">
   <div class="po-row">
       <po-datepicker-range
-          class="po-lg-3 po-md-3"
+          class="po-lg-3 po-ml-xl-1 po-mb-xb-0"
           [p-label]="literals?.period"
           [(ngModel)]="config.datePickerRange"
-          (p-change)="calculateQuantityOfVacationDays()"
-          >
-          <!--  -->
+          (p-change)="calculateQuantityOfVacationDays()">
       </po-datepicker-range>
       
       <po-multiselect  class="po-md-3"
@@ -18,11 +16,14 @@
         (p-change)="changeOptions($event)"> 
       </po-multiselect>
   </div>
-  <div class="po-row">
+  <po-container class="po-ml-xl-mt-mb-mp-0"
+    p-no-border="true">
     <po-table #tableEvent
       [p-columns]="columns"
       [p-items]="items"
-      [p-hide-columns-manager]="true">
+      [p-container]="true"
+      [p-height]="500"
+      [p-striped]="true">
     </po-table>
-  </div>
+  </po-container>
 </po-page-default>

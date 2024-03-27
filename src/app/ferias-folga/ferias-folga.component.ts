@@ -192,7 +192,7 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
       { property: 'idUsuario', label: 'idUsuario', type: 'number', visible: false },
       {
-        property: 'nomeUsuario', label: 'Nome', width: '200px',type: 'link', tooltip: this.literals.newEventUser, action: (value, row) => {
+        property: 'nomeUsuario',fixed: true, label: 'Nome', width: '200px',type: 'link', tooltip: this.literals.newEventUser, action: (value, row) => {
           this.redirect(value, row);
         }
       },
