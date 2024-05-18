@@ -36,12 +36,10 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
 
   items: Array<any> = new Array<any>();
 
-  private itemsEventosAux: Array<IEvento>;
   tipoEventos: Array<ITipoEvento> = new Array<ITipoEvento>();
   dayOffType: Array<PoTableColumnLabel> = [];
 
   public eventos: Array<any> = new Array<any>();
-  itemsAux: Array<any>;
   itemsUsers: Array<IUsuario> = new Array<IUsuario>();
   newEvent = {};
 
@@ -51,7 +49,6 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   expandables = [''];
   disclaimers: Array<PoDisclaimer> = [];
   disclaimersEquipeUser: Array<PoDisclaimer> = [];
-  map1 = new Map();
   userLogado: number;
   idUsuario: number;
 
@@ -281,7 +278,6 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
   }
 
   searchEventosEquipes(loadMore = false): void { //coloquei novo
-    this.itemsEventosAux = [];
     this.items = [];
 
     this.disclaimers = [];
@@ -307,84 +303,12 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       .queryEvento(disclaimer, this.currentPage, this.pageSize)
       .subscribe((response: TotvsResponse<any>) => {
         
-        this.itemsEventosAux = [...response.items];
-        //this.items = response.items;
+        this.items = response.items;
         this.hasNext = response.hasNext;
 
-        if (this.itemsEventosAux.length === 0) { this.currentPage = 1; }
-        if (this.itemsEventosAux.length > 0) {
-          this.changeObjectProperty(this.itemsEventosAux);
-        }
+       
       });
 
-  }
-
-  private changeObjectProperty(eventsUsers: Array<any>): void {
-    this.eventos = [];
-    this.itemsAux = [];
-    if (eventsUsers.length > 0) {
-      for (var i = 0; i < eventsUsers.length; i++) {
-
-        this.map1 = new Map();
-        this.map1.set('idUsuario', eventsUsers[i].idUsuario);
-        this.primeiroDia = new Date(eventsUsers[i].dataEventoIni);
-        const end = new Date(eventsUsers[i].dataEventoFim);
-        this.ultimoDia = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
-        this.quantityOfDaysSchedule = Math.floor(
-          (Date.UTC(this.ultimoDia.getFullYear(), this.ultimoDia.getMonth(), this.ultimoDia.getDate()) -
-            Date.UTC(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), this.primeiroDia.getDate())) /
-          (1000 * 60 * 60 * 24)
-        );
-        this.dataCalc = new Date();
-        for (let y = 0; y <= this.quantityOfDaysSchedule; y++) {
-          this.dataCalc = new Date(this.primeiroDia.getFullYear(), this.primeiroDia.getMonth(), (this.primeiroDia.getDate()) + y);
-
-          this.map1.set(this.formatoProperty(this.dataCalc), eventsUsers[i].descTipoEvento);
-          this.itemsAux = [...this.map1];
-          if (this.newEvent[this.itemsAux[0][0]] !== this.itemsAux[0][1]) {
-            this.newEvent = {};
-          }
-          this.newEvent[this.itemsAux[0][0]] = this.itemsAux[0][1];
-          this.newEvent[this.itemsAux[y][0]] = this.itemsAux[y][1];
-          this.newEvent['nomeUsuario'] = eventsUsers[i].nomeUsuario;
-          
-          if ( eventsUsers[i].usuarioSubstituto != null || eventsUsers[i].usuarioSubstituto != undefined ) {
-            this.newEvent['detail'] = [{ usuarioSubstituto: eventsUsers[i].usuarioSubstituto }];
-          }          
-        }
-
-        this.eventos.push(this.newEvent);
-
-
-      }
-
-      this.agrupByUser();
-    }
-  }
-
-
-  private agrupByUser(): void {
-
-
-    this.items = []
-
-    let resultado = [];
-    for (const objeto of this.eventos) {
-      const chaveDuplicada = resultado.find(
-        (item) =>
-          item.idUsuario === objeto.idUsuario &&
-          item.nomeUsuario === objeto.nomeUsuario
-      );
-
-      if (chaveDuplicada) {
-        // Se já existe um objeto com a mesma chave, mesclar as propriedades
-        Object.assign(chaveDuplicada, objeto);
-      } else {
-        // Caso contrário, adicionar o objeto ao resultado
-        resultado.push(objeto);
-      }      
-    }
-    this.items = resultado;    
   }
 
 
