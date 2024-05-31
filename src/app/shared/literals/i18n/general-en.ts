@@ -109,6 +109,7 @@ export const generalEn = {
     faixaData: 'Uses date range',
     gestorPessoas: 'Human resources management?',
     substituto: 'Substitute',
-    userSubstituto:"Substitute user in case of time off or vacation"
+    userSubstituto:"Substitute user in case of time off or vacation",
+    updateTable: "Update"
 
 };

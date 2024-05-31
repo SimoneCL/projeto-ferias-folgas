@@ -153,10 +153,15 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
     for (let i in event) {
       this.disclaimersEquipeUser.push({ property: 'codEquipe', value: event[i].value });
     }
-    if (this.disclaimersEquipeUser.length > 0) {
-      this.searchEventosEquipes();
-    } else {
-      this.items = [];
+  
+  }
+
+  onClick() {
+     this.calculateQuantityOfVacationDays() ;
+    
+    if (this.disclaimersEquipeUser) {
+       this.searchEventosEquipes();
+
     }
   }
 
@@ -260,11 +265,6 @@ export class FeriasFolgaComponent implements OnInit, OnDestroy {
       this.primeiroDia = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1)
       this.ultimoDia = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
       this.setColumnsList();
-      if (this.disclaimersEquipeUser) {
-        this.searchEventosEquipes();
-
-      }
-
     }
   }
 
