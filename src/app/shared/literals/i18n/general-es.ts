@@ -109,6 +109,7 @@ export const generalEs = {
     faixaData: 'Utiliza faixa data',
     gestorPessoas: 'Gestão de pessoas?',
     substituto: 'Sustituto',
-    userSubstituto:"Usuário substituto em caso folga ou férias"
+    userSubstituto:"Usuário substituto em caso folga ou férias",
+    updateTable: "Atualizar"
 
 };

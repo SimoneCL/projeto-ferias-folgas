@@ -2,20 +2,25 @@
   [p-title]="literals?.titleVacation">
   <div class="po-row">
       <po-datepicker-range
-          class="po-lg-3 po-ml-xl-1 po-mb-xb-0"
+          class="po-md-3 po-lg-3 po-ml-xl-1 po-mb-xb-0"
           [p-label]="literals?.period"
           [(ngModel)]="config.datePickerRange"
-          (p-change)="calculateQuantityOfVacationDays()">
+          p-required="true">
       </po-datepicker-range>
       
-      <po-multiselect  class="po-md-3"
-       name="multiselect" 
-       [p-label]="literals?.equipeUsuario"
-       [(ngModel)]="multiSelectEquipe"
+      <po-multiselect  class="po-md-3 po-lg-3"
+        name="multiselect" 
+        [p-label]="literals?.equipeUsuario"
+        [(ngModel)]="multiSelectEquipe"
         [p-options]="optionsMultiSeletc"
         (p-change)="changeOptions($event)"> 
       </po-multiselect>
-  </div>
+      
+      <po-button class="po-mt-4 po-mb-xb-0"
+        [p-label]="literals?.updateTable" 
+        (p-click)="onClick()">
+      </po-button>
+   </div>
   <po-container class="po-ml-xl-mt-mb-mp-0"
     p-no-border="true">
     <po-table #tableEvent
