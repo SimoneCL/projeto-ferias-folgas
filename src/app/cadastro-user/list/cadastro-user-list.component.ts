@@ -75,6 +75,7 @@ export class CadastroUserListComponent implements OnInit {
     this.tableActions = [
       { action: this.edit.bind(this), label: this.literals.edit },
       { action: this.detail.bind(this), label: this.literals.detail },
+      { action: this.eventos.bind(this), label: this.literals.eventos },
       { action: this.delete.bind(this), label: this.literals.delete, type: 'danger' }
     ];
     this.pageActions = [
@@ -188,6 +189,10 @@ export class CadastroUserListComponent implements OnInit {
     this.router.navigate(['/cadastroUser', 'detail', Usuario.getInternalId(item)]);
   }
 
+  private eventos(item: IUsuario): void {
+    this.router.navigate(['/agendaUser', 'list', Usuario.getInternalId(item)]);
+  }
+  
   public onChangeDisclaimer(disclaimers): void {
     this.disclaimers = disclaimers;
     this.search();
