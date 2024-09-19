@@ -170,7 +170,7 @@ export class CadastroUserEditComponent implements OnInit {
     }
 
     this.lookupColumns = [
-      { property: 'nomeUsuario', label: 'nomeUsuario' }
+      { property: 'nomeUsuario', label: this.literals['nameUser'] }
     ];
     this.susbtitutoTableActions = [
       { action: this.susbtitutoDelete.bind(this), label: this.literals['remove'], icon: 'po-icon po-icon-delete' }
