@@ -60,7 +60,6 @@ export class UsuarioSubstitutoService {
     }
 
     delete(id: number): Observable<any> {
-console.log('delete')
         return this.http.delete(`${this.apiBaseUrl}/${id}`);
     }
 }

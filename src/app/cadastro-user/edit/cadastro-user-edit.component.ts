@@ -410,10 +410,8 @@ export class CadastroUserEditComponent implements OnInit {
   }
   saveUsuarioSubstituos(): void {
     this.usuarioSubstitutos = [];
-    console.log('this.aUsuarioSubstituto', this.aUsuarioSubstituto)
     if (this.aUsuarioSubstituto.length > 0) {
       this.aUsuarioSubstituto.forEach((element) => {
-        console.log('element.idUsuario', element)
         this.usuarioSubstitutos.push(
           {
 
