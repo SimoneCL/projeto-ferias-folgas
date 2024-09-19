@@ -92,9 +92,14 @@ export const generalEs = {
     labelRecupera: 'Ingrese un correo electrónico válido para recibir una contraseña de recuperación',
     sendMail: 'Enviado con éxito',
     feriados: 'Vacaciones',
+    feriadosNew: 'Nuevo vacaciones',
+    feriadosEdit: 'Editar vacaciones',
     data: 'Fecha',
     pontoFacultativo: 'Punto Facultativo',
     feriadosNacional: 'Días Festivos Nacionales',
+    titleEquipes: 'Equipos',
+    equipeNew: 'Nuevo equipo',
+    equipeEdit: 'Editar equipo',
     ano: 'Año',
     codigo: 'Código',
     equipeUsuario: 'Equipos de usuarios',
@@ -109,6 +114,7 @@ export const generalEs = {
     faixaData: 'Utiliza faixa data',
     gestorPessoas: 'Gestão de pessoas?',
     substituto: 'Sustituto',
+    adicionarSubstituto: 'Agregar',
     userSubstituto:"Usuário substituto em caso folga ou férias",
     updateTable: "Atualizar"
 

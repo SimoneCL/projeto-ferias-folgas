@@ -23,6 +23,7 @@ export class EquipesComponent implements OnInit{
   close: PoModalAction;
 
   titleApp: String;
+  titleModalEquipe: String;
   email: string = undefined;
   isSubscribed: boolean = false;
   literals: any = {};
@@ -38,7 +39,7 @@ export class EquipesComponent implements OnInit{
   EquipesItems: Array<IEquipes> = new Array<IEquipes>();
   typeOptions: Array<PoSelectOption> = [];
   createItems: IEquipes = new Equipes();
-
+  
   public itemsEquipes: Array<IEquipes>;
 
   public usuarioLogado = new UsuarioLogadoService();
@@ -132,6 +133,7 @@ export class EquipesComponent implements OnInit{
     this.isEdit = true;
     this.codEquipe = item.codEquipe;
     this.descEquipe = item.descEquipe;
+    this.titleModalEquipe = this.literals.equipeEdit;
     this.poModal.open();
   }
   private relacEquipe(item: IEquipes): void {
@@ -187,6 +189,7 @@ export class EquipesComponent implements OnInit{
     this.isEdit = false;
     this.codEquipe = 0;
     this.descEquipe = '';
+    this.titleModalEquipe = this.literals.equipeNew;
     this.poModal.open();
   }
 

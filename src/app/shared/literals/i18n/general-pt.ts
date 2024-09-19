@@ -94,9 +94,14 @@ export const generalPt = {
     labelRecupera: 'Digite um e-mail válido para receber uma senha de recuperção',
     sendMail: 'Enviado com sucesso',
     feriados: 'Feriados',
+    feriadosNew: 'Novo feriado',
+    feriadosEdit: 'Editar feriado',
     data: 'Data',
     pontoFacultativo: 'Ponto facultativo',
     feriadosNacional: 'Feriados nacionais',
+    titleEquipes: 'Equipes',
+    equipeNew: 'Nova Equipe',
+    equipeEdit: 'Editar Equipe',
     ano: 'Ano',
     codigo: 'Código',
     equipeUsuario: 'Equipes do usuário',
@@ -111,6 +116,7 @@ export const generalPt = {
     faixaData: 'Utiliza faixa data',
     gestorPessoas: 'Gestão de pessoas?',
     substituto: 'Substituto',
+    adicionarSubstituto: 'Adicionar',
     userSubstituto:"Usuário substituto em caso folga ou férias",
     updateTable: "Atualizar"
 

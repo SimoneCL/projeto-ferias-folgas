@@ -1,6 +1,5 @@
 <po-page-list 
-  [p-title]="literals?.feriados" 
-  [p-title]="literals?.titleferiados"
+  [p-title]="literals?.feriados"
   [p-actions]="actions"
   [p-disclaimer-group]="disclaimerGroup"
   [p-filter]="filterSettings">
@@ -11,7 +10,8 @@
     [p-columns]="columnsFeriados" 
     [p-items]="itemsFeriados"
     [p-actions]="tableActions"
-    p-actions-right="true"> 
+    [p-actions-right]="true"
+    [p-hide-columns-manager]="true"> 
   </po-table>
 </po-page-list>
 
@@ -28,7 +28,7 @@
 </po-modal>
 <po-modal #modalFeriado 
 p-size = 'auto'
-    [p-title]="literals?.scheduleEvent"
+    [p-title]="titleModalFeriado"
     [p-primary-action]="confirm"
     [p-secondary-action]="close" >
 
