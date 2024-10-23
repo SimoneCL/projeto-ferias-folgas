@@ -34,6 +34,7 @@ export class FeriadosComponent implements OnInit {
 
 
   titleApp: String;
+  titleModalFeriado: String;
   email: string = undefined;
   isSubscribed: boolean = false;
   literals: any = {};
@@ -287,6 +288,7 @@ export class FeriadosComponent implements OnInit {
   public newferiados() {
     this.isEdit = false;
     this.feriados = new Feriados();
+    this.titleModalFeriado = this.literals.feriadosNew;
     this.modalFeriado.open();
   }
   private edit(item: IFeriados): void {
@@ -294,6 +296,7 @@ export class FeriadosComponent implements OnInit {
     this.feriados = new Feriados();
     this.feriados = item;
     this.feriados.dataFormat = Feriados.formataData(item.data);
+    this.titleModalFeriado = this.literals.feriadosEdit;
     this.modalFeriado.open();
   }
 

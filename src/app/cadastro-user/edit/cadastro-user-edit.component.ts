@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoLookupColumn, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoSelectOption } from '@po-ui/ng-components';
+import { PoBreadcrumb, PoDialogService, PoDisclaimer, PoI18nPipe, PoI18nService, PoLookupColumn, PoModalAction, PoModalComponent, PoMultiselectOption, PoNotificationService, PoPageAction, PoSelectOption, PoTableAction, PoTableColumn } from '@po-ui/ng-components';
 import { TotvsResponse } from 'dts-backoffice-util';
 import { Subscription, forkJoin } from 'rxjs';
 import { ITipoPerfilUsuario } from 'src/app/shared/model/tipo-perfil-usuario.model';
@@ -9,6 +9,8 @@ import { EquipeUsuario, IEquipeUsuario } from '../../shared/model/equipe-usuario
 import { IUsuario, Usuario } from '../../shared/model/usuario.model';
 import { UsuarioService } from '../../shared/services/usuario.service';
 import { UsuarioLogadoService } from '../../usuario-logado.service';
+import { IUsuarioSubstituto, UsuarioSubstituto } from 'src/app/shared/model/usuario-substituto.model';
+import { UsuarioSubstitutoService } from 'src/app/shared/services/usuario-substituto.service';
 
 @Component({
   selector: 'app-cadastro-user-edit',
@@ -16,9 +18,10 @@ import { UsuarioLogadoService } from '../../usuario-logado.service';
   styleUrls: ['./cadastro-user-edit.component.css']
 })
 export class CadastroUserEditComponent implements OnInit {
-  @ViewChild('modalEquipe', { static: false }) modalEquipe: PoModalComponent;
+  @ViewChild('modalEditSubstituto', { static: true }) modalEditSubstituto: PoModalComponent;
 
   private usuarioSubscription$: Subscription;
+  private substitutoSubscription$: Subscription;
   private servEquipesSubscription$: Subscription;
   private servTipoPerfilUsuarioSubscription$: Subscription;
   private servEquipeUsuarioSubscription$: Subscription;
@@ -56,7 +59,8 @@ export class CadastroUserEditComponent implements OnInit {
   noShadow: true;
   userLogado: number;
   perfilUsuario: number = 0;
-  nomeUsuarioSubstituto: string;
+  substituto_id: any;
+  aUsuarioSubstituto: Array<any> = [];
 
   public usuarioLogado = new UsuarioLogadoService();
 
@@ -67,6 +71,16 @@ export class CadastroUserEditComponent implements OnInit {
   private disclaimers: Array<PoDisclaimer> = [];
   idUsuario = 0;
 
+  usuarioSubstitutos: Array<IUsuarioSubstituto> = new Array<IUsuarioSubstituto>();
+  susbtitutoTableActions: Array<PoTableAction>;
+  substituto: IUsuarioSubstituto = new UsuarioSubstituto();
+  itemsSubstitutos: Array<IUsuarioSubstituto> = new Array<IUsuarioSubstituto>();
+  columnsSubstitutos: Array<PoTableColumn> = [];
+  confirmSubs: PoModalAction;
+  cancelSubs: PoModalAction;
+  isNew: boolean;
+  isHiddenSubstituto: boolean = false;
+
   constructor(
     private route: Router,
     private activatedRoute: ActivatedRoute,
@@ -75,7 +89,8 @@ export class CadastroUserEditComponent implements OnInit {
     private poDialogService: PoDialogService,
     private poI18nPipe: PoI18nPipe,
     public serviceUsuario: UsuarioService,
-    private servTipoPerfilUsuario: TipoPerfilUsuarioService
+    private servTipoPerfilUsuario: TipoPerfilUsuarioService,
+    public serviceSubs: UsuarioSubstitutoService
   ) { }
 
   ngOnInit(): void {
@@ -93,7 +108,13 @@ export class CadastroUserEditComponent implements OnInit {
 
       this.searchPerfil();
       this.eventPage = this.activatedRoute.snapshot.url[0].path;
+      this.isNew = this.eventPage === 'new';
       this.idUsuario = parseInt(this.activatedRoute.snapshot.paramMap.get('id'));
+      this.esconderInformacaoSubstituto();  
+      if (this.isNew === false) {
+        this.searchSubstituto();
+      }
+
       this.setupComponents();
 
 
@@ -108,13 +129,21 @@ export class CadastroUserEditComponent implements OnInit {
       .subscribe((response: TotvsResponse<ITipoPerfilUsuario>) => {
         if (response && response.items) {
           this.itemsPerfil = [...response.items];
-          this.hasNext = response.hasNext;               
-        }        
+          this.hasNext = response.hasNext;
+        }
         this.atualizaPerfilUsuario(this.itemsPerfil);
 
       })
   }
 
+  esconderInformacaoSubstituto() {
+    if (this.isNew || this.usuario.tipoPerfil === 1 /*dev Team*/ ) {
+      this.isHiddenSubstituto = true;
+    } else {
+      this.isHiddenSubstituto = false;
+    }
+  }
+  
   atualizaPerfilUsuario(itensPerfilUsuario: Array<ITipoPerfilUsuario>) {
     this.perfilOptions = [];
     for (let i in itensPerfilUsuario) {
@@ -125,11 +154,13 @@ export class CadastroUserEditComponent implements OnInit {
     if (this.eventPage !== 'new') {
       this.get(this.idUsuario);
     }
+   
   }
 
   setupComponents() {
 
     this.breadcrumb = this.getBreadcrumb();
+
 
     if (this.eventPage === 'detail') {
       this.properties = "true";
@@ -139,9 +170,25 @@ export class CadastroUserEditComponent implements OnInit {
     }
 
     this.lookupColumns = [
-      { property: 'nomeUsuario', label: 'Nome'},      
-    ];    
-    
+      { property: 'nomeUsuario', label: this.literals['nameUser'] }
+    ];
+    this.susbtitutoTableActions = [
+      { action: this.susbtitutoDelete.bind(this), label: this.literals['remove'], icon: ' ph ph-trash' }
+    ];
+    this.columnsSubstitutos = [
+      { property: 'substituto_id', label: this.literals['usuario'], type: 'number', visible: false },
+      { property: 'nomeUsuario', label: this.literals['nameUser'], type: 'string' }
+    ];
+    this.confirmSubs = {
+      action: () => this.onConfirmSubs(),
+      label: this.literals['confirm']
+    };
+
+    this.cancelSubs = {
+      action: () => this.modalEditSubstituto.close(),
+      label: this.literals['cancel']
+    };
+
     if (this.eventPage !== 'edit') {
       this.propertiesButton = false;
     }
@@ -150,7 +197,7 @@ export class CadastroUserEditComponent implements OnInit {
       this.propertiesPassword = "true";
       if (this.perfilUsuario === 0) { // mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor
         this.properties = "true";
-        this.propertiesName = "false";        
+        this.propertiesName = "false";
       }
     }
 
@@ -171,7 +218,7 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   create() {
-    this.usuario.usuarioSubstituto = this.nomeUsuarioSubstituto;
+    this.saveUsuarioSubstituos();
     this.usuarioSubscription$ = this.serviceUsuario.create(this.usuario).subscribe((response: any) => {
       if (response.error !== '') {
         this.poNotification.error(response.error);
@@ -186,7 +233,7 @@ export class CadastroUserEditComponent implements OnInit {
     });
   }
   update() {
-    this.usuario.usuarioSubstituto = this.nomeUsuarioSubstituto;
+    this.saveUsuarioSubstituos();
     this.save();
     this.usuarioSubscription$ = this.serviceUsuario.update(this.usuario).subscribe(() => {
       if (this.perfilUsuario === 1) { // mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor dev team
@@ -197,9 +244,49 @@ export class CadastroUserEditComponent implements OnInit {
   }
 
   public closeModal() {
-    this.equipeSelected = [];
-    this.modalEquipe.close();
+    this.modalEditSubstituto.close();
   }
+  substitutoAdd() {
+    this.substituto = new UsuarioSubstituto();
+    this.substituto_id = undefined;
+    this.modalEditSubstituto.open();
+  }
+
+  susbtitutoDelete(itemToDelete: any): void {
+    this.substitutoSubscription$ = this.serviceSubs.delete(itemToDelete.substituto_id).subscribe((response: any) => {
+      this.poNotification.success(this.poI18nPipe.transform(this.literals.excludedMessage, itemToDelete.nomeUsuario));
+      this.searchSubstituto();
+    });
+  }
+  onConfirmSubs(): void {
+
+    this.substituto.substituto_id = this.substituto_id;
+    this.substituto.usuario_id = this.idUsuario;
+    this.createSubstituto();
+  }
+
+  createSubstituto() {
+    this.substitutoSubscription$ = this.serviceSubs.create(this.substituto).subscribe((response: any) => {
+      this.modalEditSubstituto.close();
+      this.poNotification.success(this.literals.createdMessage);
+      this.searchSubstituto();
+    });
+  }
+  searchSubstituto(): void {
+    this.currentPage = 1;
+    let disclaimerSubs = [{ property: 'usuario_id', value: this.idUsuario }]
+    this.substitutoSubscription$ = this.serviceSubs
+      .query(disclaimerSubs)
+      .subscribe((response: TotvsResponse<IUsuarioSubstituto>) => {
+        if (response && response.items) {
+          this.itemsSubstitutos = response.items;
+          this.hasNext = response.hasNext;
+        }
+        this.atualizaPerfilUsuario(this.itemsPerfil);
+
+      })
+  }
+
 
   getTitle(): string {
     if (this.eventPage === 'edit') {
@@ -244,6 +331,7 @@ export class CadastroUserEditComponent implements OnInit {
         ]
       };
     }
+    
   }
 
   getActions(): Array<PoPageAction> {
@@ -299,7 +387,7 @@ export class CadastroUserEditComponent implements OnInit {
         label: this.literals.save,
         disabled: (this.eventPage !== 'new' && (this.newPassword === undefined || this.confirmNewPassword !== this.newPassword)),
         action: this.create.bind(this),
-        icon: 'po-icon-plus'
+        icon: 'ph ph-plus'
       }, {
         label: this.literals.return,
         action: this.return.bind(this)
@@ -315,13 +403,31 @@ export class CadastroUserEditComponent implements OnInit {
     this.usuarioSubscription$ = this.serviceUsuario
       .getById(id, [''])
       .subscribe((response: IUsuario) => {
-        this.usuario = response[0];     
-        this.nomeUsuarioSubstituto = this.usuario.usuarioSubstituto;    
-        
+        this.usuario = response[0];  
+        this.esconderInformacaoSubstituto();  
+       
       });
   }
+  saveUsuarioSubstituos(): void {
+    this.usuarioSubstitutos = [];
+    if (this.aUsuarioSubstituto.length > 0) {
+      this.aUsuarioSubstituto.forEach((element) => {
+        this.usuarioSubstitutos.push(
+          {
 
- 
+            usuario_id: this.usuario.idUsuario,
+            substituto_id: element
+          }
+        )
+      });
+      this.usuario.usuarioSubstituto = this.usuarioSubstitutos;
+    }
+
+  }
+  changeOptions(event): void {
+    this.aUsuarioSubstituto = event;
+
+  }
 
   ngOnDestroy(): void {
     if (this.usuarioSubscription$) {

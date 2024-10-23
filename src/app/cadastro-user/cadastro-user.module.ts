@@ -10,6 +10,7 @@ import { UsuarioService } from '../shared/services/usuario.service';
 import { CadastroUserRoutingModule } from './cadastro-user-routing.module';
 import { CadastroUserEditComponent } from './edit/cadastro-user-edit.component';
 import { CadastroUserListComponent } from './list/cadastro-user-list.component';
+import { UsuarioSubstitutoService } from '../shared/services/usuario-substituto.service';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { CadastroUserListComponent } from './list/cadastro-user-list.component';
   providers:[
     UsuarioService,
     PoI18nPipe,
-    TipoPerfilUsuarioService
+    TipoPerfilUsuarioService,
+    UsuarioSubstitutoService
   ]
 })
 export class CadastroUserModule { }

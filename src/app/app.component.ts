@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
     public usuarioLogado = new UsuarioLogadoService();
 
     public profile: PoToolbarProfile;
-    
+
     constructor(
         public poI18nService: PoI18nService,
         private router: Router
@@ -33,43 +33,43 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-
         this.usuarioLogado.clearUsuarioLogado();
-                
+
         forkJoin(
             [this.poI18nService.getLiterals()]
         ).subscribe(literals => {
             this.router.navigate(['/login']);
-            
+
             literals.map(item => Object.assign(this.literals, item));
             this.menus = [
-                { label: 'Cadastro', icon: "po-icon-user-add", shortLabel: "Cadastro", link: '/cadastroUser' },
-                { label: 'Férias e Folgas', icon: "po-icon-calendar-ok", shortLabel: "Folgas", link: '/feriasFolga' },
-                { label: 'Agenda', icon: "po-icon-calendar", shortLabel: "Agenda", link: '/agendaUser' },
-                { label: 'Tipo evento', icon: "po-icon-document", shortLabel: "Evento", link: '/tipoEvento' },
-                { label: 'Feriados', icon: "po-icon-calendar-settings", shortLabel: "Feriados", link: '/feriados' },
-                { label: 'Equipes', icon: "po-icon-users", shortLabel: "Equipes", link: '/equipes' },
-                { label: 'Perfil', icon: "po-icon-waiter", shortLabel: "Perfil", link: '/perfilUsuario' },
-                { label: 'Sair', icon: "po-icon-close", shortLabel: "Sair", link: '/login' },
+                { label: 'Cadastro', icon: "ph ph-user-plus", shortLabel: "Cadastro", link: '/cadastroUser' },
+                { label: 'Férias e Folgas',  shortLabel: "Folgas", link: '/feriasFolga' },
+                { label: 'Agenda', icon: "ph ph-calendar-dots", shortLabel: "Agenda", link: '/agendaUser' },
+                { label: 'Tipo eventoaaaa', icon: "ph ph-calendar-star", shortLabel: "Tipo evento", link: '/tipoEvento' },
+                { label: 'Feriados', icon: "ph ph-calendar-gear", shortLabel: "Feriados", link: '/feriados' },
+                { label: 'Equipes', icon: "ph ph-users", shortLabel: "Equipes", link: '/equipes' },
+                { label: 'Perfil', icon: "ph ph-waiter", shortLabel: "Perfil", link: '/perfilUsuario' },
+                { label: 'Sair', icon: "ph ph-x", shortLabel: "Sair", link: '/login' },
             ];
-
+console.log('appcomponents 1',this.menus)
+            
             this.profile = {
                 avatar: 'https://via.placeholder.com/48x48?text=Login',
                 title: 'Login',
                 subtitle: ''
             };
 
-            this.usuarioLogado.setProfile(this.toolbarProfile);                                          
-            
+            this.usuarioLogado.setProfile(this.toolbarProfile);
+
             this.router.events.subscribe((url: any) => {
-                if (url instanceof NavigationEnd) {                
-                    this.ishidden = (url.url === '/login');    
+                if (url instanceof NavigationEnd) {
+                    this.ishidden = (url.url === '/login');
                     this.usuarioLogado.setMenu(this.userMenu);
                 }
             });
         });
     }
-    
+
     displayVersions(): void {
         /*console.log('App:', name);
         console.log('Git Info:', git);

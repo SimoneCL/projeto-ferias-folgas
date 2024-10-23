@@ -9,22 +9,10 @@
       class="po-md-6" 
       [(ngModel)]="usuario.nomeUsuario" 
       p-clean 
-      p-icon="po-icon-user" 
+      p-icon="ph ph-user" 
       [p-label]="literals?.name"
       [p-disabled]="propertiesName">
     </po-input>
-    <po-lookup 
-      class="po-md-5"
-      [(ngModel)]="nomeUsuarioSubstituto"
-      p-field-label="nomeUsuario"
-      p-field-value="nomeUsuario" 
-      [p-placeholder]="literals?.userSubstituto"
-      [p-columns]="lookupColumns"
-      [p-filter-service]="serviceUsuario"
-      [p-label]="literals?.substituto"
-      p-hide-columns-manager="true"
-      p-infinite-scroll="true">
-    </po-lookup>    
   </div>
   <div class="po-row">
   <po-email 
@@ -53,4 +41,55 @@
       (p-click)="alterarSenha()"> 
     </po-button>
   </div>
+ 
+   <po-divider *ngIf="!isHiddenSubstituto" class="po-sm-12 po-md-12 po-lg-12 po-lx-12"
+    [p-label]="literals?.substituto">
+  </po-divider>
+  <div *ngIf="!isHiddenSubstituto" class="po-row po-sm-8
+  po-md-8 po-offset-md-0
+  po-lg-8  po-offset-lg-0
+  po-xl-8 po-offset-xl-0">
+    <po-button 
+        class="po-m-0 po-pb-1 po-pt-0 po-sm-2
+               po-md-2 po-offset-md-1
+               po-lg-2 po-offset-lg-1
+               po-xl-2 po-offset-xl-1"
+        (p-click)="substitutoAdd()"
+        p-icon="ph ph-plus"
+        [p-label]="literals?.adicionarSubstituto"
+        p-kind="primary">
+    </po-button>  
+
+  <po-table 
+    class="po-m-0 po-sm-12 
+           po-md-12 po-offset-md-1
+           po-lg-12  po-offset-lg-1
+           po-xl-12 po-offset-xl-1"
+    p-selectable="false"
+    p-striped="true"
+    p-hide-columns-manager="true"
+    [p-columns]="columnsSubstitutos"
+    [p-items]="itemsSubstitutos"
+    [p-actions]="susbtitutoTableActions" >
+  </po-table>
+</div> 
 </po-page-default>
+<po-modal #modalEditSubstituto
+    p-size="sm"
+    [p-title]="literals?.substitutoModal"
+    [p-primary-action]="confirmSubs"
+    [p-secondary-action]="cancelSubs">
+    
+    <po-lookup 
+      class="po-md-12"
+      [(ngModel)]="substituto_id"
+      p-field-label="nomeUsuario"
+      p-field-value="idUsuario" 
+      [p-placeholder]="literals?.userSubstituto"
+      [p-columns]="lookupColumns"
+      [p-filter-service]="serviceUsuario"
+      [p-label]="literals?.substituto"
+      p-hide-columns-manager="true"
+      p-infinite-scroll="true">
+    </po-lookup> 
+</po-modal>

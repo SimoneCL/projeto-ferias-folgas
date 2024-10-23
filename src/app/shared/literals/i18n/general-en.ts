@@ -92,9 +92,14 @@ export const generalEn = {
     labelRecupera: 'Enter a valid email to receive a recovery password',
     sendMail: 'Sent with success',
     feriados: 'Holidays',
+    feriadosNew: 'New holidays',
+    feriadosEdit: 'Edit holidays',
     data: 'Date',
     pontoFacultativo: 'Facultative Point',
     feriadosNacional: 'National Holidays',
+    titleEquipes: 'Teams',
+    equipeNew: 'New team',
+    equipeEdit: 'Edit team',
     ano: 'Year',
     codigo: 'Code',
     equipeUsuario: 'User Teams',
@@ -109,6 +114,8 @@ export const generalEn = {
     faixaData: 'Uses date range',
     gestorPessoas: 'Human resources management?',
     substituto: 'Substitute',
+    substitutoModal: 'Add substitute',
+    adicionarSubstituto: 'Add',
     userSubstituto:"Substitute user in case of time off or vacation",
     updateTable: "Update"
 

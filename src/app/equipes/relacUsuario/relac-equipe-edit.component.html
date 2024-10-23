@@ -11,7 +11,7 @@
             [(ngModel)]="quickSearchUsuario"
             [p-placeholder]="literals?.nameUser"
             p-clean="true"
-            p-icon="po-icon-search"
+            p-icon="ph ph-magnifying-glass"
             (keypress)="onKeyQuickSearchUsuar($event.keyCode)"
             (p-change)="onChangeQuickSearchUsuar($event)">
         </po-input>
@@ -27,7 +27,8 @@
         p-height="400"
         [p-items]="items"
         [p-striped]="true"
-        (p-delete-items)="deleteItems($event)">
+        (p-delete-items)="deleteItems($event)"
+        [p-hide-columns-manager]="true">
         </po-table>
     </div>
     <div class="po-md-6 ">
@@ -40,19 +41,20 @@
             [(ngModel)]="quickSearchUsuarioSelect"
             [p-placeholder]="literals?.nameUser"
             p-clean="true"
-            p-icon="po-icon-search"
+            p-icon="ph ph-magnifying-glass"
             (keypress)="onKeyQuickSearchUsuarioSelect($event.keyCode)"
             (p-change)="onChangeQuickSearchUsuarioSelect($event)">
         </po-input>
         <po-table class="po-md-12 po-mt-8"
-        #POItemsSelected
-        [p-columns]="columns"
-        [p-striped]="true"
-        [p-infinite-scroll]="true"
-        p-height="400"
-        p-sort="true"
-        [p-items]="itemsSelected"
-        >
+            #POItemsSelected
+            [p-columns]="columns"
+            [p-striped]="true"
+            [p-infinite-scroll]="true"
+            p-height="400"
+            p-sort="true"
+            [p-items]="itemsSelected"
+            [p-actions-right]="true"
+            [p-hide-columns-manager]="true" >
         </po-table>
     </div>
     </div>

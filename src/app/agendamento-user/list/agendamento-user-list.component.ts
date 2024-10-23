@@ -263,8 +263,8 @@ export class AgendamentoUserListComponent implements OnInit {
 
   getIcons(strTooltip: string): any[] {
     return [
-      { value: true, icon: 'po-icon-ok', color: 'color-11', tooltip: strTooltip },
-      { value: false, icon: 'po-icon-minus', color: 'color-07', tooltip: `${this.literals.no} ${strTooltip}` }
+      { value: true, icon: 'ph ph-check', color: 'color-11', tooltip: strTooltip },
+      { value: false, icon: 'ph ph-minus', color: 'color-07', tooltip: `${this.literals.no} ${strTooltip}` }
     ];
   }
 
