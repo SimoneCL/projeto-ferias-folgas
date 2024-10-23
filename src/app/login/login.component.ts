@@ -166,21 +166,21 @@ export class LoginComponent {
 
               if (UsuarioLogadoService.tipoPerfilUserLogado === 0) { //mysql campo lógico é do tipo inteiro (0 ou 1) - 0 - não perfil gesto pessoal e 1 - perfil gestor
                 this.menusPerfil = [
-                  { label: 'Edição usuário', icon: "po-icon-user", shortLabel: "Edição", link: `/cadastroUser/edit/${this.userLogin.idUsuario}` },
-                  { label: 'Férias e Folgas', icon: "po-icon-calendar-ok", shortLabel: "Folgas", link: '/feriasFolga' },
-                  { label: 'Agenda', icon: "po-icon-calendar", shortLabel: "Agenda", link: '/agendaUser' },
-                  { label: 'Sair', icon: "po-icon-close", shortLabel: "Sair", link: '/login' },
+                  { label: 'Edição usuário', icon: "ph ph-user", shortLabel: "Edição", link: `/cadastroUser/edit/${this.userLogin.idUsuario}` },
+                  { label: 'Férias e Folgas', icon: "ph ph-calendar-check", shortLabel: "Folgas", link: '/feriasFolga' },
+                  { label: 'Agenda', icon: "ph ph-calendar-dots", shortLabel: "Agenda", link: '/agendaUser' },
+                  { label: 'Sair', icon: "ph ph-x", shortLabel: "Sair", link: '/login' },
                 ];
               } else {
                 this.menusPerfil = [
-                  { label: 'Cadastro', icon: "po-icon-user-add", shortLabel: "Cadastro", link: '/cadastroUser' },
-                  { label: 'Férias e Folgas', icon: "po-icon-calendar-ok", shortLabel: "Folgas", link: '/feriasFolga' },
-                  { label: 'Agenda', icon: "po-icon-calendar", shortLabel: "Agenda", link: '/agendaUser' },
-                  { label: 'Tipo evento', icon: "po-icon-document", shortLabel: "Evento", link: '/tipoEvento' },
-                  { label: 'Feriados', icon: "po-icon-calendar-settings", shortLabel: "Feriados", link: '/feriados' },
-                  { label: 'Equipes', icon: "po-icon-users", shortLabel: "Equipes", link: '/equipes' },
-                  { label: 'Perfil', icon: "po-icon-waiter", shortLabel: "Perfil", link: '/perfilUsuario' },
-                  { label: 'Sair', icon: "po-icon-close", shortLabel: "Sair", link: '/login' },
+                  { label: 'Cadastro', icon: "ph ph-user-plus", shortLabel: "Cadastro", link: '/cadastroUser' },
+                  { label: 'Férias e Folgas', icon: "ph ph-calendar-check", shortLabel: "Folgas", link: '/feriasFolga' },
+                  { label: 'Agenda', icon: "ph ph-calendar-dots", shortLabel: "Agenda", link: '/agendaUser' },
+                  { label: 'Tipo evento', icon: "ph ph-file", shortLabel: "Evento", link: '/tipoEvento' },
+                  { label: 'Feriados', icon: "ph ph-calendar-gear", shortLabel: "Feriados", link: '/feriados' },
+                  { label: 'Equipes', icon: "ph ph-users", shortLabel: "Equipes", link: '/equipes' },
+                  { label: 'Perfil', icon: "ph ph-waiter", shortLabel: "Perfil", link: '/perfilUsuario' },
+                  { label: 'Sair', icon: "ph ph-x", shortLabel: "Sair", link: '/login' },
                 ];
               }
 

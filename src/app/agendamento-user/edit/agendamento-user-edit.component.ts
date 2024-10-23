@@ -249,7 +249,7 @@ export class AgendamentoUserEditComponent implements OnInit {
       {
         label: this.literals.save,
         action: this.create.bind(this),
-        icon: 'po-icon-plus'
+        icon: 'ph ph-plus'
       }, {
         label: this.literals.return,
         action: this.return.bind(this)

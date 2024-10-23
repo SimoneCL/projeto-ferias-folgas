@@ -173,7 +173,7 @@ export class CadastroUserEditComponent implements OnInit {
       { property: 'nomeUsuario', label: this.literals['nameUser'] }
     ];
     this.susbtitutoTableActions = [
-      { action: this.susbtitutoDelete.bind(this), label: this.literals['remove'], icon: 'po-icon po-icon-delete' }
+      { action: this.susbtitutoDelete.bind(this), label: this.literals['remove'], icon: ' ph ph-trash' }
     ];
     this.columnsSubstitutos = [
       { property: 'substituto_id', label: this.literals['usuario'], type: 'number', visible: false },
@@ -387,7 +387,7 @@ export class CadastroUserEditComponent implements OnInit {
         label: this.literals.save,
         disabled: (this.eventPage !== 'new' && (this.newPassword === undefined || this.confirmNewPassword !== this.newPassword)),
         action: this.create.bind(this),
-        icon: 'po-icon-plus'
+        icon: 'ph ph-plus'
       }, {
         label: this.literals.return,
         action: this.return.bind(this)

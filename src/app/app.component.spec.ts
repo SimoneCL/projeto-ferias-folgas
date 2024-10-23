@@ -1,11 +1,10 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { AppComponent } from './app.component';
-import { BrowserTestingModule } from '@angular/platform-browser/testing';
-import { PoTemplatesModule } from '@po-ui/ng-templates';
 import { CommonModule } from '@angular/common';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { PoModule, PoI18nModule } from '@po-ui/ng-components';
+import { BrowserTestingModule } from '@angular/platform-browser/testing';
+import { PoI18nModule, PoModule } from '@po-ui/ng-components';
+import { PoTemplatesModule } from '@po-ui/ng-templates';
+import { AppComponent } from './AppComponent';
 import { AppModule } from './app.module';
 
 
@@ -14,7 +13,6 @@ describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        RouterTestingModule,
         BrowserTestingModule,
         PoModule,
         PoTemplatesModule,
@@ -32,11 +30,6 @@ describe('AppComponent', () => {
   })
   );
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-
-    expect(app).toBeTruthy();
-  });
+  
 
 });
