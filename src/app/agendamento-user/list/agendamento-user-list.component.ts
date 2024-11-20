@@ -8,6 +8,8 @@ import { ITipoEvento } from '../../shared/model/tipo-evento.model';
 import { EventoService } from '../../shared/services/evento.service';
 import { TipoEventoService } from '../../shared/services/tipo-evento.service';
 import { UsuarioLogadoService } from '../../usuario-logado.service';
+import { IUsuario, Usuario } from '../../shared/model/usuario.model';
+import { UsuarioService } from '../../shared/services/usuario.service';
 
 @Component({
   selector: 'app-agendamento-user-list',
@@ -26,6 +28,7 @@ export class AgendamentoUserListComponent implements OnInit {
 
   breadcrumb: PoBreadcrumb;
 
+  usuario: IUsuario = new Usuario();
   items: Array<IEvento> = new Array<IEvento>();
   tipoEventos: Array<ITipoEvento> = new Array<ITipoEvento>();
   dayOffType: Array<any> = [];
@@ -50,6 +53,9 @@ export class AgendamentoUserListComponent implements OnInit {
   cancelAdvSearchAction: PoModalAction;
   userLogado: number;
 
+  eventosLogado = false;
+  idAtual = this.activatedRoute.snapshot.paramMap.get('id');
+
   hasNext = false;
   pageSize = 20;
   currentPage = 0;
@@ -60,6 +66,7 @@ export class AgendamentoUserListComponent implements OnInit {
   public usuarioLogado = new UsuarioLogadoService();
 
   constructor(
+    private serviceUsuario: UsuarioService,
     private serviceEvento: EventoService,
     private serviceTipoEvento: TipoEventoService,
     private poI18nPipe: PoI18nPipe,
@@ -74,7 +81,12 @@ export class AgendamentoUserListComponent implements OnInit {
 
     this.userLogado = this.usuarioLogado.getUsuarioLogado();
 
-
+    if(this.idAtual){
+      this.eventosLogado = true;
+    }else{
+      this.eventosLogado = false;
+    };
+    
     forkJoin(
       [
         this.poI18nService.getLiterals(),
@@ -92,10 +104,17 @@ export class AgendamentoUserListComponent implements OnInit {
     this.disclaimers = [];
 
     const id = this.activatedRoute.snapshot.paramMap.get('id');
+
+    var idNumber = Number(id);
+
     if (id !== null) {
-      this.title = this.literals.scheduleEventUser + ': ' + id[0].toUpperCase() + id.substring(1);
+      this.serviceUsuario.getById(idNumber, [''])
+      .subscribe((response: IUsuario) => {
+        this.usuario.nomeUsuario = response[0].nomeUsuario;     
+        this.title = this.literals.scheduleEventUser + ': ' + /*id[0].toUpperCase() + id.substring(1) +*/ this.usuario.nomeUsuario;
+      });    
     } else {
-      this.title = this.literals.scheduleEventUser;
+      this.title = this.literals.yourScheduleEventUser;
     }
     this.eventFilterOptions = this.dayOffType;
 
@@ -107,17 +126,26 @@ export class AgendamentoUserListComponent implements OnInit {
       action: () => this.modalAdvanceSearch.close(), label: this.literals['cancel']
     };
 
-    this.tableActions = [
-      { action: this.edit.bind(this), label: this.literals.edit },
-      { action: this.delete.bind(this), label: this.literals.delete, type: 'danger' }
-    ];
-
-    this.pageActions = [
-      {
-        label: this.literals.add,
-        action: () => this.router.navigate(['agendaUser/new'])
-      }
-    ];
+    if(id === null){
+      this.tableActions = [
+        { action: this.edit.bind(this), label: this.literals.edit },
+        { action: this.delete.bind(this), label: this.literals.delete, type: 'danger' }
+      ];
+      
+      this.pageActions = [
+        {
+          label: this.literals.add,
+          action: () => this.router.navigate(['agendaUser/new'])
+        }
+      ];
+    }else{
+      this.pageActions = [
+        {
+          label: this.literals.return,
+          action: () => this.router.navigate(['cadastroUser'])
+        }
+      ];
+    }
 
     this.columns = [
       { property: 'codTipo', label: this.literals.type, type: 'label', labels: this.dayOffType },
@@ -212,33 +240,33 @@ export class AgendamentoUserListComponent implements OnInit {
 
 
   search(loadMore = false): void {
-    const newDisclaimer = { property: 'idUsuario', value: this.userLogado};
-    const isDuplicate = this.disclaimers.some(disclaimer => (
-      disclaimer.property === newDisclaimer.property && disclaimer.value === newDisclaimer.value
-    ));
-    
-    if (!isDuplicate) {
-      this.disclaimers = [...this.disclaimers, newDisclaimer];
-    }
- 
+      const newDisclaimer = { property: 'idUsuario', value: this.eventosLogado ? this.idAtual : this.userLogado };
+      const isDuplicate = this.disclaimers.some(disclaimer => (
+        disclaimer.property === newDisclaimer.property && disclaimer.value === newDisclaimer.value
+      ));
+      
+      if (!isDuplicate) {
+        this.disclaimers = [...this.disclaimers, newDisclaimer];
+      }
+   
 
-    if (loadMore === true) {
-      this.currentPage = this.currentPage + 1;
-    } else {
-      this.items = [];
-      this.currentPage = 1;
-    }
-    this.isLoading = true;
-    this.eventoUserSubscription$ = this.serviceEvento
-      .query(this.disclaimers, this.currentPage, this.pageSize)
-      .subscribe((response: TotvsResponse<IEvento>) => {
-        this.items = [...response.items];
-        this.hasNext = response.hasNext;
-        this.isLoading = false;
-      }, (err: any) => {
-        /*Se retornar erro desabilitar o botão adicionar*/
-        this.pageActions = undefined;
-      });
+      if (loadMore === true) {
+        this.currentPage = this.currentPage + 1;
+      } else {
+        this.items = [];
+        this.currentPage = 1;
+      }
+      this.isLoading = true;
+      this.eventoUserSubscription$ = this.serviceEvento
+        .query(this.disclaimers, this.currentPage, this.pageSize)
+        .subscribe((response: TotvsResponse<IEvento>) => {
+          this.items = [...response.items];
+          this.hasNext = response.hasNext;
+          this.isLoading = false;
+        }, (err: any) => {
+          /*Se retornar erro desabilitar o botão adicionar*/
+          this.pageActions = undefined;
+        });
   }
 
   delete(item: IEvento): void {

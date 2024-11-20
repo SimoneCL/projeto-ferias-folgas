@@ -55,6 +55,7 @@ export const generalPt = {
     module: 'Gerenciamento Férias/Folga',
     titleVacation: 'Férias e folgas',
     scheduleEventUser: 'Agendamento evento do usuário',
+    yourScheduleEventUser: 'Seu agendamento evento',
     listUser: 'Lista de usuários',
     newUser: 'Novo cadastro de usuário',
     editUser: 'Editar cadastro de usuário',
@@ -119,6 +120,7 @@ export const generalPt = {
     substitutoModal: 'Adicionar substituto',
     adicionarSubstituto: 'Adicionar',
     userSubstituto:"Usuário substituto em caso folga ou férias",
-    updateTable: "Atualizar"
+    updateTable: "Atualizar",
+    eventos: "Eventos"
 
 };
